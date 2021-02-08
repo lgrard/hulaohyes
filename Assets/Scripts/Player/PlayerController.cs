@@ -1,93 +1,58 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using hulaohyes.enemy;
+using UnityEngine.InputSystem;
+using hulaohyes.player.states;
 
 namespace hulaohyes.player
 {
-    public class PlayerController : MonoBehaviour
+    public class PlayerController : Pickable
     {
-        enum State
-        {
-            idle,
-            running,
-            attacking,
-            carried,
-            carring,
-            takingDamage,
-            dead
-        }
+        const float GRAVITY_AMOUNT_RISE = 2f;
+        const float GRAVITY_AMOUNT_FALL = 4f;
 
-        State currentState = State.idle;
-        Camera mainCamera;
-        Animator playerAnimator;
-        Vector2 movementInput = Vector2.zero;
-        float rotationSmoothingAmount = 0.01f;
+        private Animator _playerAnimator;
+        private PlayerStateMachine _stateMachine;
+        private PlayerInput _playerInput;
+        private ControlScheme _controlScheme;
 
-        [Tooltip("Layer(s) used for ground detection")]
-        [SerializeField] LayerMask groundLayer;
+        [Tooltip("Main camera container")]
+        [SerializeField] Transform _cameraContainer;
+        [SerializeField] Transform _attackPoint;
+
+        [Header("Current pick up target")]
+        public Pickable pickUpTarget;
 
         //Constructor and initialization
         private void Start()
         {
-            mainCamera = Camera.main;
-            playerAnimator = GetComponent<Animator>();
+            _rb = GetComponent<Rigidbody>();
+            _playerInput = GetComponent<PlayerInput>();
+            _playerAnimator = GetComponent<Animator>();
+            _controlScheme = new ControlScheme();
+            _playerInput.actions = _controlScheme.asset;
+            _stateMachine = new PlayerStateMachine(this,_controlScheme,_cameraContainer,_rb,_playerAnimator, _attackPoint);
         }
 
-        private void Update()
+        private void Update() => _stateMachine.CurrentState.LoopLogic();
+        private void FixedUpdate()
         {
-            PlayerStateMachine();
+            _stateMachine.CurrentState.PhysLoopLogic();
+            _rb.AddForce(Physics.gravity * _gravity, ForceMode.Acceleration);
         }
 
-        ///Allows player action depending on the current state
-        void PlayerStateMachine()
+        float _gravity => (_rb.velocity.y < 0) ? GRAVITY_AMOUNT_FALL : GRAVITY_AMOUNT_RISE;
+
+        private void OnTriggerEnter(Collider other)
         {
-            switch (currentState)
-            {
-                case State.idle:
-                    break;
 
-                case State.running:;
-                    break;
-
-                case State.attacking:
-                    break;
-
-                case State.carried:
-                    break;
-
-                case State.carring:
-                    break;
-
-                case State.takingDamage:
-                    break;
-
-                case State.dead:
-                    break;
-            }
         }
 
-        ///Transition player to a new state
-        ///<param name="newState">State to transition to</param>
-        State setCurrentState(State newState)
+        private void OnDrawGizmosSelected()
         {
-            currentState = newState;
-            return currentState;
+            Gizmos.DrawLine(transform.position, new Vector3(transform.position.x, transform.position.y - 0.5f, transform.position.z));
+            Gizmos.DrawWireSphere(_attackPoint.position, 1f);
         }
-
-        ///Rotate player facing last direction
-        void RotatePlayer()
-        {
-            Vector3 camForward = mainCamera.transform.forward;
-            Vector3 camRight = mainCamera.transform.right;
-            Vector3 DesiredRotation = camForward * movementInput.y + camRight * movementInput.x;
-            Quaternion desiredRotation = Quaternion.LookRotation(new Vector3(DesiredRotation.x, 0, DesiredRotation.z));
-
-            transform.rotation = Quaternion.Slerp(desiredRotation, transform.rotation, rotationSmoothingAmount);
-        }
-
-        ///Return if player is grounded
-        bool isGrounded => (Physics.Raycast(transform.position, -transform.up, 1, groundLayer));
 
         ///Destroy player's object and delete references
         public PlayerController destroyPlayer()
