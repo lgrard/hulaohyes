@@ -18,11 +18,13 @@ namespace hulaohyes.player.states
         /// <param name="pCameraContainer">Associated camera container</param>
         /// <param name="pRb">Associated rigidbody</param>
         /// <param name="pAnimator">Associated rigidbody</param>
-        public PlayerStateMachine(PlayerController pPlayer, ControlScheme pControlScheme, Transform pCameraContainer, Rigidbody pRb, Animator pAnimator, Transform pAttackPoint)
+        /// <param name="pParticles">Associated player particle systems</param>
+        public PlayerStateMachine(PlayerController pPlayer, ControlScheme pControlScheme, Transform pCameraContainer,
+            Rigidbody pRb, Animator pAnimator, Transform pAttackPoint, List<ParticleSystem> pParticles)
         {
-            running = new Running(this, pPlayer, pControlScheme, pCameraContainer, pRb, pAnimator);
-            carrying = new Carrying(this, pPlayer, pControlScheme, pCameraContainer, pRb, pAnimator);
-            attacking = new Attacking(this, pPlayer, pControlScheme, pCameraContainer, pRb, pAnimator,pAttackPoint);
+            running = new Running(this, pPlayer, pControlScheme, pCameraContainer, pRb, pAnimator, pParticles);
+            carrying = new Carrying(this, pPlayer, pControlScheme, pCameraContainer, pRb, pAnimator, pParticles);
+            attacking = new Attacking(this, pPlayer, pControlScheme, pCameraContainer, pRb, pAnimator, pParticles, pAttackPoint);
             CurrentState = running;
         }
     }

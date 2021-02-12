@@ -18,18 +18,6 @@ namespace hulaohyes.enemy
             speed = pSpeed;
         }
 
-        /// The enemy takes damage and check the amount of HPs
-        /// <param name="damage">Amount of damage taken by the enemy</param>
-        public void takeDamage(int damage)
-        {
-            if (HP - damage <= 0)
-            {
-                //dies
-            }
-
-            else
-                HP -= damage;
-        }
 
         ///Destroy enemy's object and delete references
         public Enemy destroyEnemy()

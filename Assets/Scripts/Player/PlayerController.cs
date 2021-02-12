@@ -16,9 +16,16 @@ namespace hulaohyes.player
         private PlayerInput _playerInput;
         private ControlScheme _controlScheme;
 
+        [Header("HP values")]
+        [SerializeField] uint maxHp = 10;
+
+        [Header("Objects and components")]
         [Tooltip("Main camera container")]
         [SerializeField] Transform _cameraContainer;
         [SerializeField] Transform _attackPoint;
+
+        [Header("Particles list")]
+        [SerializeField] List<ParticleSystem> _playerParticles;
 
         [Header("Current pick up target")]
         public Pickable pickUpTarget;
@@ -31,7 +38,7 @@ namespace hulaohyes.player
             _playerAnimator = GetComponent<Animator>();
             _controlScheme = new ControlScheme();
             _playerInput.actions = _controlScheme.asset;
-            _stateMachine = new PlayerStateMachine(this,_controlScheme,_cameraContainer,_rb,_playerAnimator, _attackPoint);
+            _stateMachine = new PlayerStateMachine(this,_controlScheme,_cameraContainer,_rb,_playerAnimator, _attackPoint, _playerParticles);
         }
 
         private void Update() => _stateMachine.CurrentState.LoopLogic();
@@ -41,12 +48,9 @@ namespace hulaohyes.player
             _rb.AddForce(Physics.gravity * _gravity, ForceMode.Acceleration);
         }
 
+        public void PunchHit() => _stateMachine.attacking.PunchHitTest();
+
         float _gravity => (_rb.velocity.y < 0) ? GRAVITY_AMOUNT_FALL : GRAVITY_AMOUNT_RISE;
-
-        private void OnTriggerEnter(Collider other)
-        {
-
-        }
 
         private void OnDrawGizmosSelected()
         {
@@ -55,10 +59,9 @@ namespace hulaohyes.player
         }
 
         ///Destroy player's object and delete references
-        public PlayerController destroyPlayer()
+        public void destroyPlayer()
         {
             //Destructor
-            return this;
         }
     }
 }

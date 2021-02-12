@@ -18,13 +18,13 @@ namespace hulaohyes.player.states
         /// <param name="pRb">Associated rigidbody</param>
         /// <param name="pAnimator">Associated animator component</param>
         public Running(PlayerStateMachine pStateMachine, PlayerController pPlayer, ControlScheme pControlScheme,
-            Transform pCameraContainer, Rigidbody pRb, Animator pAnimator)
-            : base(pStateMachine, pPlayer, pControlScheme, pCameraContainer, pRb, pAnimator) => _pickableLayers = LayerMask.GetMask("Enemy", "Player");
+            Transform pCameraContainer, Rigidbody pRb, Animator pAnimator, List<ParticleSystem> pParticles)
+            : base(pStateMachine, pPlayer, pControlScheme, pCameraContainer, pRb, pAnimator, pParticles) => _pickableLayers = LayerMask.GetMask("Enemy", "Player");
 
 
-        void Punch(InputAction.CallbackContext ctx) => _stateMachine.CurrentState = _stateMachine.attacking;
+        void OnPunch(InputAction.CallbackContext ctx) => _stateMachine.CurrentState = _stateMachine.attacking;
 
-        void Pickup(InputAction.CallbackContext ctx)
+        void OnPickup(InputAction.CallbackContext ctx)
         {
             if (_player.pickUpTarget != null) _stateMachine.CurrentState = _stateMachine.carrying;
         }
@@ -35,9 +35,11 @@ namespace hulaohyes.player.states
             RaycastHit hit;
 
             if (Physics.Raycast(lFrontRay,out hit, PICK_UP_DISTANCE, _pickableLayers)
-                && hit.collider.gameObject != _player && hit.collider.gameObject != _player.pickUpTarget)
+                && hit.collider.gameObject != _player
+                && hit.collider.TryGetComponent<Pickable>(out Pickable pickableTarget) != _player.pickUpTarget
+                && pickableTarget.isPickable)
             {
-                _player.pickUpTarget = hit.collider.GetComponent<Pickable>();
+                _player.pickUpTarget = pickableTarget;
                 Debug.Log("Current target: " + _player.pickUpTarget.gameObject.name);
             }
 
@@ -51,8 +53,8 @@ namespace hulaohyes.player.states
         public override void OnEnter()
         {
             base.OnEnter();
-            base._controlScheme.Player.Punch.performed += Punch;
-            base._controlScheme.Player.PickUp.performed += Pickup;
+            base._controlScheme.Player.Punch.performed += OnPunch;
+            base._controlScheme.Player.PickUp.performed += OnPickup;
         }
 
         public override void PhysLoopLogic()
@@ -64,8 +66,8 @@ namespace hulaohyes.player.states
         public override void OnExit()
         {
             base.OnExit();
-            base._controlScheme.Player.Punch.performed -= Punch;
-            base._controlScheme.Player.PickUp.performed -= Pickup;
+            base._controlScheme.Player.Punch.performed -= OnPunch;
+            base._controlScheme.Player.PickUp.performed -= OnPickup;
         }
     }
 }

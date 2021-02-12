@@ -13,6 +13,7 @@ namespace hulaohyes.player.states
         protected Transform _cameraContainer;
         protected Rigidbody _rb;
         protected Animator _animator;
+        protected List<ParticleSystem> _particles;
 
         /// Create a new state
         /// <param name="pStateMachine">Associated state machine</param>
@@ -22,7 +23,7 @@ namespace hulaohyes.player.states
         /// <param name="pRb">Associated rigidbody</param>
         /// <param name="pAnimator">Associated animator component</param>
         public PlayerState(PlayerStateMachine pStateMachine, PlayerController pPlayer, ControlScheme pControlScheme,
-            Transform pCameraContainer, Rigidbody pRb, Animator pAnimator)
+            Transform pCameraContainer, Rigidbody pRb, Animator pAnimator, List<ParticleSystem> pParticles)
             :base()
         {
             _stateMachine = pStateMachine;
@@ -31,6 +32,7 @@ namespace hulaohyes.player.states
             _controlScheme = pControlScheme;
             _rb = pRb;
             _animator = pAnimator;
+            _particles = pParticles;
         }
     }
 }
