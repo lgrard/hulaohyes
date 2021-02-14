@@ -9,7 +9,7 @@ namespace hulaohyes.player.states
     {
         const float ROTATION_SMOOTHING_AMOUNT = 0.75f;
         const float MOVEMENT_SPEED = 8f;
-        const float JUMP_HEIGHT = 25000f;
+        const float JUMP_HEIGHT = 16000f;
 
         private Vector3 _camForward;
         private Vector3 _camRight;

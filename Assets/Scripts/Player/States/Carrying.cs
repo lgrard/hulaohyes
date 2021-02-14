@@ -8,7 +8,7 @@ namespace hulaohyes.player.states
 {
     public class Carrying : Idle
     {
-        private Vector3 _pickUpPoint = new Vector3(0, 2f, 0);
+        private Vector3 _pickUpPoint = new Vector3(0, 2.1f, 0);
 
         public Carrying(PlayerStateMachine pStateMachine, PlayerController pPlayer, ControlScheme pControlScheme,
             Transform pCameraContainer, Rigidbody pRb, Animator pAnimator, List<ParticleSystem> pParticles)

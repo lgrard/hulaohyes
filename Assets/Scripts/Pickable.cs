@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Pickable : MonoBehaviour
 {
-    private const float THROW_FORCE = 30000f;
+    private const float THROW_FORCE = 15000f;
 
     [Tooltip("This item can be taken")]
     public bool isPickable = true;
