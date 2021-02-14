@@ -41,6 +41,12 @@ namespace hulaohyes.player.states
             base._controlScheme.Player.Punch.performed += OnThrowTarget;
         }
 
+        public override void PhysLoopLogic()
+        {
+            base.PhysLoopLogic();
+            base.MovePlayer();
+        }
+
         public override void OnExit()
         {
             base.OnExit();

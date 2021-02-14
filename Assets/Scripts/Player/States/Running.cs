@@ -60,8 +60,10 @@ namespace hulaohyes.player.states
         public override void PhysLoopLogic()
         {
             base.PhysLoopLogic();
+            base.MovePlayer();
             Targetting();
         }
+
 
         public override void OnExit()
         {

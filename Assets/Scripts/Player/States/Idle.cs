@@ -41,7 +41,7 @@ namespace hulaohyes.player.states
         }
 
         /// Move player's rigidbody
-        void MovePlayer()
+        protected void MovePlayer()
         {
             Vector3 lDesiredPosition = _camForward * _movementInput.y + _camRight * _movementInput.x;
             base._rb.velocity = new Vector3(lDesiredPosition.x * MOVEMENT_SPEED, base._rb.velocity.y, lDesiredPosition.z * MOVEMENT_SPEED);
@@ -53,7 +53,9 @@ namespace hulaohyes.player.states
         protected bool isGrounded =>(Physics.Raycast(base._player.transform.position, -base._player.transform.up, 0.5f, _groundLayer));
 
         /// Makes the player jump
-        protected void OnJump(InputAction.CallbackContext ctx)
+        void OnJump(InputAction.CallbackContext ctx) => Jump();
+
+        protected virtual void Jump()
         {
             if (isGrounded)
             {
@@ -78,13 +80,6 @@ namespace hulaohyes.player.states
             _camRight = base._cameraContainer.transform.right;
 
             RotatePlayer();
-        }
-
-        public override void PhysLoopLogic()
-        {
-            base.LoopLogic();
-
-            MovePlayer();
         }
 
         public override void OnExit()
