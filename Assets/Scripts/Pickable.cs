@@ -11,8 +11,9 @@ public class Pickable : MonoBehaviour
     protected private Pickable _currentPicker = null;
     protected private Rigidbody _rb;
 
+    private void Start() => Init();
 
-    private void Start()
+    protected virtual void Init()
     {
         _rb = GetComponent<Rigidbody>();
     }
