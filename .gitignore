@@ -10,6 +10,9 @@
 /[Ll]ogs/
 /[Mm]emoryCaptures/
 
+# Ignore Package manifest
+/[Pp]rojectSettings/[Pp]ackages/[Cc]om.unity.probuilder/
+
 # Ignore game binary files
 /[Aa]ssets/[Bb]inary/
 
