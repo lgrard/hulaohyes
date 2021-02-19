@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using hulaohyes.player.states;
+using hulaohyes.inputs;
+using hulaohyes.camera;
 
 namespace hulaohyes.player
 {
@@ -11,10 +13,12 @@ namespace hulaohyes.player
         const float GRAVITY_AMOUNT_RISE = 2f;
         const float GRAVITY_AMOUNT_FALL = 4f;
 
+        private GameManager _gameManager;
         private Animator _playerAnimator;
         private PlayerStateMachine _stateMachine;
         private PlayerInput _playerInput;
         private ControlScheme _controlScheme;
+        private Transform _cameraContainer;
 
         public int playerIndex = 0;
 
@@ -23,14 +27,13 @@ namespace hulaohyes.player
         private int _hp;
 
         [Header("Objects and components")]
-        [Tooltip("Main camera container")]
-        [SerializeField] Transform _cameraContainer;
+        [Tooltip("The transform where the attack collision checks")]
         [SerializeField] Transform _attackPoint;
 
         [Header("Particles list")]
         [SerializeField] List<ParticleSystem> _playerParticles;
 
-        [Header("Current pick up target")]
+        [HideInInspector]
         public Pickable pickUpTarget;
 
         ///Constructor and initialization
@@ -60,16 +63,25 @@ namespace hulaohyes.player
         }
 
         public void PunchHit() => _stateMachine.attacking.PunchHitTest();
+        public void ResetCombo() => _stateMachine.attacking.ResetCombo();
 
         float _gravity => (_rb.velocity.y < 0) ? GRAVITY_AMOUNT_FALL : GRAVITY_AMOUNT_RISE;
+
+        public void SetPlayerDevice()
+        {
+            InputDevice lDevice = DeviceManager.GetInputDevice(playerIndex);
+            if (lDevice != null) _playerInput.SwitchCurrentControlScheme(lDevice);
+        }
 
         override protected void Init()
         {
             base.Init();
-            _playerInput = GetComponent<PlayerInput>();
+            _cameraContainer = CameraManager.getActiveCamera(this.transform);
             _playerAnimator = GetComponent<Animator>();
             _controlScheme = new ControlScheme();
+            _playerInput = GetComponent<PlayerInput>();
             _playerInput.actions = _controlScheme.asset;
+            SetPlayerDevice();
             _stateMachine = new PlayerStateMachine(this, _controlScheme, _cameraContainer, _rb, _playerAnimator, _attackPoint, _playerParticles);
 
             _hp = maxHp;
@@ -78,13 +90,13 @@ namespace hulaohyes.player
         private void OnDrawGizmosSelected()
         {
             Gizmos.DrawLine(transform.position, new Vector3(transform.position.x, transform.position.y - 0.5f, transform.position.z));
-            Gizmos.DrawWireSphere(_attackPoint.position, 1f);
+            Gizmos.DrawWireCube(_attackPoint.position, new Vector3(1,2,1));
         }
 
         ///Destroy player's object and delete references
         public void destroyPlayer()
         {
-            //Destructor
+            Destroy(gameObject);
         }
     }
 }

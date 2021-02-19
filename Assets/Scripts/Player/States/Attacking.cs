@@ -2,19 +2,22 @@
 using System.Collections.Generic;
 using UnityEngine.InputSystem;
 using UnityEngine;
+using hulaohyes.effects;
 using hulaohyes.enemy;
 
 namespace hulaohyes.player.states
 {
     public class Attacking : PlayerState
     {
-        const float MAX_ATTACK_STAMP = 0.5f;
-        const float ATTACK_RADIUS = 1f;
-        const float MAGNET_RADIUS = 2f;
+        const float ATTACK_HEIGHT = 1;
+        const float ATTACK_DEPTH = 1;
+        const float ATTACK_WIDTH = 1;
+        const float MAGNET_RADIUS = 3f;
 
+        private float _magnetPositionMagnitude = 2f;
         private LayerMask _enemyLayer;
-        private float _attackStamp;
         private Transform _attackPoint;
+        private Vector3 _attackBox = new Vector3(ATTACK_WIDTH, ATTACK_HEIGHT, ATTACK_DEPTH);
 
         /// Create a new attacking state object
         /// <param name="pStateMachine">Associated state machine</param>
@@ -38,10 +41,16 @@ namespace hulaohyes.player.states
             Collider[] lHitCollidersMagnet = Physics.OverlapSphere(_player.transform.position, MAGNET_RADIUS, _enemyLayer);
             if (lHitCollidersMagnet.Length > 0)
             {
-                Debug.Log("Magnet to " + lHitCollidersMagnet[0].name);
-                Vector3 lLookPosition = lHitCollidersMagnet[0].transform.position - _player.transform.position;
+                Collider magnetTarget = lHitCollidersMagnet[0];
+                Debug.Log("Magnet to " + magnetTarget.name);
+
+                Vector3 lLookPosition = magnetTarget.transform.position - _player.transform.position;
                 lLookPosition.y = 0;
                 _player.transform.rotation = Quaternion.LookRotation(lLookPosition);
+
+                Vector3 lMagnetPosition = magnetTarget.transform.position - (_player.transform.forward * _magnetPositionMagnitude);
+                lMagnetPosition.y = _player.transform.position.y;
+                _player.transform.position = lMagnetPosition;
             }
         }
 
@@ -52,31 +61,36 @@ namespace hulaohyes.player.states
 
         public void PunchHitTest()
         {
-            Collider[] lHitCollidersDamage = Physics.OverlapSphere(_attackPoint.transform.position, ATTACK_RADIUS, _enemyLayer);
-            foreach(Collider lHitCollider in lHitCollidersDamage)
+            MagnetCheck();
+            Collider[] lHitCollidersDamage = Physics.OverlapBox(_attackPoint.transform.position, _attackBox,_player.transform.rotation);
+            if (lHitCollidersDamage.Length > 0) _player.StartCoroutine(Effects.HitStop(_animator,_animator,0.2f,0.01f));
+            foreach (Collider lHitCollider in lHitCollidersDamage)
             {
                 //damage code
-                if(lHitCollider.gameObject.TryGetComponent<EnemyController>(out EnemyController enemy)) enemy.takeDamage(1);
+                if (lHitCollider.gameObject.TryGetComponent<EnemyController>(out EnemyController enemy))
+                {
+                    enemy.StartCoroutine(enemy.KnockBack(_player.transform));
+                    enemy.TakeDamage(1);
+                }
                 Debug.Log(lHitCollider.gameObject.name);
                 _particles[1].Play();
             }
         }
         void OnPunch(InputAction.CallbackContext ctx) => TriggerPunch();
 
+        public void ResetCombo()
+        {
+            _animator.ResetTrigger("Punch");
+            base._stateMachine.CurrentState = _stateMachine.running;
+        }
+
         public override void OnEnter()
         {
             base.OnEnter();
-            _attackStamp = MAX_ATTACK_STAMP;
+            _rb.velocity = _rb.velocity/2;
             _controlScheme.Player.Punch.performed += OnPunch;
             MagnetCheck();
             TriggerPunch();
-        }
-
-        public override void LoopLogic()
-        {
-            base.LoopLogic();
-            if (_attackStamp > 0) _attackStamp -= Time.deltaTime;
-            else base._stateMachine.CurrentState = _stateMachine.running;
         }
 
         public override void OnExit()

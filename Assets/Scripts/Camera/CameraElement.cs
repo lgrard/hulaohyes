@@ -18,7 +18,13 @@ namespace hulaohyes.camera
 
         public Transform Target
         {
+            get => _virtualCamera.Follow;
             set => _virtualCamera.Follow = value;
+        }
+
+        public Transform Camera
+        {
+            get => _camera.transform;
         }
 
         public float ScreenPosX

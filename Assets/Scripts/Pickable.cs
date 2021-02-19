@@ -6,10 +6,11 @@ public class Pickable : MonoBehaviour
 {
     private const float THROW_FORCE = 15000f;
 
-    [Tooltip("This item can be taken")]
-    public bool isPickable = true;
     protected private Pickable _currentPicker = null;
     protected private Rigidbody _rb;
+
+    [HideInInspector]
+    public bool isPickable = true;
 
     private void Start() => Init();
 

@@ -18,8 +18,8 @@ namespace hulaohyes.camera
         [SerializeField] Camera _rightCam;
         [SerializeField] CinemachineVirtualCamera _leftVirtualCam;
         [SerializeField] CinemachineVirtualCamera _rightVirtualCam;
-        private CameraElement _leftCamElement;
-        private CameraElement _rightCamElement;
+        private static CameraElement _leftCamElement;
+        private static CameraElement _rightCamElement;
 
         [Header("Merge/split distance thresholds")]
         [Tooltip("Distance between camera before they merge")]
@@ -31,7 +31,12 @@ namespace hulaohyes.camera
 
         private void Awake()
         {
-            if (_instance == null) _instance = this;
+            if (_instance == null)
+            {
+                _instance = this;
+                DontDestroyOnLoad(this.gameObject);
+            }
+
             else
             {
                 Debug.LogError("Attempt to create a second CameraManager");
@@ -66,6 +71,23 @@ namespace hulaohyes.camera
         bool canMerge => Vector3.Distance(_player1.transform.position, _player2.transform.position) < _mergeThreshold && !_merged;
         bool canSplit => Vector3.Distance(_player1.transform.position, _player2.transform.position) > _splitThreshold && _merged;
 
+        public static CameraManager getInstance()
+        {
+            if (_instance == null) _instance = new CameraManager();
+            return _instance;
+        }
+
+        public static Transform getActiveCamera(Transform pPlayer)
+        {
+            if (_leftCamElement.Target == pPlayer) return _leftCamElement.Camera;
+            else if (_rightCamElement.Target == pPlayer) return _rightCamElement.Camera;
+            else
+            {
+                Debug.LogError("Invalid camera target");
+                return null;
+            }
+        }
+
         void ChangeCameraState(float pScreenPosX, Transform pLeftTarget, Transform pRightTarget)
         {
             _leftCamElement.Target = pLeftTarget;
@@ -92,7 +114,6 @@ namespace hulaohyes.camera
 
             return lSideOrder;
         }
-
 
         private void OnDrawGizmosSelected()
         {
