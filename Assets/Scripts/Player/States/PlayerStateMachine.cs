@@ -13,6 +13,7 @@ namespace hulaohyes.player.states
         public Carried carried;
         public TakingDamage takingDamage;
         public Downed downed;
+        public Thrown thrown;
 
         ///Create a new state machine object
         /// <param name="pPlayer">Associated player</param>
@@ -30,6 +31,7 @@ namespace hulaohyes.player.states
             takingDamage = new TakingDamage(this, pPlayer, pControlScheme, pCameraContainer, pRb, pAnimator, pParticles);
             downed = new Downed(this, pPlayer, pControlScheme, pCameraContainer, pRb, pAnimator, pParticles);
             attacking = new Attacking(this, pPlayer, pControlScheme, pCameraContainer, pRb, pAnimator, pParticles, pAttackPoint);
+            thrown = new Thrown(this, pPlayer, pControlScheme, pCameraContainer, pRb, pAnimator, pParticles);
             CurrentState = running;
         }
     }

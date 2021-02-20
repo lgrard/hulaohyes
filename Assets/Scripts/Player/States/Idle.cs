@@ -7,9 +7,9 @@ namespace hulaohyes.player.states
 {
     public abstract class Idle : PlayerState
     {
+        protected const float JUMP_HEIGHT = 8f;
         const float ROTATION_SMOOTHING_AMOUNT = 0.75f;
         const float MOVEMENT_SPEED = 8f;
-        const float JUMP_HEIGHT = 16000f;
 
         private Vector3 _camForward;
         private Vector3 _camRight;
@@ -57,12 +57,9 @@ namespace hulaohyes.player.states
 
         protected virtual void Jump()
         {
-            if (isGrounded)
-            {
-                _particles[0].Play();
-                Vector3 upDir = new Vector3(0, JUMP_HEIGHT, 0);
-                base._rb.AddForce(upDir);
-            }
+            _particles[0].Play();
+            Vector3 upDir = new Vector3(0, JUMP_HEIGHT, 0);
+            base._rb.velocity = upDir;
         }
 
         public override void OnEnter()

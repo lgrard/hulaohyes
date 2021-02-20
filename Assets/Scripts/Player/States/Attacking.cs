@@ -62,8 +62,8 @@ namespace hulaohyes.player.states
         public void PunchHitTest()
         {
             MagnetCheck();
-            Collider[] lHitCollidersDamage = Physics.OverlapBox(_attackPoint.transform.position, _attackBox,_player.transform.rotation);
-            if (lHitCollidersDamage.Length > 0) _player.StartCoroutine(Effects.HitStop(_animator,_animator,0.2f,0.01f));
+            Collider[] lHitCollidersDamage = Physics.OverlapBox(_attackPoint.transform.position, _attackBox,_player.transform.rotation, _enemyLayer);
+            if (lHitCollidersDamage.Length > 0) _player.StartCoroutine(Effects.HitStop(_animator,_animator,0.15f,0.01f));
             foreach (Collider lHitCollider in lHitCollidersDamage)
             {
                 //damage code

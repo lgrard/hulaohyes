@@ -87,6 +87,23 @@ namespace hulaohyes.player
             _hp = maxHp;
         }
 
+        override public void Propel()
+        {
+            base.Propel();
+            _stateMachine.CurrentState = _stateMachine.thrown;
+        }
+
+        override public void GetPicked()
+        {
+            base.GetPicked();
+            _stateMachine.CurrentState = _stateMachine.carried;
+        }
+
+        private void OnCollisionEnter(Collision collision)
+        {
+            if(_stateMachine.CurrentState == _stateMachine.thrown) _stateMachine.thrown.HitObject(collision);
+        }
+
         private void OnDrawGizmosSelected()
         {
             Gizmos.DrawLine(transform.position, new Vector3(transform.position.x, transform.position.y - 0.5f, transform.position.z));

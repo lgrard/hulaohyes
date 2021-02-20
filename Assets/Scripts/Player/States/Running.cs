@@ -8,6 +8,7 @@ namespace hulaohyes.player.states
     public class Running : Idle
     {
         const float PICK_UP_DISTANCE = 2;
+        private Vector3 _targettingOffset = new Vector3(0, 0.5f, 0);
         private LayerMask _pickableLayers;
 
         /// Create a new running state object
@@ -31,7 +32,7 @@ namespace hulaohyes.player.states
 
         void Targetting()
         {
-            Ray lFrontRay = new Ray(_player.transform.position,_player.transform.forward);
+            Ray lFrontRay = new Ray(_player.transform.position+_targettingOffset,_player.transform.forward);
             RaycastHit hit;
 
             if (Physics.Raycast(lFrontRay,out hit, PICK_UP_DISTANCE, _pickableLayers)
@@ -48,6 +49,11 @@ namespace hulaohyes.player.states
                 _player.pickUpTarget = null;
                 Debug.Log("Current target: null");
             }
+        }
+
+        protected override void Jump()
+        {
+            if (isGrounded) base.Jump();
         }
 
         public override void OnEnter()

@@ -14,7 +14,7 @@ namespace hulaohyes.player.states
         {
             base.OnEnter();
             _animator.SetBool("Downed", true);
-            _player.gameObject.SetActive(false);
+            //_player.gameObject.SetActive(false);
         }
 
         public override void OnExit()

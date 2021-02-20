@@ -9,8 +9,8 @@ namespace hulaohyes.camera
     {
         private static CameraManager _instance;
 
+        [SerializeField] Transform _player0;
         [SerializeField] Transform _player1;
-        [SerializeField] Transform _player2;
         [SerializeField] Transform _playerGroup;
 
         [Header("Cameras")]
@@ -48,6 +48,8 @@ namespace hulaohyes.camera
         {
             _leftCamElement = new CameraElement(_leftCam, _leftVirtualCam);
             _rightCamElement = new CameraElement(_rightCam, _rightVirtualCam);
+            _leftCamElement.Target = _player0;
+            _rightCamElement.Target = _player1;
         }
 
         private void Update()
@@ -55,7 +57,7 @@ namespace hulaohyes.camera
             if (canMerge)
             {
                 Debug.Log("Camera merge");
-                ChangeCameraState(0, _playerGroup, _player2);
+                ChangeCameraState(0, _playerGroup, _player1);
                 _merged = true;
             }
 
@@ -68,8 +70,8 @@ namespace hulaohyes.camera
             }
         }
 
-        bool canMerge => Vector3.Distance(_player1.transform.position, _player2.transform.position) < _mergeThreshold && !_merged;
-        bool canSplit => Vector3.Distance(_player1.transform.position, _player2.transform.position) > _splitThreshold && _merged;
+        bool canMerge => Vector3.Distance(_player0.transform.position, _player1.transform.position) < _mergeThreshold && !_merged;
+        bool canSplit => Vector3.Distance(_player0.transform.position, _player1.transform.position) > _splitThreshold && _merged;
 
         public static CameraManager getInstance()
         {
@@ -100,16 +102,16 @@ namespace hulaohyes.camera
         {
             List<Transform> lSideOrder = new List<Transform>();
 
-            if(_player1.transform.position.x < _player2.transform.position.x)
+            if(_player0.transform.position.x < _player1.transform.position.x)
             {
-                lSideOrder.Add(_player2);
                 lSideOrder.Add(_player1);
+                lSideOrder.Add(_player0);
             }
 
             else
             {
+                lSideOrder.Add(_player0);
                 lSideOrder.Add(_player1);
-                lSideOrder.Add(_player2);
             }
 
             return lSideOrder;

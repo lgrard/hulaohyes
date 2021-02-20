@@ -4,7 +4,10 @@ using UnityEngine;
 
 public class Pickable : MonoBehaviour
 {
-    private const float THROW_FORCE = 15000f;
+    private const float THROW_FORCE = 17f;
+
+    private Vector3 _forwardVelocity;
+    private Vector3 _diretionOffset = new Vector3(0,-0.1f);
 
     protected private Pickable _currentPicker = null;
     protected private Rigidbody _rb;
@@ -19,10 +22,11 @@ public class Pickable : MonoBehaviour
         _rb = GetComponent<Rigidbody>();
     }
 
-    public void Propel()
+    public virtual void Propel()
     {
         CurrentPicker = null;
-        _rb.AddForce(transform.forward * THROW_FORCE);
+        _forwardVelocity = (transform.forward - _diretionOffset) * THROW_FORCE;
+        _rb.velocity = _forwardVelocity;
     }
 
     public Pickable CurrentPicker
@@ -47,6 +51,11 @@ public class Pickable : MonoBehaviour
                 isPickable = true;
             }
         }
+    }
+
+    public virtual void GetPicked()
+    {
+
     }
 
     private void OnCollisionEnter(Collision collision)

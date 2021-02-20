@@ -56,7 +56,11 @@ namespace hulaohyes.enemy
         }
 
         //private void Update() => _stateMachine.CurrentState.LoopLogic();
-        //private void FixedUpdate() => _stateMachine.CurrentState.PhysLoopLogic();
+        private void FixedUpdate()
+        {
+            //_stateMachine.CurrentState.PhysLoopLogic();
+            _rb.AddForce(Physics.gravity * 4, ForceMode.Acceleration);
+        }
 
         protected override void Init()
         {

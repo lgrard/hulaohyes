@@ -18,15 +18,13 @@ namespace hulaohyes.player.states
             _stateMachine.CurrentState = _stateMachine.running;
         }
 
-        void OnThrowSelf(InputAction.CallbackContext ctx)
-        {
-            _player.Propel();
-            _stateMachine.CurrentState = _stateMachine.running;
-        }
+        void OnThrowSelf(InputAction.CallbackContext ctx) => _player.Propel();
+
         protected override void Jump()
         {
             _player.CurrentPicker = null;
             base.Jump();
+            _stateMachine.CurrentState = _stateMachine.running;
         }
 
         public override void OnEnter()
@@ -34,7 +32,7 @@ namespace hulaohyes.player.states
             base.OnEnter();
             _animator.SetBool("Carried", true);
             base._controlScheme.Player.PickUp.performed += OnDropSelf;
-            base._controlScheme.Player.PickUp.performed += OnThrowSelf;
+            base._controlScheme.Player.Punch.performed += OnThrowSelf;
         }
 
         public override void OnExit()
@@ -42,7 +40,7 @@ namespace hulaohyes.player.states
             base.OnEnter();
             _animator.SetBool("Carried", false);
             base._controlScheme.Player.PickUp.performed -= OnDropSelf;
-            base._controlScheme.Player.PickUp.performed -= OnThrowSelf;
+            base._controlScheme.Player.Punch.performed -= OnThrowSelf;
         }
     }
 }

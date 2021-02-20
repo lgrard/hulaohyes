@@ -10,7 +10,7 @@ namespace hulaohyes.player.states
     {
         private const int HIT_BEFORE_DROP = 3;
         private int currentHit;
-        private Vector3 _pickUpPoint = new Vector3(0, 2.1f, 0);
+        private Vector3 _pickUpPoint = new Vector3(0, 1.8f, 0);
 
         public Carrying(PlayerStateMachine pStateMachine, PlayerController pPlayer, ControlScheme pControlScheme,
             Transform pCameraContainer, Rigidbody pRb, Animator pAnimator, List<ParticleSystem> pParticles)
@@ -32,6 +32,7 @@ namespace hulaohyes.player.states
         {
             Debug.Log("You have picked: " + _player.pickUpTarget.name);
             _player.pickUpTarget.CurrentPicker = _player;
+            _player.pickUpTarget.GetPicked();
             _player.pickUpTarget.transform.localPosition = _pickUpPoint;
 
             _animator.SetBool("Carrying", true);
@@ -47,6 +48,10 @@ namespace hulaohyes.player.states
         {
             _player.pickUpTarget.Propel();
             _stateMachine.CurrentState = _stateMachine.running;
+        }
+        protected override void Jump()
+        {
+            if (isGrounded) base.Jump();
         }
 
         public override void OnEnter()
