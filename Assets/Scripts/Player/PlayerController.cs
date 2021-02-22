@@ -18,7 +18,7 @@ namespace hulaohyes.player
         private PlayerStateMachine _stateMachine;
         private PlayerInput _playerInput;
         private ControlScheme _controlScheme;
-        private Transform _cameraContainer;
+        [SerializeField] Transform _cameraContainer;
 
         public int playerIndex = 0;
 
@@ -76,7 +76,7 @@ namespace hulaohyes.player
         override protected void Init()
         {
             base.Init();
-            _cameraContainer = CameraManager.getActiveCamera(this.transform);
+            //_cameraContainer = CameraManager.getActiveCamera(this.transform);
             _playerAnimator = GetComponent<Animator>();
             _controlScheme = new ControlScheme();
             _playerInput = GetComponent<PlayerInput>();

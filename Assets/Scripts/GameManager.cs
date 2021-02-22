@@ -38,7 +38,7 @@ namespace hulaohyes
         private void Init()
         {
             _stageEnemyList = new List<EnemyController>();
-            _camManager = CameraManager.getInstance();
+            //_camManager = CameraManager.getInstance();
             foreach (PlayerController lPlayer in FindObjectsOfType<PlayerController>())
             {
                 if (lPlayer.playerIndex == 0) _player0 = lPlayer; 
