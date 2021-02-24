@@ -9,8 +9,8 @@ public class CameraVoronoiManager : MonoBehaviour
     private const float RAD2DEG = 180 / Mathf.PI;
     private const float DEG2RAD = Mathf.PI / 180;
     private const float CENTER_MAGNITUDE = 0.25f;
-    private const float SPLIT_THRESHOLD = 3;
-    private const float MERGE_THRESHOLD = 1;
+    private const float SPLIT_THRESHOLD = 14;
+    private const float MERGE_THRESHOLD = 10;
 
     [Header("Cameras")]
     [SerializeField] Camera cam0;
@@ -81,6 +81,8 @@ public class CameraVoronoiManager : MonoBehaviour
 
     IEnumerator MergeCams()
     {
+        isMerged = true;
+
         sideGlobalCam0.m_Priority = 30;
         sideGlobalCam1.m_Priority = 31;
         sideCam0.m_Priority = 9;
@@ -92,8 +94,6 @@ public class CameraVoronoiManager : MonoBehaviour
         mask1.gameObject.SetActive(false);
         mask0.gameObject.SetActive(false);
         bar.gameObject.SetActive(false);
-        
-        isMerged = true;
     }
 
     void SplitCams()
@@ -113,8 +113,8 @@ public class CameraVoronoiManager : MonoBehaviour
         sideCam0.m_Priority = 11;
         sideCam1.m_Priority = 12;
     }
-
-    private void OnDrawGizmos()
+    
+    private void OnDrawGizmosSelected()
     {
         Gizmos.DrawWireSphere(playerGroup.position, SPLIT_THRESHOLD/2);
         Gizmos.DrawWireSphere(playerGroup.position, MERGE_THRESHOLD/2);
