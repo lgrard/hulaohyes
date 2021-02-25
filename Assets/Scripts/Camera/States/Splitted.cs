@@ -17,10 +17,6 @@ namespace hulaohyes.camera.states
         private CameraManager _camManager;
         private CinemachineFramingTransposer _sideCam0transposer;
         private CinemachineFramingTransposer _sideCam1transposer;
-        private SideCameraElement _sideCameraElement0;
-        private SideCameraElement _sideCameraElement1;
-        private CinemachineComposer _tdCam0Composer;
-        private CinemachineComposer _tdCam1Composer;
         private RectTransform _mask0;
         private RectTransform _mask1;
         private RectTransform _bar;
@@ -33,8 +29,6 @@ namespace hulaohyes.camera.states
         {
             _cam1 = pSideCamElement1.Camera;
             _camManager = CameraManager.getInstance();
-            _sideCameraElement0 = pSideCamElement0;
-            _sideCameraElement1 = pSideCamElement1;
             _sideCam0transposer = pSideCamElement0.SideCamTransposer;
             _sideCam1transposer = pSideCamElement1.SideCamTransposer;
             _mask0 = pMask0;
@@ -53,18 +47,18 @@ namespace hulaohyes.camera.states
             _mask0.gameObject.SetActive(true);
             _bar.gameObject.SetActive(true);
 
-            UpdateCamGlobalPriority(_camElement0, 1);
-            UpdateCamGlobalPriority(_camElement1, 0);
-            UpdateCamNormalPriority(_camElement0, 12);
-            UpdateCamNormalPriority(_camElement1, 11);
+            UpdateCamGlobalPriority(camElement0, 1);
+            UpdateCamGlobalPriority(camElement1, 0);
+            if (camElement0 is SideCameraElement) UpdateCamNormalPriority(camElement0, 12);
+            if (camElement1 is SideCameraElement) UpdateCamNormalPriority(camElement1, 11);
         }
 
         IEnumerator MergeCams()
         {
-            UpdateCamGlobalPriority(_camElement0, 31);
-            UpdateCamGlobalPriority(_camElement1, 30);
-            UpdateCamNormalPriority(_camElement0, 10);
-            UpdateCamNormalPriority(_camElement1, 9);
+            UpdateCamGlobalPriority(camElement0, 31);
+            UpdateCamGlobalPriority(camElement1, 30);
+            if (camElement0 is SideCameraElement) UpdateCamNormalPriority(camElement0, 10);
+            if (camElement1 is SideCameraElement) UpdateCamNormalPriority(camElement1, 9);
 
             yield return new WaitForSeconds(0.5f);
 
@@ -81,29 +75,10 @@ namespace hulaohyes.camera.states
             var lScreenX1 = 1 - ((Mathf.Cos(_splitAngle * DEG2RAD) * CENTER_MAGNITUDE) + 0.5f);
             var lScreenY1 = 1 - ((Mathf.Sin(_splitAngle * DEG2RAD) * CENTER_MAGNITUDE) + 0.5f);
 
-            if (_camElement0 is SideCameraElement)
-            {
-                _sideCam0transposer.m_ScreenX = lScreenX0;
-                _sideCam0transposer.m_ScreenY = lScreenY0;
-            }
-
-            else if (_camElement0 is TopDownCameraElement)
-            {
-                _tdCam0Composer.m_ScreenX = lScreenX0;
-                _tdCam0Composer.m_ScreenY = lScreenY0;
-            }
-
-            if (_camElement1 is SideCameraElement)
-            {
-                _sideCam1transposer.m_ScreenX = lScreenX1;
-                _sideCam1transposer.m_ScreenY = lScreenY1;
-            }
-
-            else if (_camElement1 is TopDownCameraElement)
-            {
-                _tdCam1Composer.m_ScreenX = lScreenX1;
-                _tdCam1Composer.m_ScreenY = lScreenY1;
-            }
+            _sideCam0transposer.m_ScreenX = lScreenX0;
+            _sideCam0transposer.m_ScreenY = lScreenY0;
+            _sideCam1transposer.m_ScreenX = lScreenX1;
+            _sideCam1transposer.m_ScreenY = lScreenY1;
         }
 
         void SetUIAngle()
@@ -114,32 +89,7 @@ namespace hulaohyes.camera.states
             _mask1.localEulerAngles = new Vector3(0, 0, -_splitAngle - 180);
         }
 
-        public void UpdateCamElement(int pIndex, CameraElement pCamElement)
-        {
-            if (pIndex == 0)
-            {
-                UpdateCamGlobalPriority(_camElement0, 0);
-                UpdateCamNormalPriority(_camElement0, 0);
-                _camElement0 = pCamElement;
-                UpdateCamGlobalPriority(_camElement0, 99);
-                UpdateCamNormalPriority(_camElement0, 100);
-            }
-
-            else if (pIndex == 1)
-            {
-                UpdateCamGlobalPriority(_camElement1, 0);
-                UpdateCamNormalPriority(_camElement1, 0);
-                _camElement1 = pCamElement;
-                UpdateCamGlobalPriority(_camElement1, 99);
-                UpdateCamNormalPriority(_camElement1, 100);
-            }
-        }
-
-        public void SetTDCamComposer(int pIndex, TopDownCameraElement pTDCameraElement)
-        {
-            if (pIndex == 0) _tdCam0Composer = pTDCameraElement.TDCamTransposer;
-            if (pIndex == 1) _tdCam1Composer = pTDCameraElement.TDCamTransposer;
-        }
+        bool CanMerge => _playerDistance.magnitude < MERGE_THRESHOLD;
 
         public override void OnEnter()
         {
@@ -151,7 +101,7 @@ namespace hulaohyes.camera.states
         {
             base.LoopLogic();
 
-            if (_playerDistance.magnitude < MERGE_THRESHOLD) _stateMachine.CurrentState = _stateMachine.MergedState;
+            if (CanMerge) _stateMachine.CurrentState = _stateMachine.MergedState;
 
             SetUIAngle();
             SetScreenPosition();

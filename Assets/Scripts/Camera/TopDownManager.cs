@@ -23,14 +23,15 @@ namespace hulaohyes.camera
         [SerializeField] CinemachineVirtualCamera _tdGlobalCam1;
 
         private CameraManager _camManager;
-        private TopDownCameraElement _tdCamElement0;
-        private TopDownCameraElement _tdCamElement1;
+        private TopDownCameraElement _tdCamElement;
         private BoxCollider _triggerZone;
         private bool _player0in = false;
         private bool _player1in = false;
 
         private void Start()
         {
+            gameObject.transform.localScale = Vector3.one;
+
             _camManager = CameraManager.getInstance();
             Camera lCam0 = _camManager.GetCamera(0);
             Camera lCam1 = _camManager.GetCamera(1);
@@ -38,8 +39,7 @@ namespace hulaohyes.camera
             Transform lPlayer0 = GameManager.getPlayer(0).transform;
             Transform lPlayer1 = GameManager.getPlayer(1).transform;
 
-            _tdCamElement0 = new TopDownCameraElement(lCam0, _tdCam0, _tdGlobalCam0, lPlayer0, lPlayerGroup, _camPosition);
-            _tdCamElement1 = new TopDownCameraElement(lCam1, _tdCam1, _tdGlobalCam1, lPlayer1, lPlayerGroup, _camPosition);
+            _tdCamElement = new TopDownCameraElement(lCam0, _tdGlobalCam0, lPlayer0, lPlayerGroup, _camPosition);
 
             CreateTriggerZone();
         }
@@ -61,8 +61,7 @@ namespace hulaohyes.camera
                 if (lPlayerIndex == 0) _player0in = true;
                 else if (lPlayerIndex == 1) _player1in = true;
 
-                 TopDownCameraElement lTopDownCameraElement = lPlayerIndex == 0 ? _tdCamElement0 : _tdCamElement1;
-                _camManager.SetCameraElement(lPlayerIndex, lTopDownCameraElement);
+                if(_player0in && _player1in) _camManager.SetTopDownCameraElement(_tdCamElement);
             }
         }
 
@@ -72,10 +71,10 @@ namespace hulaohyes.camera
             {
                 int lPlayerIndex = lPlayer.playerIndex;
 
+                if (_player0in && _player1in) _camManager.ResetCamerasElement();
+
                 if (lPlayerIndex == 0) _player0in = false;
                 else if (lPlayerIndex == 1) _player1in = false;
-
-                if(!_player0in && _player1in) _camManager.ResetCameraElement(lPlayerIndex);
             }
         }
 

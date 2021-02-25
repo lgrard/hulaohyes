@@ -38,6 +38,7 @@ namespace hulaohyes.camera
         private SideCameraElement _sideCamElement0;
         private SideCameraElement _sideCamElement1;
 
+
         private void Awake()
         {
             if (_instance == null)
@@ -73,16 +74,20 @@ namespace hulaohyes.camera
             return _instance;
         }
 
-        public void SetCameraElement(int pIndex, TopDownCameraElement pTDCamElement)
+        public void SetTopDownCameraElement(TopDownCameraElement pTDCamElement)
         {
-            _stateMachine.SplittedState.SetTDCamComposer(pIndex, pTDCamElement);
-            _stateMachine.SplittedState.UpdateCamElement(pIndex, pTDCamElement);
+            _stateMachine.SplittedState.UpdateCamGlobalPriority(_stateMachine.SplittedState.camElement0, 0);
+            _stateMachine.SplittedState.UpdateCamNormalPriority(_stateMachine.SplittedState.camElement0, 0);
+            _stateMachine.SplittedState.camElement0 = pTDCamElement;
+            _stateMachine.SplittedState.UpdateCamGlobalPriority(_stateMachine.SplittedState.camElement0, 100);
         }
 
-        public void ResetCameraElement(int pIndex)
+        public void ResetCamerasElement()
         {
-            SideCameraElement lSideCam = pIndex == 0 ? _sideCamElement0 : _sideCamElement1;
-            _stateMachine.SplittedState.UpdateCamElement(pIndex, lSideCam);
+            _stateMachine.SplittedState.UpdateCamGlobalPriority(_stateMachine.SplittedState.camElement0, 0);
+            _stateMachine.SplittedState.camElement0 = _sideCamElement0;
+            _stateMachine.SplittedState.UpdateCamGlobalPriority(_stateMachine.SplittedState.camElement0, 100);
+            _stateMachine.SplittedState.UpdateCamNormalPriority(_stateMachine.SplittedState.camElement0, 99);
         }
 
         public Camera GetCamera(int pIndex)
@@ -97,8 +102,6 @@ namespace hulaohyes.camera
         }
 
         public Transform PlayerGroup { get => _playerGroup; }
-
-        public bool isMerged { get => _stateMachine.CurrentState == _stateMachine.MergedState; }
 
         private void Update() => _stateMachine.CurrentState.LoopLogic();
     }
