@@ -16,7 +16,7 @@ namespace hulaohyes.camera.states
         {
             _splitted = new Splitted(this, pCamElement0,pCamElement1, pSideCamElement0, pSideCamElement1, pMask0,pMask1,pBar);
             _merged = new Merged(this, pCamElement0, pCamElement1);
-            CurrentState = _splitted;
+            CurrentState = _merged;
         }
 
         public Splitted SplittedState { get => _splitted; }
