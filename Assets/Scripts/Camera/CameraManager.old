@@ -1,0 +1,128 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using Cinemachine;
+
+namespace hulaohyes.camera
+{
+    public class CameraManager : MonoBehaviour
+    {
+        private static CameraManager _instance;
+
+        [SerializeField] Transform _player0;
+        [SerializeField] Transform _player1;
+        [SerializeField] Transform _playerGroup;
+
+        [Header("Cameras")]
+        [SerializeField] Camera _leftCam;
+        [SerializeField] Camera _rightCam;
+        [SerializeField] CinemachineVirtualCamera _leftVirtualCam;
+        [SerializeField] CinemachineVirtualCamera _rightVirtualCam;
+        private static CameraElement _leftCamElement;
+        private static CameraElement _rightCamElement;
+
+        [Header("Merge/split distance thresholds")]
+        [Tooltip("Distance between camera before they merge")]
+        [SerializeField] float _mergeThreshold = 10;
+        [Tooltip("Distance between camera before they split")]
+        [SerializeField] float _splitThreshold = 30;
+
+        bool _merged = false;
+
+        private void Awake()
+        {
+            if (_instance == null)
+            {
+                _instance = this;
+                DontDestroyOnLoad(this.gameObject);
+            }
+
+            else
+            {
+                Debug.LogError("Attempt to create a second CameraManager");
+                Destroy(this.gameObject);
+            }
+        }
+
+        private void Start()
+        {
+            _leftCamElement = new CameraElement(_leftCam, _leftVirtualCam);
+            _rightCamElement = new CameraElement(_rightCam, _rightVirtualCam);
+            _leftCamElement.Target = _player0;
+            _rightCamElement.Target = _player1;
+        }
+
+        private void Update()
+        {
+            if (canMerge)
+            {
+                Debug.Log("Camera merge");
+                ChangeCameraState(0, _playerGroup, _player1);
+                _merged = true;
+            }
+
+            if (canSplit)
+            {
+                Debug.Log("Camera split");
+                List<Transform> lSideCheck = SideCheck();
+                ChangeCameraState(-0.5f, lSideCheck[0], lSideCheck[1]);
+                _merged = false;
+            }
+        }
+
+        bool canMerge => Vector3.Distance(_player0.transform.position, _player1.transform.position) < _mergeThreshold && !_merged;
+        bool canSplit => Vector3.Distance(_player0.transform.position, _player1.transform.position) > _splitThreshold && _merged;
+
+        public static CameraManager getInstance()
+        {
+            if (_instance == null) _instance = new CameraManager();
+            return _instance;
+        }
+
+        public static Transform getActiveCamera(Transform pPlayer)
+        {
+            if (_leftCamElement.Target == pPlayer) return _leftCamElement.Camera;
+            else if (_rightCamElement.Target == pPlayer) return _rightCamElement.Camera;
+            else
+            {
+                Debug.LogError("Invalid camera target");
+                return null;
+            }
+        }
+
+        void ChangeCameraState(float pScreenPosX, Transform pLeftTarget, Transform pRightTarget)
+        {
+            _leftCamElement.Target = pLeftTarget;
+            _rightCamElement.Target = pRightTarget;
+
+            _leftCamElement.ScreenPosX = pScreenPosX;
+        }
+
+        List<Transform> SideCheck()
+        {
+            List<Transform> lSideOrder = new List<Transform>();
+
+            if(_player0.transform.position.x < _player1.transform.position.x)
+            {
+                lSideOrder.Add(_player1);
+                lSideOrder.Add(_player0);
+            }
+
+            else
+            {
+                lSideOrder.Add(_player0);
+                lSideOrder.Add(_player1);
+            }
+
+            return lSideOrder;
+        }
+
+        private void OnDrawGizmosSelected()
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireSphere(_playerGroup.position, _splitThreshold/2);
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawWireSphere(_playerGroup.position, _mergeThreshold/2);
+        }
+    }
+}

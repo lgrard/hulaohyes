@@ -5,6 +5,7 @@ using hulaohyes.player;
 using hulaohyes.camera;
 using hulaohyes.enemy;
 using hulaohyes.inputs;
+using Cinemachine;
 
 namespace hulaohyes
 {
@@ -31,14 +32,14 @@ namespace hulaohyes
                 Debug.LogError("Attempt to create a second GameManager");
                 Destroy(this.gameObject);
             }
-        }
 
-        private void Start() => Init();
+            Init();
+        }
 
         private void Init()
         {
             _stageEnemyList = new List<EnemyController>();
-            //_camManager = CameraManager.getInstance();
+            _camManager = CameraManager.getInstance();
             foreach (PlayerController lPlayer in FindObjectsOfType<PlayerController>())
             {
                 if (lPlayer.playerIndex == 0) _player0 = lPlayer; 
