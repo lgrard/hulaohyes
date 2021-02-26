@@ -5,12 +5,12 @@ using Cinemachine;
 
 namespace hulaohyes.camera.elements
 {
-    public class TopDownCameraElement : CameraElement
+    public class LookAtCameraElement : CameraElement
     {
-        public TopDownCameraElement(Camera pCamera,CinemachineVirtualCamera pTDCamGlobal, Transform pTarget, Transform pPlayerGroup, Transform pPosition)
+        public LookAtCameraElement(Camera pCamera,CinemachineVirtualCamera pLookAtCamGlobal, Transform pTarget, Transform pPlayerGroup, Transform pPosition)
             : base(pCamera, pTarget)
         {
-            _camGlobal = pTDCamGlobal;
+            _camGlobal = pLookAtCamGlobal;
             _camGlobal.Follow = pPosition;
             _camGlobal.LookAt = pPlayerGroup;
         }

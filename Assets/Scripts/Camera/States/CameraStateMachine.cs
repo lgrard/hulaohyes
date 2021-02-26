@@ -19,7 +19,7 @@ namespace hulaohyes.camera.states
             CurrentState = _merged;
         }
 
-        public Splitted SplittedState { get => _splitted; }
-        public Merged MergedState { get => _merged; }
+        public Splitted SplitState { get => _splitted; }
+        public Merged MergeState { get => _merged; }
     }
 }

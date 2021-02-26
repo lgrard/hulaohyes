@@ -53,6 +53,8 @@ namespace hulaohyes.camera.states
             if (camElement1 is SideCameraElement) UpdateCamNormalPriority(camElement1, 11);
         }
 
+        public void ForceMerge() => _stateMachine.CurrentState = _stateMachine.MergeState;
+
         IEnumerator MergeCams()
         {
             UpdateCamGlobalPriority(camElement0, 31);
@@ -101,7 +103,7 @@ namespace hulaohyes.camera.states
         {
             base.LoopLogic();
 
-            if (CanMerge) _stateMachine.CurrentState = _stateMachine.MergedState;
+            if (CanMerge) _stateMachine.CurrentState = _stateMachine.MergeState;
 
             SetUIAngle();
             SetScreenPosition();

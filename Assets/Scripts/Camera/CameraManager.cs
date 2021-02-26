@@ -74,20 +74,23 @@ namespace hulaohyes.camera
             return _instance;
         }
 
-        public void SetTopDownCameraElement(TopDownCameraElement pTDCamElement)
+        public void SetAltCameraElement(CameraElement pLookAtCamElement)
         {
-            _stateMachine.SplittedState.UpdateCamGlobalPriority(_stateMachine.SplittedState.camElement0, 0);
-            _stateMachine.SplittedState.UpdateCamNormalPriority(_stateMachine.SplittedState.camElement0, 0);
-            _stateMachine.SplittedState.camElement0 = pTDCamElement;
-            _stateMachine.SplittedState.UpdateCamGlobalPriority(_stateMachine.SplittedState.camElement0, 100);
+            _stateMachine.SplitState.ForceMerge();
+            _stateMachine.MergeState.SetCanSplit = false;
+            _stateMachine.SplitState.UpdateCamGlobalPriority(_stateMachine.SplitState.camElement0, 0);
+            _stateMachine.SplitState.UpdateCamNormalPriority(_stateMachine.SplitState.camElement0, 0);
+            _stateMachine.SplitState.camElement0 = pLookAtCamElement;
+            _stateMachine.SplitState.UpdateCamGlobalPriority(_stateMachine.SplitState.camElement0, 100);
         }
 
         public void ResetCamerasElement()
         {
-            _stateMachine.SplittedState.UpdateCamGlobalPriority(_stateMachine.SplittedState.camElement0, 0);
-            _stateMachine.SplittedState.camElement0 = _sideCamElement0;
-            _stateMachine.SplittedState.UpdateCamGlobalPriority(_stateMachine.SplittedState.camElement0, 100);
-            _stateMachine.SplittedState.UpdateCamNormalPriority(_stateMachine.SplittedState.camElement0, 99);
+            _stateMachine.SplitState.UpdateCamGlobalPriority(_stateMachine.SplitState.camElement0, 0);
+            _stateMachine.SplitState.camElement0 = _sideCamElement0;
+            _stateMachine.SplitState.UpdateCamGlobalPriority(_stateMachine.SplitState.camElement0, 100);
+            _stateMachine.SplitState.UpdateCamNormalPriority(_stateMachine.SplitState.camElement0, 99);
+            _stateMachine.MergeState.SetCanSplit = true;
         }
 
         public Camera GetCamera(int pIndex)

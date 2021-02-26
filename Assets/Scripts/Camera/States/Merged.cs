@@ -8,14 +8,17 @@ namespace hulaohyes.camera.states
     public class Merged : CameraState
     {
         private const float SPLIT_THRESHOLD = 14;
+        private bool _canSplit = true;
 
         public Merged(CameraStateMachine pStateMachine, CameraElement pCamElement0, CameraElement pCamElement1) : base(pStateMachine, pCamElement0, pCamElement1) { }
 
-        bool CanMerge => _playerDistance.magnitude > SPLIT_THRESHOLD;
+        public bool SetCanSplit { set => _canSplit = value; }
+
+        bool CanSplit => _playerDistance.magnitude > SPLIT_THRESHOLD && _canSplit;
 
         public override void LoopLogic()
         {
-            if (CanMerge) _stateMachine.CurrentState = _stateMachine.SplittedState;
+            if (CanSplit) _stateMachine.CurrentState = _stateMachine.SplitState;
             base.LoopLogic();
         }
     }

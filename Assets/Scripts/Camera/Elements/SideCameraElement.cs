@@ -9,7 +9,6 @@ namespace hulaohyes.camera.elements
     {
         private CinemachineFramingTransposer _sideCamTransposer;
 
-
         public SideCameraElement(Camera pCamera, CinemachineVirtualCamera pSideCam, CinemachineVirtualCamera pSideCamGlobal, Transform pTarget, Transform pPlayerGroup)
             :base(pCamera,pTarget)
         {
