@@ -76,7 +76,7 @@ namespace hulaohyes.player
         override protected void Init()
         {
             base.Init();
-            _cameraContainer = CameraManager.getInstance().transform;
+            _cameraContainer = CameraManager.getInstance().GetCamera(playerIndex).transform;
             _playerAnimator = GetComponent<Animator>();
             _controlScheme = new ControlScheme();
             _playerInput = GetComponent<PlayerInput>();
