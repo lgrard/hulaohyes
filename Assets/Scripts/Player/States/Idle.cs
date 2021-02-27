@@ -9,11 +9,12 @@ namespace hulaohyes.player.states
     {
         protected const float JUMP_HEIGHT = 8f;
         const float ROTATION_SMOOTHING_AMOUNT = 0.75f;
-        const float MOVEMENT_SPEED = 8f;
+        const float MOVEMENT_SPEED = 6f;
+        const float DEG2RAD = Mathf.PI/ 180;
 
         private Vector3 _camForward;
         private Vector3 _camRight;
-        private Vector2 _movementInput = Vector2.zero;
+        private Vector2 _movementInput;
         private LayerMask _groundLayer;
 
         /// Create a new idle state
@@ -25,7 +26,11 @@ namespace hulaohyes.player.states
         /// <param name="pAnimator">Associated animator component</param>
         public Idle(PlayerStateMachine pStateMachine, PlayerController pPlayer, ControlScheme pControlScheme,
             Transform pCameraContainer, Rigidbody pRb, Animator pAnimator, List<ParticleSystem> pParticles)
-            : base(pStateMachine, pPlayer, pControlScheme, pCameraContainer, pRb, pAnimator, pParticles) => _groundLayer = LayerMask.GetMask("Ground");
+            : base(pStateMachine, pPlayer, pControlScheme, pCameraContainer, pRb, pAnimator, pParticles)
+        {
+            _movementInput = Vector2.zero;
+            _groundLayer = LayerMask.GetMask("Ground");
+        }
 
 
         ///Rotate player facing last direction
@@ -38,6 +43,16 @@ namespace hulaohyes.player.states
                 Quaternion lDesiredRotation = Quaternion.LookRotation(new Vector3(lDesiredDirection.x, 0, lDesiredDirection.z));
                 base._player.transform.rotation = Quaternion.Slerp(lDesiredRotation, base._player.transform.rotation, ROTATION_SMOOTHING_AMOUNT);
             }
+        }
+
+        /// Rotate and normalize camera directions vectors
+        private void CameraDirection()
+        {
+            float lAngleOffset = _cameraContainer.transform.eulerAngles.x * DEG2RAD;
+            Vector3 lDirOffset = new Vector3(0, Mathf.Sin(lAngleOffset), Mathf.Cos(lAngleOffset));
+
+            _camForward = base._cameraContainer.transform.forward + lDirOffset;
+            _camRight = base._cameraContainer.transform.right;
         }
 
         /// Move player's rigidbody
@@ -72,9 +87,8 @@ namespace hulaohyes.player.states
         {
             base.LoopLogic();
 
+            CameraDirection();
             _movementInput = _controlScheme.Player.Movement.ReadValue<Vector2>();
-            _camForward = base._cameraContainer.transform.forward;
-            _camRight = base._cameraContainer.transform.right;
 
             RotatePlayer();
         }

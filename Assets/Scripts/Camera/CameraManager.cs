@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Cinemachine;
+using hulaohyes;
+using hulaohyes.camera.states;
+using hulaohyes.camera.elements;
 
 namespace hulaohyes.camera
 {
@@ -9,25 +12,32 @@ namespace hulaohyes.camera
     {
         private static CameraManager _instance;
 
-        [SerializeField] Transform _player0;
-        [SerializeField] Transform _player1;
-        [SerializeField] Transform _playerGroup;
+        [Header("Camera 0")]
+        [SerializeField] Camera _cam0;
+        [SerializeField] CinemachineVirtualCamera _sideCam0;
+        [SerializeField] CinemachineVirtualCamera _sideGlobalCam0;
 
-        [Header("Cameras")]
-        [SerializeField] Camera _leftCam;
-        [SerializeField] Camera _rightCam;
-        [SerializeField] CinemachineVirtualCamera _leftVirtualCam;
-        [SerializeField] CinemachineVirtualCamera _rightVirtualCam;
-        private static CameraElement _leftCamElement;
-        private static CameraElement _rightCamElement;
+        [Header("Camera 1")]
+        [SerializeField] Camera _cam1;
+        [SerializeField] CinemachineVirtualCamera _sideCam1;
+        [SerializeField] CinemachineVirtualCamera _sideGlobalCam1;
 
-        [Header("Merge/split distance thresholds")]
-        [Tooltip("Distance between camera before they merge")]
-        [SerializeField] float _mergeThreshold = 10;
-        [Tooltip("Distance between camera before they split")]
-        [SerializeField] float _splitThreshold = 30;
+        [Header("DepthMasks")]
+        [SerializeField] RectTransform _mask0;
+        [SerializeField] RectTransform _mask1;
 
-        bool _merged = false;
+        [Header("Splitting bar")]
+        [SerializeField] RectTransform _bar;
+
+        [Header("Targets")]
+        private Transform _playerGroup;
+        private Transform _player0;
+        private Transform _player1;
+
+        private CameraStateMachine _stateMachine;
+        private SideCameraElement _sideCamElement0;
+        private SideCameraElement _sideCamElement1;
+
 
         private void Awake()
         {
@@ -42,36 +52,21 @@ namespace hulaohyes.camera
                 Debug.LogError("Attempt to create a second CameraManager");
                 Destroy(this.gameObject);
             }
+
+            Init();
         }
 
-        private void Start()
+        void Init()
         {
-            _leftCamElement = new CameraElement(_leftCam, _leftVirtualCam);
-            _rightCamElement = new CameraElement(_rightCam, _rightVirtualCam);
-            _leftCamElement.Target = _player0;
-            _rightCamElement.Target = _player1;
+            _player0 = GameManager.getPlayer(0).transform;
+            _player1 = GameManager.getPlayer(1).transform;
+            _playerGroup = FindObjectOfType<CinemachineTargetGroup>().transform;
+
+            _sideCamElement0 = new SideCameraElement(_cam0, _sideCam0, _sideGlobalCam0,_player0, _playerGroup);
+            _sideCamElement1 = new SideCameraElement(_cam1, _sideCam1, _sideGlobalCam1,_player1, _sideGlobalCam0.transform);
+
+            _stateMachine = new CameraStateMachine(_sideCamElement0, _sideCamElement1, _sideCamElement0,_sideCamElement1,_mask0, _mask1, _bar);
         }
-
-        private void Update()
-        {
-            if (canMerge)
-            {
-                Debug.Log("Camera merge");
-                ChangeCameraState(0, _playerGroup, _player1);
-                _merged = true;
-            }
-
-            if (canSplit)
-            {
-                Debug.Log("Camera split");
-                List<Transform> lSideCheck = SideCheck();
-                ChangeCameraState(-0.5f, lSideCheck[0], lSideCheck[1]);
-                _merged = false;
-            }
-        }
-
-        bool canMerge => Vector3.Distance(_player0.transform.position, _player1.transform.position) < _mergeThreshold && !_merged;
-        bool canSplit => Vector3.Distance(_player0.transform.position, _player1.transform.position) > _splitThreshold && _merged;
 
         public static CameraManager getInstance()
         {
@@ -79,50 +74,38 @@ namespace hulaohyes.camera
             return _instance;
         }
 
-        public static Transform getActiveCamera(Transform pPlayer)
+        public void SetAltCameraElement(CameraElement pLookAtCamElement)
         {
-            if (_leftCamElement.Target == pPlayer) return _leftCamElement.Camera;
-            else if (_rightCamElement.Target == pPlayer) return _rightCamElement.Camera;
+            _stateMachine.SplitState.ForceMerge();
+            _stateMachine.MergeState.SetCanSplit = false;
+            _stateMachine.SplitState.UpdateCamGlobalPriority(_stateMachine.SplitState.camElement0, 0);
+            _stateMachine.SplitState.UpdateCamNormalPriority(_stateMachine.SplitState.camElement0, 0);
+            _stateMachine.SplitState.camElement0 = pLookAtCamElement;
+            _stateMachine.SplitState.UpdateCamGlobalPriority(_stateMachine.SplitState.camElement0, 100);
+        }
+
+        public void ResetCamerasElement()
+        {
+            _stateMachine.SplitState.UpdateCamGlobalPriority(_stateMachine.SplitState.camElement0, 0);
+            _stateMachine.SplitState.camElement0 = _sideCamElement0;
+            _stateMachine.SplitState.UpdateCamGlobalPriority(_stateMachine.SplitState.camElement0, 100);
+            _stateMachine.SplitState.UpdateCamNormalPriority(_stateMachine.SplitState.camElement0, 99);
+            _stateMachine.MergeState.SetCanSplit = true;
+        }
+
+        public Camera GetCamera(int pIndex)
+        {
+            if (pIndex == 0) return _cam0;
+            if (pIndex == 1) return _cam1;
             else
             {
-                Debug.LogError("Invalid camera target");
+                Debug.LogError("Invalid camera index");
                 return null;
             }
         }
 
-        void ChangeCameraState(float pScreenPosX, Transform pLeftTarget, Transform pRightTarget)
-        {
-            _leftCamElement.Target = pLeftTarget;
-            _rightCamElement.Target = pRightTarget;
+        public Transform PlayerGroup { get => _playerGroup; }
 
-            _leftCamElement.ScreenPosX = pScreenPosX;
-        }
-
-        List<Transform> SideCheck()
-        {
-            List<Transform> lSideOrder = new List<Transform>();
-
-            if(_player0.transform.position.x < _player1.transform.position.x)
-            {
-                lSideOrder.Add(_player1);
-                lSideOrder.Add(_player0);
-            }
-
-            else
-            {
-                lSideOrder.Add(_player0);
-                lSideOrder.Add(_player1);
-            }
-
-            return lSideOrder;
-        }
-
-        private void OnDrawGizmosSelected()
-        {
-            Gizmos.color = Color.red;
-            Gizmos.DrawWireSphere(_playerGroup.position, _splitThreshold/2);
-            Gizmos.color = Color.yellow;
-            Gizmos.DrawWireSphere(_playerGroup.position, _mergeThreshold/2);
-        }
+        private void Update() => _stateMachine.CurrentState.LoopLogic();
     }
 }
