@@ -25,6 +25,13 @@ namespace hulaohyes.enemy
         [Header("Current pick up target")]
         public Pickable pickUpTarget;
 
+        [Header("Angles")]
+        [Range(0,359)][SerializeField] float _grabAngle = 45;
+        [Range(0, 10)][SerializeField] float _grabRadius = 1;
+        [Range(0, 359)][SerializeField] float _viewAngle = 45;
+        [Range(0, 50)][SerializeField] float _viewRadius =1;
+        [Range(0, 50)] [SerializeField] float _meleeRadius = 1;
+
 
         private void Start() => Init();
 
@@ -72,6 +79,13 @@ namespace hulaohyes.enemy
 
             _hp = MAX_HP;
         }
+
+        public float GrabAngles { get => _grabAngle; }
+        public float GrabRadius { get => _grabRadius; }
+        public float ViewAngles { get => _viewAngle; }
+        public float ViewRadius { get => _viewRadius; }
+        public float MeleeRadius { get => _meleeRadius; }
+
 
         public void destroyEnemy()
         {
