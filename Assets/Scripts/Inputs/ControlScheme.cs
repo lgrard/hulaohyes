@@ -65,6 +65,14 @@ public class @ControlScheme : IInputActionCollection, IDisposable
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """"
+                },
+                {
+                    ""name"": ""Debug_Switch"",
+                    ""type"": ""Button"",
+                    ""id"": ""7cba55b3-c243-4783-a6e1-975ad467387a"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": ""Tap""
                 }
             ],
             ""bindings"": [
@@ -243,6 +251,28 @@ public class @ControlScheme : IInputActionCollection, IDisposable
                     ""action"": ""Pause"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""f0b5dae1-a401-4b76-9a2b-4c24ad22cd42"",
+                    ""path"": ""<Keyboard>/tab"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard"",
+                    ""action"": ""Debug_Switch"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""0aba561f-974d-46d8-a6cf-5b269d78412c"",
+                    ""path"": ""<Gamepad>/leftShoulder"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Controller"",
+                    ""action"": ""Debug_Switch"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -345,6 +375,7 @@ public class @ControlScheme : IInputActionCollection, IDisposable
         m_Player_Join = m_Player.FindAction("Join", throwIfNotFound: true);
         m_Player_PickUp = m_Player.FindAction("PickUp", throwIfNotFound: true);
         m_Player_Pause = m_Player.FindAction("Pause", throwIfNotFound: true);
+        m_Player_Debug_Switch = m_Player.FindAction("Debug_Switch", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Cancel = m_UI.FindAction("Cancel", throwIfNotFound: true);
@@ -405,6 +436,7 @@ public class @ControlScheme : IInputActionCollection, IDisposable
     private readonly InputAction m_Player_Join;
     private readonly InputAction m_Player_PickUp;
     private readonly InputAction m_Player_Pause;
+    private readonly InputAction m_Player_Debug_Switch;
     public struct PlayerActions
     {
         private @ControlScheme m_Wrapper;
@@ -415,6 +447,7 @@ public class @ControlScheme : IInputActionCollection, IDisposable
         public InputAction @Join => m_Wrapper.m_Player_Join;
         public InputAction @PickUp => m_Wrapper.m_Player_PickUp;
         public InputAction @Pause => m_Wrapper.m_Player_Pause;
+        public InputAction @Debug_Switch => m_Wrapper.m_Player_Debug_Switch;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -442,6 +475,9 @@ public class @ControlScheme : IInputActionCollection, IDisposable
                 @Pause.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnPause;
                 @Pause.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnPause;
                 @Pause.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnPause;
+                @Debug_Switch.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDebug_Switch;
+                @Debug_Switch.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDebug_Switch;
+                @Debug_Switch.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDebug_Switch;
             }
             m_Wrapper.m_PlayerActionsCallbackInterface = instance;
             if (instance != null)
@@ -464,6 +500,9 @@ public class @ControlScheme : IInputActionCollection, IDisposable
                 @Pause.started += instance.OnPause;
                 @Pause.performed += instance.OnPause;
                 @Pause.canceled += instance.OnPause;
+                @Debug_Switch.started += instance.OnDebug_Switch;
+                @Debug_Switch.performed += instance.OnDebug_Switch;
+                @Debug_Switch.canceled += instance.OnDebug_Switch;
             }
         }
     }
@@ -543,6 +582,7 @@ public class @ControlScheme : IInputActionCollection, IDisposable
         void OnJoin(InputAction.CallbackContext context);
         void OnPickUp(InputAction.CallbackContext context);
         void OnPause(InputAction.CallbackContext context);
+        void OnDebug_Switch(InputAction.CallbackContext context);
     }
     public interface IUIActions
     {

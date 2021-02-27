@@ -1,0 +1,68 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using hulaohyes;
+using hulaohyes.player;
+using UnityEngine.InputSystem;
+
+namespace hulaohyes.debugtool
+{
+    public class InputDebugTool : MonoBehaviour
+    {
+        static InputDebugTool _instance;
+
+        [Header("Input devices (Debug Only)")]
+        [SerializeField] string _p0_input_debug;
+        [SerializeField] string _p1_input_debug;
+
+        private PlayerInput player0input;
+        private PlayerInput player1input;
+        private ControlScheme player0cs;
+        private ControlScheme player1cs;
+
+        private void Awake()
+        {
+            if (_instance == null) _instance = this;
+            else Destroy(this);
+        }
+
+        private void OnEnable() => StartCoroutine(Init());
+
+        private void OnDisable()
+        {
+            if(player0cs != null) player0cs.Player.Debug_Switch.performed -= SwitchControllers;
+            if (player1cs != null) player1cs.Player.Debug_Switch.performed -= SwitchControllers;
+        }
+
+        IEnumerator Init()
+        {
+            yield return new WaitForEndOfFrame();
+            PlayerController lPlayer0 = GameManager.getPlayer(0);
+            PlayerController lPlayer1 = GameManager.getPlayer(1);
+            player0input = lPlayer0.gameObject.GetComponent<PlayerInput>();
+            player1input = lPlayer1.gameObject.GetComponent<PlayerInput>();
+            player0cs = lPlayer0.getActiveControlScheme();
+            player1cs = lPlayer1.getActiveControlScheme();
+            player0cs.Player.Debug_Switch.performed += SwitchControllers;
+            player1cs.Player.Debug_Switch.performed += SwitchControllers;
+            _p0_input_debug = player0input.devices[0].name;
+            _p1_input_debug = player1input.devices[0].name;
+        }
+
+        void SwitchControllers(InputAction.CallbackContext ctx)
+        {
+            InputDevice lPlayer0Device = player0input.devices[0];
+            InputDevice lPlayer1Device = player1input.devices[0];
+
+            if (lPlayer0Device != null && lPlayer1Device != null)
+            {
+                player0input.SwitchCurrentControlScheme(lPlayer1Device);
+                player1input.SwitchCurrentControlScheme(lPlayer0Device);
+                Debug.Log("Switch: device switch between players");
+
+                _p0_input_debug = lPlayer1Device.name;
+                _p1_input_debug = lPlayer0Device.name;
+            }
+        }
+    }
+}

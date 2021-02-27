@@ -73,6 +73,8 @@ namespace hulaohyes.player
             if (lDevice != null) _playerInput.SwitchCurrentControlScheme(lDevice);
         }
 
+        public ControlScheme getActiveControlScheme() { return _controlScheme; }
+
         override protected void Init()
         {
             base.Init();
