@@ -13,9 +13,9 @@ namespace hulaohyes.camera
         private const float RAD2DEG = 180 / Mathf.PI;
 
         [Header("Values")]
-        [SerializeField] float _screenOffset = 0;
-        [SerializeField] float _targetAngle = 0;
-        [SerializeField] float _distance = 10;
+        [Range(-10,10)][SerializeField] float _screenOffset = 0;
+        [Range(0, 359)][SerializeField] float _targetAngle = 0;
+        [Range(1, 50)][SerializeField] float _distance = 10;
         [SerializeField] bool _isDollyToFit;
 
         [Header("Debug Preview")]
