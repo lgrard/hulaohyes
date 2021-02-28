@@ -37,7 +37,7 @@ namespace hulaohyes.player.states
 
         public override void OnExit()
         {
-            base.OnEnter();
+            base.OnExit();
             _animator.SetBool("Carried", false);
             base._controlScheme.Player.PickUp.performed -= OnDropSelf;
             base._controlScheme.Player.Punch.performed -= OnThrowSelf;
