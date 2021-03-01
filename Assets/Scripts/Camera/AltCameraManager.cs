@@ -89,6 +89,9 @@ namespace hulaohyes.camera
                 Gizmos.color = Color.blue;
                 Gizmos.DrawWireCube(_zone.localPosition, _zone.localScale);
             }
+
+            Gizmos.color = Color.grey;
+            Gizmos.DrawSphere(transform.position, 0.25f);
         }
 
         private void OnDrawGizmos() { if (_drawGizmos) GizmosDebug(); }
