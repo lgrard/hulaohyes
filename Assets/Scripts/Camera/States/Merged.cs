@@ -12,6 +12,7 @@ namespace hulaohyes.camera.states
 
         public Merged(CameraStateMachine pStateMachine, CameraElement pCamElement0, CameraElement pCamElement1) : base(pStateMachine, pCamElement0, pCamElement1) { }
 
+        /// Allows/forbid splitting
         public bool SetCanSplit { set => _canSplit = value; }
 
         bool CanSplit => _playerDistance.magnitude > SPLIT_THRESHOLD && _canSplit;

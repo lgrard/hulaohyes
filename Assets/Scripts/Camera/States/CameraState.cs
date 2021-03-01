@@ -21,8 +21,14 @@ namespace hulaohyes.camera.states
             _playerDistance = new Vector3(0, 0, 0);
         }
 
+        /// Update merged camera priority
+        /// <param name="pCamElement">Associated camera to update</param>
+        /// <param name="pGlobalPriority">New merged camera priority</param>
         public void UpdateCamGlobalPriority(CameraElement pCamElement, int pGlobalPriority) => pCamElement.CamGlobal.m_Priority = pGlobalPriority;
 
+        /// Update splitted camera priority
+        /// <param name="pCamElement">Associated camera to update</param>
+        /// <param name="pNormalPriority">New splitted camera priority</param>
         public void UpdateCamNormalPriority(CameraElement pCamElement, int pNormalPriority) => pCamElement.CamNormal.m_Priority = pNormalPriority;
 
         public override void LoopLogic()

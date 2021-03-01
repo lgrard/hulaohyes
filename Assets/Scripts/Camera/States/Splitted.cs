@@ -53,6 +53,7 @@ namespace hulaohyes.camera.states
             if (camElement1 is SideCameraElement) UpdateCamNormalPriority(camElement1, 11);
         }
 
+        /// Force camera merging and global camera usage
         public void ForceMerge() => _stateMachine.CurrentState = _stateMachine.MergeState;
 
         IEnumerator MergeCams()

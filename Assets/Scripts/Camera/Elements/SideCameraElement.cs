@@ -20,6 +20,7 @@ namespace hulaohyes.camera.elements
             _camGlobal.Follow = pPlayerGroup;
         }
 
+        /// Returns this sideCamera framing transposer
         public CinemachineFramingTransposer SideCamTransposer
         {
             get => _sideCamTransposer;

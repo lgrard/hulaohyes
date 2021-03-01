@@ -19,7 +19,10 @@ namespace hulaohyes.camera.states
             CurrentState = _merged;
         }
 
+        /// Returns this StateMachine splitted state
         public Splitted SplitState { get => _splitted; }
+
+        /// Returns this StateMachine merged state
         public Merged MergeState { get => _merged; }
     }
 }

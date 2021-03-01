@@ -68,22 +68,27 @@ namespace hulaohyes.camera
             _stateMachine = new CameraStateMachine(_sideCamElement0, _sideCamElement1, _sideCamElement0,_sideCamElement1,_mask0, _mask1, _bar);
         }
 
+        /// Returns CameraManager singleton instance
+        /// <returns>CameraManager singleton instance</returns>
         public static CameraManager getInstance()
         {
             if (_instance == null) _instance = new CameraManager();
             return _instance;
         }
 
-        public void SetAltCameraElement(CameraElement pLookAtCamElement)
+        /// Assign a new global camera by changing camera priorities
+        /// <param name="pAltCamElement">New global alternative camera</param>
+        public void SetAltCameraElement(CameraElement pAltCamElement)
         {
             _stateMachine.SplitState.ForceMerge();
             _stateMachine.MergeState.SetCanSplit = false;
             _stateMachine.SplitState.UpdateCamGlobalPriority(_stateMachine.SplitState.camElement0, 0);
             _stateMachine.SplitState.UpdateCamNormalPriority(_stateMachine.SplitState.camElement0, 0);
-            _stateMachine.SplitState.camElement0 = pLookAtCamElement;
+            _stateMachine.SplitState.camElement0 = pAltCamElement;
             _stateMachine.SplitState.UpdateCamGlobalPriority(_stateMachine.SplitState.camElement0, 100);
         }
 
+        /// Reset global and normal cameras to sideCamElements
         public void ResetCamerasElement()
         {
             _stateMachine.SplitState.UpdateCamGlobalPriority(_stateMachine.SplitState.camElement0, 0);
@@ -93,6 +98,9 @@ namespace hulaohyes.camera
             _stateMachine.MergeState.SetCanSplit = true;
         }
 
+        /// Returns associated player index Camera component
+        /// <param name="pIndex">Associated Camera player index</param>
+        /// <returns>Camera component</returns>
         public Camera GetCamera(int pIndex)
         {
             if (pIndex == 0) return _cam0;
@@ -104,6 +112,7 @@ namespace hulaohyes.camera
             }
         }
 
+        /// Returns current global PlayerGroup
         public Transform PlayerGroup { get => _playerGroup; }
 
         private void Update() => _stateMachine.CurrentState.LoopLogic();

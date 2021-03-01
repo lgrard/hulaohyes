@@ -18,20 +18,25 @@ namespace hulaohyes.camera.elements
             _camera = pCamera;
         }
 
+        /// Returns associated target position
         public Vector3 TargetPosition
         {
             get => _target.transform.position;
         }
 
+        /// Returns associated camera
         public Camera Camera
         {
             get => _camera;
         }
 
+        /// Returns associated splitted virtual camera
         public CinemachineVirtualCamera CamNormal
         {
             get => _camNormal;
         }
+
+        /// Returns associated merged virtual camera
         public CinemachineVirtualCamera CamGlobal
         {
             get => _camGlobal;
