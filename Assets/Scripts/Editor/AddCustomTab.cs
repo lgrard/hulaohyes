@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEditor;
 using hulaohyes.debugtool;
+using hulaohyes.levelbrick.door;
 
 public class AddCustomTab : MonoBehaviour
 {
@@ -9,9 +10,17 @@ public class AddCustomTab : MonoBehaviour
     [MenuItem("HulaOhYes/Managers/CameraManager")] static void newCameraManager() => newItemFromPrefab("Prefabs/Managers/CameraManager");
     [MenuItem("HulaOhYes/Cameras/Look At Camera")] static void newLookAtCamera() => newItemFromPrefab("Prefabs/Cameras/LookAtCamera");
     [MenuItem("HulaOhYes/Cameras/Angled Camera")] static void newAngledCamera() => newItemFromPrefab("Prefabs/Cameras/AngledCamera");
+    [MenuItem("HulaOhYes/Bricks/Door Group")] static void newDoorGroup()
+    {
+        GameObject lDoorGroup = newItemFromPrefab("Prefabs/Bricks/DoorGroup");
+        Slab lSlab = newItemFromPrefab("Prefabs/Bricks/Slab").GetComponent<Slab>();
+        lSlab.transform.parent = lDoorGroup.transform;
+        lSlab.name = "0_Slab";
+        if (lDoorGroup.TryGetComponent<DoorManager>(out DoorManager lDoorManager)) lDoorManager.SlabList.Add(lSlab);
+        Selection.activeGameObject = lDoorGroup as GameObject;
+    }
 
-    [MenuItem("HulaOhYes/DebugTools/Input Switcher")]
-    static void newInputSwitcher()
+    [MenuItem("HulaOhYes/DebugTools/Input Switcher")] static void newInputSwitcher()
     {
         GameObject lDebugToolObject = createDebugTool();
         if (lDebugToolObject.TryGetComponent<InputDebugTool>(out InputDebugTool pInputDebugTool))
@@ -21,15 +30,20 @@ public class AddCustomTab : MonoBehaviour
     }
 
 
-    static void newItemFromPrefab(string pFilePath)
+    static GameObject newItemFromPrefab(string pFilePath)
     {
         Object lItem = Resources.Load(pFilePath);
         if (lItem != null)
         {
             Object lPrefab = PrefabUtility.InstantiatePrefab(lItem);
             Selection.activeGameObject = lPrefab as GameObject;
+            return lPrefab as GameObject;
         }
-        else Debug.LogError(pFilePath + " is not a valid pathname");
+        else
+        {
+            Debug.LogError(pFilePath + " is not a valid pathname");
+            return null;
+        }
     }
 
     static GameObject createDebugTool()

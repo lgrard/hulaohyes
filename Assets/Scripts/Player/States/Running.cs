@@ -20,7 +20,7 @@ namespace hulaohyes.player.states
         /// <param name="pAnimator">Associated animator component</param>
         public Running(PlayerStateMachine pStateMachine, PlayerController pPlayer, ControlScheme pControlScheme,
             Transform pCameraContainer, Rigidbody pRb, Animator pAnimator, List<ParticleSystem> pParticles)
-            : base(pStateMachine, pPlayer, pControlScheme, pCameraContainer, pRb, pAnimator, pParticles) => _pickableLayers = LayerMask.GetMask("Enemy", "Player");
+            : base(pStateMachine, pPlayer, pControlScheme, pCameraContainer, pRb, pAnimator, pParticles) => _pickableLayers = LayerMask.GetMask("Enemy", "Player", "UnitCube");
 
 
         void OnPunch(InputAction.CallbackContext ctx) => _stateMachine.CurrentState = _stateMachine.attacking;
