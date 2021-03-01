@@ -39,14 +39,26 @@ namespace hulaohyes.debugtool
             yield return new WaitForEndOfFrame();
             PlayerController lPlayer0 = GameManager.getPlayer(0);
             PlayerController lPlayer1 = GameManager.getPlayer(1);
-            player0input = lPlayer0.gameObject.GetComponent<PlayerInput>();
-            player1input = lPlayer1.gameObject.GetComponent<PlayerInput>();
-            player0cs = lPlayer0.getActiveControlScheme();
-            player1cs = lPlayer1.getActiveControlScheme();
-            player0cs.Player.Debug_Switch.performed += SwitchControllers;
-            player1cs.Player.Debug_Switch.performed += SwitchControllers;
-            _p0_input_debug = player0input.devices[0].name;
-            _p1_input_debug = player1input.devices[0].name;
+            if (lPlayer0 != null && lPlayer1 != null)
+            {
+                player0input = lPlayer0.gameObject.GetComponent<PlayerInput>();
+                player1input = lPlayer1.gameObject.GetComponent<PlayerInput>();
+
+                if (player0input.devices.Count > 0 && player1input.devices.Count > 0)
+                {
+                    player0cs = lPlayer0.getActiveControlScheme();
+                    player1cs = lPlayer1.getActiveControlScheme();
+                    player0cs.Player.Debug_Switch.performed += SwitchControllers;
+                    player1cs.Player.Debug_Switch.performed += SwitchControllers;
+
+                    _p0_input_debug = player0input.devices[0].name;
+                    _p1_input_debug = player1input.devices[0].name;
+                }
+
+                else Disable();
+            }
+
+            else Disable();
         }
 
         void SwitchControllers(InputAction.CallbackContext ctx)
@@ -63,6 +75,12 @@ namespace hulaohyes.debugtool
                 _p0_input_debug = lPlayer1Device.name;
                 _p1_input_debug = lPlayer0Device.name;
             }
+        }
+
+        void Disable()
+        {
+            Debug.Log("player1 device not detected, disabling InputDebugTool");
+            this.enabled = false;
         }
     }
 }
