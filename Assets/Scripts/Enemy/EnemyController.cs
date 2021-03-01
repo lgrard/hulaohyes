@@ -43,10 +43,14 @@ namespace hulaohyes.enemy
             {
                 //dies
                 Debug.Log(gameObject.name+" is dead");
+                _enemyAnimator.SetTrigger("TakeDamage");
             }
 
             else
+            {
                 _hp -= pDamage;
+                _enemyAnimator.SetTrigger("TakeDamage");
+            }
         }
 
         public IEnumerator KnockBack(Transform pOrigin)
@@ -78,6 +82,12 @@ namespace hulaohyes.enemy
             GameManager.AddEnemy(this);
 
             _hp = MAX_HP;
+        }
+
+        public override void GetPicked()
+        {
+            base.GetPicked();
+            _navMeshAgent.enabled = false;
         }
 
         public float GrabAngles { get => _grabAngle; }

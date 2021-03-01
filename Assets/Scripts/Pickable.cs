@@ -11,6 +11,7 @@ public class Pickable : MonoBehaviour
 
     protected private Pickable _currentPicker = null;
     protected private Rigidbody _rb;
+    protected private Collider _collider;
 
     [HideInInspector]
     public bool isPickable = true;
@@ -20,6 +21,7 @@ public class Pickable : MonoBehaviour
     protected virtual void Init()
     {
         _rb = GetComponent<Rigidbody>();
+        _collider = GetComponent<Collider>();
     }
 
     public virtual void Propel()
@@ -47,6 +49,7 @@ public class Pickable : MonoBehaviour
             else
             {
                 transform.parent = null;
+                _collider.isTrigger = false;
                 _rb.isKinematic = false;
                 isPickable = true;
             }
@@ -55,7 +58,7 @@ public class Pickable : MonoBehaviour
 
     public virtual void GetPicked()
     {
-
+        _collider.isTrigger = true;
     }
 
     private void OnCollisionEnter(Collision collision)
