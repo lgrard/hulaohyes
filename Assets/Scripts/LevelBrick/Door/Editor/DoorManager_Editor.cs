@@ -26,13 +26,36 @@ public class DoorManager_Editor : Editor
             lDoorManager.SlabList.Add(lSlab);
             Selection.activeGameObject = lSlabObject as GameObject;
             Debug.Log("A new slab has been added to " + lDoorManager.gameObject.name);
+            EditorUtility.SetDirty(lDoorManager);
         }
+        if (GUILayout.Button("+ Add a new Door"))
+        {
+            GameObject lDoorObject = (GameObject)PrefabUtility.InstantiatePrefab(Resources.Load("Prefabs/Bricks/Door"), lDoorManager.transform);
+            lDoorObject.name = lDoorManager.DoorList.Count.ToString() + "_Door";
+            lDoorManager.DoorList.Add(lDoorObject);
+            Selection.activeGameObject = lDoorObject as GameObject;
+            Debug.Log("A new door has been added to " + lDoorManager.gameObject.name);
+            EditorUtility.SetDirty(lDoorManager);
+        }
+        GUI.color = Color.grey;
+        GUILayout.EndHorizontal();
+
+        GUILayout.BeginHorizontal();
         GUI.color = _redColor;
         if (GUILayout.Button("x Clear slab list"))
         {
             foreach (Slab lSlab in lDoorManager.SlabList) if(lSlab != null) DestroyImmediate(lSlab.gameObject);
             lDoorManager.SlabList.Clear();
             Debug.Log(lDoorManager.gameObject.name + " slab list has been cleared");
+            EditorUtility.SetDirty(lDoorManager);
+        }
+        GUI.color = _redColor;
+        if (GUILayout.Button("x Clear door List"))
+        {
+            foreach (GameObject lDoor in lDoorManager.DoorList) if (lDoor != null) DestroyImmediate(lDoor);
+            lDoorManager.DoorList.Clear();
+            Debug.Log(lDoorManager.gameObject.name + " door list has been cleared");
+            EditorUtility.SetDirty(lDoorManager);
         }
         GUILayout.EndHorizontal();
 
@@ -40,6 +63,6 @@ public class DoorManager_Editor : Editor
         GUIStyle lRedText = new GUIStyle();
         lRedText.normal.textColor = Color.red;
         if (lDoorManager.SlabList.Count == 0) GUILayout.Label("You need to create/assign at list 1 slab", lRedText);
-        if (lDoorManager.Door == null) GUILayout.Label("You need to assign a door to this group", lRedText);
+        if (lDoorManager.DoorList.Count == 0) GUILayout.Label("You need to assign a door to this group", lRedText);
     }
 }

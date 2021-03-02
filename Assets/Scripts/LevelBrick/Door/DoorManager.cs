@@ -6,23 +6,34 @@ namespace hulaohyes.levelbrick.door
 {
     public class DoorManager : MonoBehaviour
     {
+        private const float DOOR_HEIGHT = 3.1f;
+        private const float DOOR_DURATION = 0.5f;
+
         [Range(1, 10)] [SerializeField] int _unitRequirement = 1;
         private int _currentUnits = 0;
 
         [Header("Associated door")]
-        [SerializeField] GameObject _door;
-        [SerializeField] AnimationCurve _openningCurve;
+        [SerializeField] List<GameObject> _doorList;
+        [SerializeField] AnimationCurve _doorCurve;
+        private List<float> _doorPositions;
+        private float _doorProgress;
+        private bool _doorIsOpening;
 
         [Header("Associated slabs")]
         [SerializeField] List<Slab> _slabList;
 
         [Header("Associated Color")]
         [SerializeField] Color _color;
+
+        [Tooltip("Are the gizmos drawing fo this object")]
         [SerializeField] bool _drawGizmos = true;
 
         private void Start()
         {
-            foreach(Slab lSlab in _slabList)
+            _doorPositions = new List<float>();
+            foreach (GameObject lDoor in _doorList) _doorPositions.Add(lDoor.transform.position.y);
+
+            foreach (Slab lSlab in _slabList)
             {
                 if(lSlab != null)
                 {
@@ -32,29 +43,42 @@ namespace hulaohyes.levelbrick.door
             }
         }
 
-        private IEnumerator OpenDoor()
+        private void Update()
         {
-            foreach (Slab lSlab in _slabList)
-                if(lSlab!=null) lSlab.enabled = false;
-
-            Vector3 lRotationAmount = new Vector3(0, 1, 0);
-            while(_door.transform.localEulerAngles.y < 90)
+            if (_doorIsOpening && _doorProgress < DOOR_DURATION)
             {
-                _door.transform.Rotate(lRotationAmount);
-                yield return new WaitForEndOfFrame();
+                _doorProgress += Time.deltaTime;
+                MoveDoor();
             }
 
-            this.enabled = false;
+            else if (!_doorIsOpening && _doorProgress > 0)
+            {
+                _doorProgress -= Time.deltaTime;
+                MoveDoor();
+            }
         }
 
+        private void MoveDoor()
+        {
+            for (int i = _doorList.Count - 1; i >= 0; i--)
+            {
+                float lDoorY = Mathf.Lerp(_doorPositions[i], _doorPositions[i]- DOOR_HEIGHT, _doorCurve.Evaluate(_doorProgress / DOOR_DURATION));
+                _doorList[i].transform.position = new Vector3(_doorList[i].transform.position.x, lDoorY, _doorList[i].transform.position.z);
+            }
+        }
+
+        /// Add/Remove a specified amount of unit to this door manager
+        /// <param name="pAmount"> Amount of unit to increase/decrease </param>
         public void SetUnit(int pAmount)
         {
             _currentUnits += pAmount;
-            if (_currentUnits >= _unitRequirement) StartCoroutine(OpenDoor());
+            _doorIsOpening = (_currentUnits >= _unitRequirement) ? true : false;
         }
 
+        /// Returns this door manager's slab list
         public List<Slab> SlabList { get => _slabList; }
-        public GameObject Door { get => _door; }
+        /// Returns this door manager's door list
+        public List<GameObject> DoorList { get => _doorList; }
 
         private void OnDrawGizmos()
         {
@@ -64,15 +88,22 @@ namespace hulaohyes.levelbrick.door
                 Gizmos.DrawSphere(this.transform.position, 0.25f);
 
                 Gizmos.color = _color;
-                if(_door != null)
+                if(_doorList != null)
                 {
-                    Gizmos.DrawSphere(_door.transform.position, 0.15f);
-                    foreach (Slab lSlab in _slabList)
+                    foreach (GameObject lDoor in _doorList)
                     {
-                        if(lSlab != null)
+                        if (lDoor != null)
                         {
-                            Gizmos.DrawLine(_door.transform.position, lSlab.transform.position);
-                            Gizmos.DrawSphere(lSlab.transform.position, 0.15f);
+                            Gizmos.DrawSphere(lDoor.transform.position, 0.15f);
+
+                            foreach (Slab lSlab in _slabList)
+                            {
+                                if (lSlab != null)
+                                {
+                                    Gizmos.DrawLine(lDoor.transform.position, lSlab.transform.position);
+                                    Gizmos.DrawSphere(lSlab.transform.position, 0.15f);
+                                }
+                            }
                         }
                     }
                 }

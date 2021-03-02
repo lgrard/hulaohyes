@@ -14,10 +14,17 @@ public class AddCustomTab : MonoBehaviour
     [MenuItem("HulaOhYes/Bricks/Door Group")] static void newDoorGroup()
     {
         GameObject lDoorGroup = newItemFromPrefab("Prefabs/Bricks/DoorGroup");
+        GameObject lDoor = newItemFromPrefab("Prefabs/Bricks/Door");
+        lDoor.transform.parent = lDoorGroup.transform;
+        lDoor.name = "0_Door";
         Slab lSlab = newItemFromPrefab("Prefabs/Bricks/Slab").GetComponent<Slab>();
         lSlab.transform.parent = lDoorGroup.transform;
         lSlab.name = "0_Slab";
-        if (lDoorGroup.TryGetComponent<DoorManager>(out DoorManager lDoorManager)) lDoorManager.SlabList.Add(lSlab);
+        if (lDoorGroup.TryGetComponent<DoorManager>(out DoorManager lDoorManager))
+        {
+            lDoorManager.DoorList.Add(lDoor);
+            lDoorManager.SlabList.Add(lSlab);
+        }
         Selection.activeGameObject = lDoorGroup as GameObject;
     }
 

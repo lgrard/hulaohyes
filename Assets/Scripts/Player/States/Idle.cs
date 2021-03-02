@@ -29,7 +29,7 @@ namespace hulaohyes.player.states
             : base(pStateMachine, pPlayer, pControlScheme, pCameraContainer, pRb, pAnimator, pParticles)
         {
             _movementInput = Vector2.zero;
-            _groundLayer = LayerMask.GetMask("Ground");
+            _groundLayer = LayerMask.GetMask("Ground","UnitCube");
         }
 
 

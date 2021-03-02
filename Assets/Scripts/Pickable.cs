@@ -49,7 +49,7 @@ public class Pickable : MonoBehaviour
             else
             {
                 transform.parent = null;
-                _collider.isTrigger = false;
+                _collider.enabled = true;
                 _rb.isKinematic = false;
                 isPickable = true;
             }
@@ -58,7 +58,7 @@ public class Pickable : MonoBehaviour
 
     public virtual void GetPicked()
     {
-        _collider.isTrigger = true;
+        _collider.enabled = false;
     }
 
     private void OnCollisionEnter(Collision collision)

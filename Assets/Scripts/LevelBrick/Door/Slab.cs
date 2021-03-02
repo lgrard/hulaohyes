@@ -10,16 +10,18 @@ namespace hulaohyes.levelbrick.door
     {
         private Color _color;
         private DoorManager _doorManager;
-        private List<GameObject> _unitList;
+        private UnitCube _currentUnitCube;
+        private PlayerController _currentPlayer;
+        private int _currentUnits;
 
+        [Range(1,2)][SerializeField] int _maxUnit = 2;
+        [Tooltip("Where will the unit cube will magnet")]
+        [SerializeField] Vector3 _cubeSlotPosition;
         [SerializeField] Vector3 _triggerZoneSize;
+        [Tooltip("Are the gizmos drawing fo this object")]
         [SerializeField] bool _drawGizmos;
 
-        void Start()
-        {
-            _unitList = new List<GameObject>();
-            CreateTrigger();
-        }
+        void Start() => CreateTrigger();
 
         void CreateTrigger()
         {
@@ -29,26 +31,61 @@ namespace hulaohyes.levelbrick.door
             lTrigger.isTrigger = true;
         }
 
+        void MagnetCube(UnitCube pCube)
+        {
+            _currentUnitCube = pCube;
+            _currentUnitCube.transform.parent = this.transform;
+            _currentUnitCube.transform.localPosition = _cubeSlotPosition;
+            _currentUnitCube.transform.eulerAngles = Vector3.zero;
+            _currentUnitCube.FreezeCube(this);
+        }
+
         private void OnTriggerEnter(Collider other)
         {
-            if(other.TryGetComponent<PlayerController>(out PlayerController pPlayer) || other.TryGetComponent<UnitCube>(out UnitCube pCube))
+            if (_currentUnits >= _maxUnit) return;
+
+            if(other.TryGetComponent<UnitCube>(out UnitCube pCube))
             {
-                _unitList.Add(other.gameObject);
-                _doorManager.SetUnit(1);
+                if (_currentUnitCube == null) MagnetCube(pCube);
+                else return;
             }
+
+            else if (other.TryGetComponent<PlayerController>(out PlayerController pPlayer))
+            {
+                if (_currentPlayer == null) _currentPlayer = pPlayer;
+                else return;
+            }
+
+            _currentUnits += 1;
+            _doorManager.SetUnit(1);
         }
 
         private void OnTriggerExit(Collider other)
         {
-            if (_unitList.Contains(other.gameObject))
+            if (other.TryGetComponent<PlayerController>(out PlayerController pPlayer) && pPlayer == _currentPlayer)
             {
-                _unitList.Remove(other.gameObject);
+                _currentPlayer = null;
+                _currentUnits -= 1;
                 _doorManager.SetUnit(-1);
             }
         }
 
+        /// Set this Slab's color 
         public Color Color { set => _color = value; }
+
+        /// Set this Slab's current door manager 
         public DoorManager DoorManager { set => _doorManager = value; }
+
+        /// Set this Slab's current unit cube 
+        public UnitCube CurrentUnitCube
+        {
+            set
+            {
+                if (value == null) _currentUnits -= 1;
+                _doorManager.SetUnit(-1);
+                _currentUnitCube = value;
+            }
+        }
 
         private void OnDrawGizmos()
         {
@@ -57,6 +94,8 @@ namespace hulaohyes.levelbrick.door
                 Gizmos.matrix = Matrix4x4.TRS(transform.position, transform.rotation, transform.lossyScale);
                 Vector3 lTriggerPosition = new Vector3(0, _triggerZoneSize.y / 2, 0);
                 Gizmos.DrawWireCube(lTriggerPosition, _triggerZoneSize);
+                Gizmos.color = Color.green;
+                Gizmos.DrawWireCube(_cubeSlotPosition, Vector3.one * 1);
             }
         }
     }

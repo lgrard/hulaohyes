@@ -27,6 +27,7 @@ namespace hulaohyes.levelbrick.unitcube
             _currentUnitCube.CurrentSpawner = this;
         }
 
+        /// Nullify reference to old cube and create a new one
         public void DestroyCurrentCube()
         {
             _currentUnitCube = null;
