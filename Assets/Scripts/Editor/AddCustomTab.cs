@@ -10,6 +10,7 @@ public class AddCustomTab : MonoBehaviour
     [MenuItem("HulaOhYes/Managers/CameraManager")] static void newCameraManager() => newItemFromPrefab("Prefabs/Managers/CameraManager");
     [MenuItem("HulaOhYes/Cameras/Look At Camera")] static void newLookAtCamera() => newItemFromPrefab("Prefabs/Cameras/LookAtCamera");
     [MenuItem("HulaOhYes/Cameras/Angled Camera")] static void newAngledCamera() => newItemFromPrefab("Prefabs/Cameras/AngledCamera");
+    [MenuItem("HulaOhYes/Bricks/Unit Cube Spawner")] static void newUnitCubeSpawner() => newItemFromPrefab("Prefabs/Bricks/UnitCubeSpawner");
     [MenuItem("HulaOhYes/Bricks/Door Group")] static void newDoorGroup()
     {
         GameObject lDoorGroup = newItemFromPrefab("Prefabs/Bricks/DoorGroup");

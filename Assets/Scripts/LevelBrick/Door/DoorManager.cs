@@ -32,7 +32,7 @@ namespace hulaohyes.levelbrick.door
             }
         }
 
-        public IEnumerator OpenDoor()
+        private IEnumerator OpenDoor()
         {
             foreach (Slab lSlab in _slabList)
                 if(lSlab!=null) lSlab.enabled = false;

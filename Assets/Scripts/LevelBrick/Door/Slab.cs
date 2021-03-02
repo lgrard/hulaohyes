@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using hulaohyes.player;
+using hulaohyes.levelbrick.unitcube;
 
 namespace hulaohyes.levelbrick.door
 {
@@ -30,7 +31,7 @@ namespace hulaohyes.levelbrick.door
 
         private void OnTriggerEnter(Collider other)
         {
-            if(other.TryGetComponent<PlayerController>(out PlayerController pPlayer) || other.TryGetComponent<Pickable>(out Pickable pCube))
+            if(other.TryGetComponent<PlayerController>(out PlayerController pPlayer) || other.TryGetComponent<UnitCube>(out UnitCube pCube))
             {
                 _unitList.Add(other.gameObject);
                 _doorManager.SetUnit(1);
