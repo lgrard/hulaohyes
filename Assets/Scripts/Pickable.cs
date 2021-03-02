@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using hulaohyes.player;
 
 public class Pickable : MonoBehaviour
 {
@@ -9,7 +10,7 @@ public class Pickable : MonoBehaviour
     private Vector3 _forwardVelocity;
     private Vector3 _diretionOffset = new Vector3(0,-0.1f);
 
-    protected private Pickable _currentPicker = null;
+    protected private PlayerController _currentPicker = null;
     protected private Rigidbody _rb;
     protected private Collider _collider;
 
@@ -31,39 +32,32 @@ public class Pickable : MonoBehaviour
         _rb.velocity = _forwardVelocity;
     }
 
-    public Pickable CurrentPicker
+    public PlayerController CurrentPicker
     {
         get => _currentPicker;
         set
         {
+            if (value != null) GetPicked();
+            else GetDropped();
+            
             _currentPicker = value;
-
-            if (_currentPicker != null)
-            {
-                transform.parent = _currentPicker.transform;
-                transform.localEulerAngles = Vector3.zero;
-                _rb.isKinematic = true;
-                isPickable = false;
-            }
-
-            else
-            {
-                transform.parent = null;
-                _collider.enabled = true;
-                _rb.isKinematic = false;
-                isPickable = true;
-            }
         }
     }
 
-    public virtual void GetPicked()
+    protected private virtual void GetPicked()
     {
+        transform.localEulerAngles = Vector3.zero;
+        transform.localPosition = Vector3.zero;
         _collider.enabled = false;
+        _rb.isKinematic = true;
+        isPickable = false;
     }
 
-    private void OnCollisionEnter(Collision collision)
+    protected private virtual void GetDropped()
     {
-        /*if(CurrentPicker != null && collision.gameObject.layer == )
-            CurrentPicker = null;*/
+        transform.parent = null;
+        _collider.enabled = true;
+        _rb.isKinematic = false;
+        isPickable = true;
     }
 }

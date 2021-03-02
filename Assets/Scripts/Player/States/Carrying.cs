@@ -10,11 +10,11 @@ namespace hulaohyes.player.states
     {
         private const int HIT_BEFORE_DROP = 3;
         private int currentHit;
-        private Vector3 _pickUpPoint = new Vector3(0, 1.8f, 0);
+        private Transform _pickUpPoint;
 
         public Carrying(PlayerStateMachine pStateMachine, PlayerController pPlayer, ControlScheme pControlScheme,
-            Transform pCameraContainer, Rigidbody pRb, Animator pAnimator, List<ParticleSystem> pParticles)
-            : base(pStateMachine, pPlayer, pControlScheme, pCameraContainer, pRb, pAnimator, pParticles) { }
+            Transform pCameraContainer, Rigidbody pRb, Animator pAnimator, List<ParticleSystem> pParticles, Transform pPickUpPoint)
+            : base(pStateMachine, pPlayer, pControlScheme, pCameraContainer, pRb, pAnimator, pParticles) { _pickUpPoint = pPickUpPoint; }
 
         public void TakeCarryDamage()
         {
@@ -28,22 +28,28 @@ namespace hulaohyes.player.states
             }
         }
 
+        public IEnumerator DropTarget(bool pDrop)
+        {
+            _animator.SetBool("Carrying", false);
+            base._controlScheme.Player.PickUp.performed -= OnDropTarget;
+            base._controlScheme.Player.Punch.performed -= OnThrowTarget;
+            yield return new WaitForSeconds(0.1f);
+            if (pDrop) _player.pickUpTarget.CurrentPicker = null;          
+            _stateMachine.CurrentState = _stateMachine.running;
+        }
+
         void PickUpTarget()
         {
             Debug.Log("You have picked: " + _player.pickUpTarget.name);
+            _player.pickUpTarget.transform.parent = _pickUpPoint;
             _player.pickUpTarget.CurrentPicker = _player;
-            _player.pickUpTarget.GetPicked();
-            _player.pickUpTarget.transform.localPosition = _pickUpPoint;
 
             _animator.SetBool("Carrying", true);
             currentHit = HIT_BEFORE_DROP;
         }
 
-        void OnDropTarget(InputAction.CallbackContext ctx)
-        {
-            _player.pickUpTarget.CurrentPicker = null;
-            _stateMachine.CurrentState = _stateMachine.running;
-        }
+        void OnDropTarget(InputAction.CallbackContext ctx) => _player.StartCoroutine(DropTarget(true));
+
         void OnThrowTarget(InputAction.CallbackContext ctx)
         {
             _player.pickUpTarget.Propel();

@@ -36,7 +36,7 @@ namespace hulaohyes.levelbrick.unitcube
         ///  Set this unit cube's current spawner
         public UnitCubeSpawner CurrentSpawner { set => _currentSpawner = value; }
 
-        public override void GetPicked()
+        override protected private void GetPicked()
         {
             base.GetPicked();
             if (_currentSlab != null)

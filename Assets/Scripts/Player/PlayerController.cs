@@ -18,7 +18,7 @@ namespace hulaohyes.player
         private PlayerStateMachine _stateMachine;
         private PlayerInput _playerInput;
         private ControlScheme _controlScheme;
-        [SerializeField] Transform _cameraContainer;
+        private Transform _cameraContainer;
 
         public int playerIndex = 0;
 
@@ -29,15 +29,14 @@ namespace hulaohyes.player
         [Header("Objects and components")]
         [Tooltip("The transform where the attack collision checks")]
         [SerializeField] Transform _attackPoint;
+        [Tooltip("The transform where pick up target is stored")]
+        [SerializeField] Transform _pickUpPoint;
 
         [Header("Particles list")]
         [SerializeField] List<ParticleSystem> _playerParticles;
 
         [HideInInspector]
         public Pickable pickUpTarget;
-
-        ///Constructor and initialization
-        private void Start() => Init();
 
         ///Standard and physic GameLoops
         private void Update() => _stateMachine.CurrentState.LoopLogic();
@@ -84,21 +83,33 @@ namespace hulaohyes.player
             _playerInput = GetComponent<PlayerInput>();
             _playerInput.actions = _controlScheme.asset;
             SetPlayerDevice();
-            _stateMachine = new PlayerStateMachine(this, _controlScheme, _cameraContainer, _rb, _playerAnimator, _attackPoint, _playerParticles);
+            _stateMachine = new PlayerStateMachine(this, _controlScheme, _cameraContainer, _rb, _playerAnimator, _attackPoint,_pickUpPoint, _playerParticles);
 
             _hp = maxHp;
         }
 
         override public void Propel()
         {
+            CurrentPicker.SelfDropTarget(false);
             base.Propel();
             _stateMachine.CurrentState = _stateMachine.thrown;
         }
 
-        override public void GetPicked()
+        override protected private void GetPicked()
         {
             base.GetPicked();
             _stateMachine.CurrentState = _stateMachine.carried;
+        }
+
+        private protected override void GetDropped()
+        {
+            base.GetDropped();
+            _stateMachine.CurrentState = _stateMachine.running;
+        }
+
+        public void SelfDropTarget(bool pDrop)
+        {
+            if (_stateMachine.CurrentState == _stateMachine.carrying) StartCoroutine(_stateMachine.carrying.DropTarget(pDrop));
         }
 
         private void OnCollisionEnter(Collision collision)
@@ -109,7 +120,9 @@ namespace hulaohyes.player
         private void OnDrawGizmosSelected()
         {
             Gizmos.DrawLine(transform.position, new Vector3(transform.position.x, transform.position.y - 0.5f, transform.position.z));
-            Gizmos.DrawWireCube(_attackPoint.position, new Vector3(1,2,1));
+
+            Gizmos.matrix = Matrix4x4.TRS(transform.position, transform.rotation, transform.lossyScale);
+            Gizmos.DrawWireCube(_attackPoint.localPosition, new Vector3(1,2,1));
         }
 
         ///Destroy player's object and delete references

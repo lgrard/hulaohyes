@@ -84,7 +84,7 @@ namespace hulaohyes.enemy
             _hp = MAX_HP;
         }
 
-        public override void GetPicked()
+        override protected private void GetPicked()
         {
             base.GetPicked();
             _navMeshAgent.enabled = false;

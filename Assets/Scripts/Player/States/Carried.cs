@@ -14,17 +14,18 @@ namespace hulaohyes.player.states
 
         void OnDropSelf(InputAction.CallbackContext ctx)
         {
-            _player.CurrentPicker = null;
-            _stateMachine.CurrentState = _stateMachine.running;
+            base._controlScheme.Player.PickUp.performed -= OnDropSelf;
+            base._controlScheme.Player.Punch.performed -= OnThrowSelf;
+            _player.CurrentPicker.SelfDropTarget(true);
         }
 
         void OnThrowSelf(InputAction.CallbackContext ctx) => _player.Propel();
 
         protected override void Jump()
         {
+            _player.CurrentPicker.SelfDropTarget(false);
             _player.CurrentPicker = null;
             base.Jump();
-            _stateMachine.CurrentState = _stateMachine.running;
         }
 
         public override void OnEnter()

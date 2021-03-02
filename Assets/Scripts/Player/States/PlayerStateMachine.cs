@@ -23,10 +23,10 @@ namespace hulaohyes.player.states
         /// <param name="pAnimator">Associated rigidbody</param>
         /// <param name="pParticles">Associated player particle systems</param>
         public PlayerStateMachine(PlayerController pPlayer, ControlScheme pControlScheme, Transform pCameraContainer,
-            Rigidbody pRb, Animator pAnimator, Transform pAttackPoint, List<ParticleSystem> pParticles)
+            Rigidbody pRb, Animator pAnimator, Transform pAttackPoint, Transform pPickUpPoint, List<ParticleSystem> pParticles)
         {
             running = new Running(this, pPlayer, pControlScheme, pCameraContainer, pRb, pAnimator, pParticles);
-            carrying = new Carrying(this, pPlayer, pControlScheme, pCameraContainer, pRb, pAnimator, pParticles);
+            carrying = new Carrying(this, pPlayer, pControlScheme, pCameraContainer, pRb, pAnimator, pParticles, pPickUpPoint);
             carried = new Carried(this, pPlayer, pControlScheme, pCameraContainer, pRb, pAnimator, pParticles);
             takingDamage = new TakingDamage(this, pPlayer, pControlScheme, pCameraContainer, pRb, pAnimator, pParticles);
             downed = new Downed(this, pPlayer, pControlScheme, pCameraContainer, pRb, pAnimator, pParticles);
