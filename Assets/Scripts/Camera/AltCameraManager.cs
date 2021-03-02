@@ -83,15 +83,15 @@ namespace hulaohyes.camera
 
         protected virtual void GizmosDebug()
         {
+            Gizmos.color = Color.grey;
+            Gizmos.DrawSphere(transform.position, 0.25f);
+
             if (_zone != null)
             {
                 Gizmos.matrix = Matrix4x4.TRS(transform.position, transform.rotation, transform.lossyScale);
                 Gizmos.color = Color.blue;
                 Gizmos.DrawWireCube(_zone.localPosition, _zone.localScale);
             }
-
-            Gizmos.color = Color.grey;
-            Gizmos.DrawSphere(transform.position, 0.25f);
         }
 
         private void OnDrawGizmos() { if (_drawGizmos) GizmosDebug(); }
