@@ -82,8 +82,8 @@ namespace hulaohyes.camera
         {
             _stateMachine.SplitState.ForceMerge();
             _stateMachine.MergeState.SetCanSplit = false;
-            _stateMachine.SplitState.UpdateCamGlobalPriority(_stateMachine.SplitState.camElement0, 0);
-            _stateMachine.SplitState.UpdateCamNormalPriority(_stateMachine.SplitState.camElement0, 0);
+            _stateMachine.SplitState.UpdateCamGlobalPriority(_sideCamElement0, 0);
+            _stateMachine.SplitState.UpdateCamNormalPriority(_sideCamElement0, 0);
             _stateMachine.SplitState.camElement0 = pAltCamElement;
             _stateMachine.SplitState.UpdateCamGlobalPriority(_stateMachine.SplitState.camElement0, 100);
         }
@@ -93,8 +93,8 @@ namespace hulaohyes.camera
         {
             _stateMachine.SplitState.UpdateCamGlobalPriority(_stateMachine.SplitState.camElement0, 0);
             _stateMachine.SplitState.camElement0 = _sideCamElement0;
-            _stateMachine.SplitState.UpdateCamGlobalPriority(_stateMachine.SplitState.camElement0, 100);
-            _stateMachine.SplitState.UpdateCamNormalPriority(_stateMachine.SplitState.camElement0, 99);
+            _stateMachine.SplitState.UpdateCamGlobalPriority(_sideCamElement0, 100);
+            _stateMachine.SplitState.UpdateCamNormalPriority(_sideCamElement0, 99);
             _stateMachine.MergeState.SetCanSplit = true;
         }
 
