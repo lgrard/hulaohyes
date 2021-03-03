@@ -10,9 +10,11 @@ namespace hulaohyes.player.states
         private Running _running;
         private Carrying _carrying;
         private Carried _carried;
-        private TakingDamage _takingDamage;
+        private Wait _wait;
         private Downed _downed;
         private Thrown _thrown;
+
+        private Wait _dropping;
 
         ///Create a new state machine object
         /// <param name="pPlayer">Associated player</param>
@@ -27,7 +29,7 @@ namespace hulaohyes.player.states
             _running = new Running(this, pPlayer, pControlScheme, pCameraContainer, pRb, pAnimator, pParticles);
             _carrying = new Carrying(this, pPlayer, pControlScheme, pCameraContainer, pRb, pAnimator, pParticles);
             _carried = new Carried(this, pPlayer, pControlScheme, pCameraContainer, pRb, pAnimator, pParticles);
-            _takingDamage = new TakingDamage(this, pPlayer, pControlScheme, pCameraContainer, pRb, pAnimator, pParticles);
+            _wait = new Wait(this, pPlayer, pControlScheme, pCameraContainer, pRb, pAnimator, pParticles);
             _downed = new Downed(this, pPlayer, pControlScheme, pCameraContainer, pRb, pAnimator, pParticles);
             _thrown = new Thrown(this, pPlayer, pControlScheme, pCameraContainer, pRb, pAnimator, pParticles);
             CurrentState = _running;
@@ -36,7 +38,7 @@ namespace hulaohyes.player.states
         public Running Running => _running;
         public Carrying Carrying => _carrying;
         public Carried Carried => _carried;
-        public TakingDamage TakingDamage => _takingDamage;
+        public Wait Wait => _wait;
         public Downed Downed => _downed;
         public Thrown Thrown => _thrown;
     }

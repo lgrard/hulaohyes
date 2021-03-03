@@ -55,7 +55,10 @@ namespace hulaohyes.player
                 _stateMachine.Carrying.TakeCarryDamage();
 
             else if (_hp >= 0 && _stateMachine.CurrentState != _stateMachine.Carrying && _stateMachine.CurrentState != _stateMachine.Carried)
-                _stateMachine.CurrentState = _stateMachine.TakingDamage;
+            {
+                _playerAnimator.SetTrigger("TakeDamage");
+                _stateMachine.CurrentState = _stateMachine.Wait;
+            }
 
             else if (_hp <= 0)
                 _stateMachine.CurrentState = _stateMachine.Downed;
@@ -66,7 +69,7 @@ namespace hulaohyes.player
             InputDevice lDevice = DeviceManager.GetInputDevice(playerIndex);
             if (lDevice != null) _playerInput.SwitchCurrentControlScheme(lDevice);
         }
-        public void DropTarget() => _stateMachine.CurrentState = _stateMachine.Running;
+        public void DropTarget() => _stateMachine.CurrentState = _stateMachine.Wait;
 
         override protected void Init()
         {

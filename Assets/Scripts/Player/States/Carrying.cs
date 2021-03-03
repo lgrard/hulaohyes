@@ -23,7 +23,7 @@ namespace hulaohyes.player.states
             if (currentHit <= 0)
             {
                 _player.Drop();
-                _stateMachine.CurrentState = _stateMachine.TakingDamage;
+                _stateMachine.CurrentState = _stateMachine.Wait;
             }
         }
 
