@@ -7,13 +7,12 @@ namespace hulaohyes.player.states
 {
     public class PlayerStateMachine : StateMachine
     {
-        public Running running;
-        public Attacking attacking;
-        public Carrying carrying;
-        public Carried carried;
-        public TakingDamage takingDamage;
-        public Downed downed;
-        public Thrown thrown;
+        private Running _running;
+        private Carrying _carrying;
+        private Carried _carried;
+        private TakingDamage _takingDamage;
+        private Downed _downed;
+        private Thrown _thrown;
 
         ///Create a new state machine object
         /// <param name="pPlayer">Associated player</param>
@@ -23,16 +22,22 @@ namespace hulaohyes.player.states
         /// <param name="pAnimator">Associated rigidbody</param>
         /// <param name="pParticles">Associated player particle systems</param>
         public PlayerStateMachine(PlayerController pPlayer, ControlScheme pControlScheme, Transform pCameraContainer,
-            Rigidbody pRb, Animator pAnimator, Transform pAttackPoint, Transform pPickUpPoint, List<ParticleSystem> pParticles)
+            Rigidbody pRb, Animator pAnimator, List<ParticleSystem> pParticles)
         {
-            running = new Running(this, pPlayer, pControlScheme, pCameraContainer, pRb, pAnimator, pParticles);
-            carrying = new Carrying(this, pPlayer, pControlScheme, pCameraContainer, pRb, pAnimator, pParticles, pPickUpPoint);
-            carried = new Carried(this, pPlayer, pControlScheme, pCameraContainer, pRb, pAnimator, pParticles);
-            takingDamage = new TakingDamage(this, pPlayer, pControlScheme, pCameraContainer, pRb, pAnimator, pParticles);
-            downed = new Downed(this, pPlayer, pControlScheme, pCameraContainer, pRb, pAnimator, pParticles);
-            attacking = new Attacking(this, pPlayer, pControlScheme, pCameraContainer, pRb, pAnimator, pParticles, pAttackPoint);
-            thrown = new Thrown(this, pPlayer, pControlScheme, pCameraContainer, pRb, pAnimator, pParticles);
-            CurrentState = running;
+            _running = new Running(this, pPlayer, pControlScheme, pCameraContainer, pRb, pAnimator, pParticles);
+            _carrying = new Carrying(this, pPlayer, pControlScheme, pCameraContainer, pRb, pAnimator, pParticles);
+            _carried = new Carried(this, pPlayer, pControlScheme, pCameraContainer, pRb, pAnimator, pParticles);
+            _takingDamage = new TakingDamage(this, pPlayer, pControlScheme, pCameraContainer, pRb, pAnimator, pParticles);
+            _downed = new Downed(this, pPlayer, pControlScheme, pCameraContainer, pRb, pAnimator, pParticles);
+            _thrown = new Thrown(this, pPlayer, pControlScheme, pCameraContainer, pRb, pAnimator, pParticles);
+            CurrentState = _running;
         }
+
+        public Running Running => _running;
+        public Carrying Carrying => _carrying;
+        public Carried Carried => _carried;
+        public TakingDamage TakingDamage => _takingDamage;
+        public Downed Downed => _downed;
+        public Thrown Thrown => _thrown;
     }
 }

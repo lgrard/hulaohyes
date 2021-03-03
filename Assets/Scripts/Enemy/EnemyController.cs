@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 using hulaohyes.enemy.states;
+using hulaohyes.player;
 
 namespace hulaohyes.enemy
 {
@@ -24,13 +25,6 @@ namespace hulaohyes.enemy
 
         [Header("Current pick up target")]
         public Pickable pickUpTarget;
-
-        [Header("Angles")]
-        [Range(0,359)][SerializeField] float _grabAngle = 45;
-        [Range(0, 10)][SerializeField] float _grabRadius = 1;
-        [Range(0, 359)][SerializeField] float _viewAngle = 45;
-        [Range(0, 50)][SerializeField] float _viewRadius =1;
-        [Range(0, 50)] [SerializeField] float _meleeRadius = 1;
 
 
         private void Start() => Init();
@@ -73,6 +67,8 @@ namespace hulaohyes.enemy
             _rb.AddForce(Physics.gravity * 4, ForceMode.Acceleration);
         }
 
+        public Animator EnemyAnimator => _enemyAnimator;
+
         protected override void Init()
         {
             base.Init();
@@ -84,18 +80,11 @@ namespace hulaohyes.enemy
             _hp = MAX_HP;
         }
 
-        override protected private void GetPicked()
+        override public void GetPicked(PlayerController pPlayer)
         {
-            base.GetPicked();
+            base.GetPicked(pPlayer);
             _navMeshAgent.enabled = false;
         }
-
-        public float GrabAngles { get => _grabAngle; }
-        public float GrabRadius { get => _grabRadius; }
-        public float ViewAngles { get => _viewAngle; }
-        public float ViewRadius { get => _viewRadius; }
-        public float MeleeRadius { get => _meleeRadius; }
-
 
         public void destroyEnemy()
         {

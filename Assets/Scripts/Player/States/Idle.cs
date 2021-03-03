@@ -8,7 +8,7 @@ namespace hulaohyes.player.states
     public abstract class Idle : PlayerState
     {
         protected const float JUMP_HEIGHT = 8f;
-        const float ROTATION_SMOOTHING_AMOUNT = 37.5f;
+        const float ROTATION_SMOOTHING_AMOUNT = 0.75f;
         const float MOVEMENT_SPEED = 6f;
         const float DEG2RAD = Mathf.PI/ 180;
 
@@ -34,14 +34,14 @@ namespace hulaohyes.player.states
 
 
         ///Rotate player facing last direction
-        void RotatePlayer()
+        protected void RotatePlayer()
         {
             Vector3 lDesiredDirection = _camForward * _movementInput.y + _camRight * _movementInput.x;
 
             if (_movementInput != Vector2.zero)
             {
                 Quaternion lDesiredRotation = Quaternion.LookRotation(new Vector3(lDesiredDirection.x, 0, lDesiredDirection.z));
-                base._player.transform.rotation = Quaternion.Slerp(lDesiredRotation, base._player.transform.rotation, ROTATION_SMOOTHING_AMOUNT*Time.deltaTime);
+                base._player.transform.rotation = Quaternion.Slerp(lDesiredRotation, base._player.transform.rotation, ROTATION_SMOOTHING_AMOUNT);
             }
         }
 
@@ -73,6 +73,7 @@ namespace hulaohyes.player.states
         protected virtual void Jump()
         {
             _particles[0].Play();
+            _animator.SetTrigger("Jump");
             Vector3 upDir = new Vector3(0, JUMP_HEIGHT, 0);
             base._rb.velocity = upDir;
         }
@@ -86,11 +87,8 @@ namespace hulaohyes.player.states
         public override void LoopLogic()
         {
             base.LoopLogic();
-
             CameraDirection();
             _movementInput = _controlScheme.Player.Movement.ReadValue<Vector2>();
-
-            RotatePlayer();
         }
 
         public override void OnExit()

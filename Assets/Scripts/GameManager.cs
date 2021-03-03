@@ -29,7 +29,7 @@ namespace hulaohyes
 
             else
             {
-                Debug.LogError("Attempt to create a second GameManager");
+                Debug.Log("Attempt to create a second GameManager");
                 Destroy(this.gameObject);
             }
 

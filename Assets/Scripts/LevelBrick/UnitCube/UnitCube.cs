@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using hulaohyes.levelbrick.door;
+using hulaohyes.player;
 
 namespace hulaohyes.levelbrick.unitcube
 {
@@ -36,9 +37,9 @@ namespace hulaohyes.levelbrick.unitcube
         ///  Set this unit cube's current spawner
         public UnitCubeSpawner CurrentSpawner { set => _currentSpawner = value; }
 
-        override protected private void GetPicked()
+        override public void GetPicked(PlayerController pPlayer)
         {
-            base.GetPicked();
+            base.GetPicked(pPlayer);
             if (_currentSlab != null)
             {
                 _currentSlab.CurrentUnitCube = null;

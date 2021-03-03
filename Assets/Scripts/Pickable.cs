@@ -2,20 +2,21 @@
 using System.Collections.Generic;
 using UnityEngine;
 using hulaohyes.player;
+using hulaohyes.enemy;
 
 public class Pickable : MonoBehaviour
 {
-    private const float THROW_FORCE = 17f;
+    private const float THROW_FORCE = 20f;
+    private const float DROP_FORCE = 9f;
 
     private Vector3 _forwardVelocity;
-    private Vector3 _diretionOffset = new Vector3(0,-0.1f);
+    private Vector3 _diretionOffset = new Vector3(0,-0.15f);
 
     protected private PlayerController _currentPicker = null;
     protected private Rigidbody _rb;
     protected private Collider _collider;
 
-    [HideInInspector]
-    public bool isPickable = true;
+    public bool isPickable => _currentPicker == null;
 
     private void Start() => Init();
 
@@ -25,39 +26,41 @@ public class Pickable : MonoBehaviour
         _collider = GetComponent<Collider>();
     }
 
-    public virtual void Propel()
+    public virtual void Propel() => GetDropped(THROW_FORCE);
+    public virtual void Drop() => GetDropped(DROP_FORCE);
+
+    public virtual void GetPicked(PlayerController pPicker)
     {
-        CurrentPicker = null;
-        _forwardVelocity = (transform.forward - _diretionOffset) * THROW_FORCE;
+        transform.parent = pPicker.pickUpPoint;
+        _currentPicker = pPicker;
+        _rb.isKinematic = true;
+
+        transform.localEulerAngles = Vector3.zero;
+        transform.localPosition = Vector3.zero;
+        _collider.isTrigger = true;
+    }
+
+    private void GetDropped(float pDropForce)
+    {
+        _currentPicker.DropTarget();
+        transform.parent = null;
+        _currentPicker = null;
+        _rb.isKinematic = false;
+        _forwardVelocity = (transform.forward - _diretionOffset) * pDropForce;
         _rb.velocity = _forwardVelocity;
     }
 
-    public PlayerController CurrentPicker
+    private void OnTriggerEnter(Collider other)
     {
-        get => _currentPicker;
-        set
-        {
-            if (value != null) GetPicked();
-            else GetDropped();
-            
-            _currentPicker = value;
-        }
+        HitSomething();
+        if (gameObject.TryGetComponent<EnemyController>(out EnemyController pEnemy)) HitEnemy(pEnemy);
     }
 
-    protected private virtual void GetPicked()
+    protected virtual void HitEnemy(EnemyController pEnemy)
     {
-        transform.localEulerAngles = Vector3.zero;
-        transform.localPosition = Vector3.zero;
-        _collider.enabled = false;
-        _rb.isKinematic = true;
-        isPickable = false;
+        pEnemy.TakeDamage(1);
+        pEnemy.StartCoroutine(pEnemy.KnockBack(this.transform));
     }
 
-    protected private virtual void GetDropped()
-    {
-        transform.parent = null;
-        _collider.enabled = true;
-        _rb.isKinematic = false;
-        isPickable = true;
-    }
+    protected virtual void HitSomething() => _collider.isTrigger = false;
 }

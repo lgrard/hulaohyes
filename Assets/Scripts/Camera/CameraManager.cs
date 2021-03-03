@@ -41,11 +41,7 @@ namespace hulaohyes.camera
 
         private void Awake()
         {
-            if (_instance == null)
-            {
-                _instance = this;
-                DontDestroyOnLoad(this.gameObject);
-            }
+            if (_instance == null)  _instance = this;
 
             else
             {

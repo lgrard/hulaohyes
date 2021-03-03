@@ -5,6 +5,8 @@ using UnityEngine.InputSystem;
 using hulaohyes.player.states;
 using hulaohyes.inputs;
 using hulaohyes.camera;
+using hulaohyes.enemy;
+using hulaohyes.effects;
 
 namespace hulaohyes.player
 {
@@ -27,10 +29,8 @@ namespace hulaohyes.player
         private int _hp;
 
         [Header("Objects and components")]
-        [Tooltip("The transform where the attack collision checks")]
-        [SerializeField] Transform _attackPoint;
         [Tooltip("The transform where pick up target is stored")]
-        [SerializeField] Transform _pickUpPoint;
+        public Transform pickUpPoint;
 
         [Header("Particles list")]
         [SerializeField] List<ParticleSystem> _playerParticles;
@@ -51,28 +51,22 @@ namespace hulaohyes.player
         public void TakeDamage(int pDamage)
         {
             _hp -= pDamage;
-            if (_hp >= 0 && _stateMachine.CurrentState == _stateMachine.carrying)
-                _stateMachine.carrying.TakeCarryDamage();
+            if (_hp >= 0 && _stateMachine.CurrentState == _stateMachine.Carrying)
+                _stateMachine.Carrying.TakeCarryDamage();
 
-            else if (_hp >= 0 && _stateMachine.CurrentState != _stateMachine.carrying && _stateMachine.CurrentState != _stateMachine.carried)
-                _stateMachine.CurrentState = _stateMachine.takingDamage;
+            else if (_hp >= 0 && _stateMachine.CurrentState != _stateMachine.Carrying && _stateMachine.CurrentState != _stateMachine.Carried)
+                _stateMachine.CurrentState = _stateMachine.TakingDamage;
 
             else if (_hp <= 0)
-                _stateMachine.CurrentState = _stateMachine.downed;
+                _stateMachine.CurrentState = _stateMachine.Downed;
         }
-
-        public void PunchHit() => _stateMachine.attacking.PunchHitTest();
-        public void ResetCombo() => _stateMachine.attacking.ResetCombo();
-
-        float _gravity => (_rb.velocity.y < 0) ? GRAVITY_AMOUNT_FALL : GRAVITY_AMOUNT_RISE;
 
         public void SetPlayerDevice()
         {
             InputDevice lDevice = DeviceManager.GetInputDevice(playerIndex);
             if (lDevice != null) _playerInput.SwitchCurrentControlScheme(lDevice);
         }
-
-        public ControlScheme getActiveControlScheme() { return _controlScheme; }
+        public void DropTarget() => _stateMachine.CurrentState = _stateMachine.Running;
 
         override protected void Init()
         {
@@ -83,46 +77,52 @@ namespace hulaohyes.player
             _playerInput = GetComponent<PlayerInput>();
             _playerInput.actions = _controlScheme.asset;
             SetPlayerDevice();
-            _stateMachine = new PlayerStateMachine(this, _controlScheme, _cameraContainer, _rb, _playerAnimator, _attackPoint,_pickUpPoint, _playerParticles);
+            _stateMachine = new PlayerStateMachine(this, _controlScheme, _cameraContainer, _rb, _playerAnimator, _playerParticles);
 
             _hp = maxHp;
         }
 
         override public void Propel()
         {
-            CurrentPicker.SelfDropTarget(false);
+            _stateMachine.CurrentState = _stateMachine.Thrown;
             base.Propel();
-            _stateMachine.CurrentState = _stateMachine.thrown;
         }
 
-        override protected private void GetPicked()
+        override public void Drop()
         {
-            base.GetPicked();
-            _stateMachine.CurrentState = _stateMachine.carried;
+            base.Drop();
+            _stateMachine.CurrentState = _stateMachine.Thrown;
         }
 
-        private protected override void GetDropped()
+        override public void GetPicked(PlayerController pPicker)
         {
-            base.GetDropped();
-            _stateMachine.CurrentState = _stateMachine.running;
+            base.GetPicked(pPicker);
+            _stateMachine.CurrentState = _stateMachine.Carried;
         }
 
-        public void SelfDropTarget(bool pDrop)
+        protected override void HitSomething()
         {
-            if (_stateMachine.CurrentState == _stateMachine.carrying) StartCoroutine(_stateMachine.carrying.DropTarget(pDrop));
+            if (isThrown)
+            {
+                base.HitSomething();
+                _stateMachine.CurrentState = _stateMachine.Running;
+                _playerParticles[2].Play();
+            }
         }
 
-        private void OnCollisionEnter(Collision collision)
+        protected override void HitEnemy(EnemyController pEnemy)
         {
-            if(_stateMachine.CurrentState == _stateMachine.thrown) _stateMachine.thrown.HitObject(collision);
+            base.HitEnemy(pEnemy);
+            Effects.HitStop(_playerAnimator, pEnemy.EnemyAnimator, 0.5f, 0.1f);
         }
+
+        bool isThrown => _stateMachine.CurrentState == _stateMachine.Thrown;
+        float _gravity => (_rb.velocity.y < 0) ? GRAVITY_AMOUNT_FALL : GRAVITY_AMOUNT_RISE;
+        public ControlScheme getActiveControlScheme() { return _controlScheme; }
 
         private void OnDrawGizmosSelected()
         {
             Gizmos.DrawLine(transform.position, new Vector3(transform.position.x, transform.position.y - 0.5f, transform.position.z));
-
-            Gizmos.matrix = Matrix4x4.TRS(transform.position, transform.rotation, transform.lossyScale);
-            Gizmos.DrawWireCube(_attackPoint.localPosition, new Vector3(1,2,1));
         }
 
         ///Destroy player's object and delete references

@@ -24,7 +24,7 @@ namespace hulaohyes.player.states
         {
             base.LoopLogic();
             if (_stunStamp >= 0) _stunStamp -= Time.deltaTime;
-            else _stateMachine.CurrentState = _stateMachine.running;
+            else _stateMachine.CurrentState = _stateMachine.Running;
         }
     }
 }

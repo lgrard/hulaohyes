@@ -22,12 +22,9 @@ namespace hulaohyes.player.states
             Transform pCameraContainer, Rigidbody pRb, Animator pAnimator, List<ParticleSystem> pParticles)
             : base(pStateMachine, pPlayer, pControlScheme, pCameraContainer, pRb, pAnimator, pParticles) => _pickableLayers = LayerMask.GetMask("Enemy", "Player", "UnitCube");
 
-
-        void OnPunch(InputAction.CallbackContext ctx) => _stateMachine.CurrentState = _stateMachine.attacking;
-
         void OnPickup(InputAction.CallbackContext ctx)
         {
-            if (_player.pickUpTarget != null) _stateMachine.CurrentState = _stateMachine.carrying;
+            if (_player.pickUpTarget != null) _stateMachine.CurrentState = _stateMachine.Carrying;
         }
 
         void Targetting()
@@ -59,7 +56,6 @@ namespace hulaohyes.player.states
         public override void OnEnter()
         {
             base.OnEnter();
-            base._controlScheme.Player.Punch.performed += OnPunch;
             base._controlScheme.Player.PickUp.performed += OnPickup;
         }
 
@@ -67,6 +63,7 @@ namespace hulaohyes.player.states
         {
             base.PhysLoopLogic();
             base.MovePlayer();
+            base.RotatePlayer();
             Targetting();
         }
 
@@ -74,7 +71,6 @@ namespace hulaohyes.player.states
         public override void OnExit()
         {
             base.OnExit();
-            base._controlScheme.Player.Punch.performed -= OnPunch;
             base._controlScheme.Player.PickUp.performed -= OnPickup;
         }
     }
