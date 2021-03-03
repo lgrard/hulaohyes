@@ -96,7 +96,8 @@ namespace hulaohyes.levelbrick.door
                 Vector3 lTriggerPosition = new Vector3(0, _triggerZoneSize.y / 2, 0);
                 Gizmos.DrawWireCube(lTriggerPosition, _triggerZoneSize);
                 Gizmos.color = Color.green;
-                Gizmos.DrawWireCube(_cubeSlotPosition, Vector3.one * 1);
+                Vector3 lCubePosition = new Vector3(_cubeSlotPosition.x, _cubeSlotPosition.y+0.55f, _cubeSlotPosition.z);
+                Gizmos.DrawWireCube(lCubePosition, Vector3.one * 1);
             }
         }
     }
