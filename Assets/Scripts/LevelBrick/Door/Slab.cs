@@ -17,6 +17,7 @@ namespace hulaohyes.levelbrick.door
         [Range(1,2)][SerializeField] int _maxUnit = 2;
         [Tooltip("Where will the unit cube will magnet")]
         [SerializeField] Vector3 _cubeSlotPosition;
+        [Tooltip("TriggerSize")]
         [SerializeField] Vector3 _triggerZoneSize;
         [Tooltip("Are the gizmos drawing fo this object")]
         [SerializeField] bool _drawGizmos;

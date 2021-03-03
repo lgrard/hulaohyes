@@ -6,7 +6,6 @@ namespace hulaohyes.levelbrick.door
 {
     public class DoorManager : MonoBehaviour
     {
-        private const float DOOR_HEIGHT = 3.1f;
         private const float DOOR_DURATION = 0.5f;
 
         [Range(1, 10)] [SerializeField] int _unitRequirement = 1;
@@ -15,6 +14,7 @@ namespace hulaohyes.levelbrick.door
         [Header("Associated door")]
         [SerializeField] List<GameObject> _doorList;
         [SerializeField] AnimationCurve _doorCurve;
+        [Range(0,10)][SerializeField] float _doorHeight = 3.1f;
         private List<float> _doorPositions;
         private float _doorProgress;
         private bool _doorIsOpening;
@@ -62,7 +62,7 @@ namespace hulaohyes.levelbrick.door
         {
             for (int i = _doorList.Count - 1; i >= 0; i--)
             {
-                float lDoorY = Mathf.Lerp(_doorPositions[i], _doorPositions[i]- DOOR_HEIGHT, _doorCurve.Evaluate(_doorProgress / DOOR_DURATION));
+                float lDoorY = Mathf.Lerp(_doorPositions[i], _doorPositions[i]- _doorHeight, _doorCurve.Evaluate(_doorProgress / DOOR_DURATION));
                 _doorList[i].transform.position = new Vector3(_doorList[i].transform.position.x, lDoorY, _doorList[i].transform.position.z);
             }
         }
