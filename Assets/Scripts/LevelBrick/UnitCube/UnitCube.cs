@@ -18,10 +18,11 @@ namespace hulaohyes.levelbrick.unitcube
             _killZoneLayer = LayerMask.NameToLayer("KillZone");
         }
 
-        void DestroyUnitCube()
+        public void DestroyUnitCube()
         {
+            if(_currentPicker != null) _currentPicker.DropTarget();
             _currentSpawner.DestroyCurrentCube();
-            Destroy(this.gameObject,1f);
+            Destroy(this.gameObject,0.5f);
         }
 
         private void FixedUpdate() => base._rb.AddForce(Physics.gravity * 4, ForceMode.Acceleration);

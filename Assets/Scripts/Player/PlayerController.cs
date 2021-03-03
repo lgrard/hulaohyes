@@ -97,6 +97,7 @@ namespace hulaohyes.player
         override public void GetPicked(PlayerController pPicker)
         {
             base.GetPicked(pPicker);
+            if (pickUpTarget != null) DropTarget();
             _stateMachine.CurrentState = _stateMachine.Carried;
         }
 
