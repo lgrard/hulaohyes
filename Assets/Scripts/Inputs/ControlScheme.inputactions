@@ -60,6 +60,14 @@
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "Tap"
+                },
+                {
+                    "name": "Debug_Reload",
+                    "type": "Button",
+                    "id": "06fd18f8-0a97-4d3d-aebd-fb21c1713f52",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "Tap"
                 }
             ],
             "bindings": [
@@ -258,6 +266,28 @@
                     "processors": "",
                     "groups": "Controller",
                     "action": "Debug_Switch",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "ae183495-6952-409a-959b-7e0187e2c673",
+                    "path": "<Keyboard>/r",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard",
+                    "action": "Debug_Reload",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "9eab81c0-91f8-4c92-a7cc-ab5037083a3e",
+                    "path": "<Gamepad>/leftTrigger",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Controller",
+                    "action": "Debug_Reload",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

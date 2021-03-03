@@ -73,6 +73,14 @@ public class @ControlScheme : IInputActionCollection, IDisposable
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": ""Tap""
+                },
+                {
+                    ""name"": ""Debug_Reload"",
+                    ""type"": ""Button"",
+                    ""id"": ""06fd18f8-0a97-4d3d-aebd-fb21c1713f52"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": ""Tap""
                 }
             ],
             ""bindings"": [
@@ -273,6 +281,28 @@ public class @ControlScheme : IInputActionCollection, IDisposable
                     ""action"": ""Debug_Switch"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""ae183495-6952-409a-959b-7e0187e2c673"",
+                    ""path"": ""<Keyboard>/r"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard"",
+                    ""action"": ""Debug_Reload"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""9eab81c0-91f8-4c92-a7cc-ab5037083a3e"",
+                    ""path"": ""<Gamepad>/leftTrigger"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Controller"",
+                    ""action"": ""Debug_Reload"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -376,6 +406,7 @@ public class @ControlScheme : IInputActionCollection, IDisposable
         m_Player_PickUp = m_Player.FindAction("PickUp", throwIfNotFound: true);
         m_Player_Pause = m_Player.FindAction("Pause", throwIfNotFound: true);
         m_Player_Debug_Switch = m_Player.FindAction("Debug_Switch", throwIfNotFound: true);
+        m_Player_Debug_Reload = m_Player.FindAction("Debug_Reload", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Cancel = m_UI.FindAction("Cancel", throwIfNotFound: true);
@@ -437,6 +468,7 @@ public class @ControlScheme : IInputActionCollection, IDisposable
     private readonly InputAction m_Player_PickUp;
     private readonly InputAction m_Player_Pause;
     private readonly InputAction m_Player_Debug_Switch;
+    private readonly InputAction m_Player_Debug_Reload;
     public struct PlayerActions
     {
         private @ControlScheme m_Wrapper;
@@ -448,6 +480,7 @@ public class @ControlScheme : IInputActionCollection, IDisposable
         public InputAction @PickUp => m_Wrapper.m_Player_PickUp;
         public InputAction @Pause => m_Wrapper.m_Player_Pause;
         public InputAction @Debug_Switch => m_Wrapper.m_Player_Debug_Switch;
+        public InputAction @Debug_Reload => m_Wrapper.m_Player_Debug_Reload;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -478,6 +511,9 @@ public class @ControlScheme : IInputActionCollection, IDisposable
                 @Debug_Switch.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDebug_Switch;
                 @Debug_Switch.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDebug_Switch;
                 @Debug_Switch.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDebug_Switch;
+                @Debug_Reload.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDebug_Reload;
+                @Debug_Reload.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDebug_Reload;
+                @Debug_Reload.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDebug_Reload;
             }
             m_Wrapper.m_PlayerActionsCallbackInterface = instance;
             if (instance != null)
@@ -503,6 +539,9 @@ public class @ControlScheme : IInputActionCollection, IDisposable
                 @Debug_Switch.started += instance.OnDebug_Switch;
                 @Debug_Switch.performed += instance.OnDebug_Switch;
                 @Debug_Switch.canceled += instance.OnDebug_Switch;
+                @Debug_Reload.started += instance.OnDebug_Reload;
+                @Debug_Reload.performed += instance.OnDebug_Reload;
+                @Debug_Reload.canceled += instance.OnDebug_Reload;
             }
         }
     }
@@ -583,6 +622,7 @@ public class @ControlScheme : IInputActionCollection, IDisposable
         void OnPickUp(InputAction.CallbackContext context);
         void OnPause(InputAction.CallbackContext context);
         void OnDebug_Switch(InputAction.CallbackContext context);
+        void OnDebug_Reload(InputAction.CallbackContext context);
     }
     public interface IUIActions
     {
