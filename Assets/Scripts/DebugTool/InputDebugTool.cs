@@ -1,9 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using hulaohyes;
 using hulaohyes.player;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 namespace hulaohyes.debugtool
 {
@@ -30,8 +30,17 @@ namespace hulaohyes.debugtool
 
         private void OnDisable()
         {
-            if(player0cs != null) player0cs.Player.Debug_Switch.performed -= SwitchControllers;
-            if (player1cs != null) player1cs.Player.Debug_Switch.performed -= SwitchControllers;
+            if (player0cs != null)
+            {
+                player0cs.Player.Debug_Switch.performed -= SwitchControllers;
+                player0cs.Player.Debug_Reload.performed -= ReloadScene;
+            }
+
+            if (player1cs != null)
+            {
+                player1cs.Player.Debug_Switch.performed -= SwitchControllers;
+                player1cs.Player.Debug_Reload.performed -= ReloadScene;
+            }
         }
 
         IEnumerator Init()
@@ -50,6 +59,8 @@ namespace hulaohyes.debugtool
                     player1cs = lPlayer1.getActiveControlScheme();
                     player0cs.Player.Debug_Switch.performed += SwitchControllers;
                     player1cs.Player.Debug_Switch.performed += SwitchControllers;
+                    player0cs.Player.Debug_Reload.performed += ReloadScene;
+                    player1cs.Player.Debug_Reload.performed += ReloadScene;
 
                     _p0_input_debug = player0input.devices[0].name;
                     _p1_input_debug = player1input.devices[0].name;
@@ -60,6 +71,8 @@ namespace hulaohyes.debugtool
 
             else Disable();
         }
+
+        void ReloadScene(InputAction.CallbackContext ctx)=> SceneManager.LoadScene(SceneManager.GetActiveScene().name);
 
         void SwitchControllers(InputAction.CallbackContext ctx)
         {
