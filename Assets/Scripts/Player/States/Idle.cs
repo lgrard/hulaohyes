@@ -7,7 +7,7 @@ namespace hulaohyes.player.states
 {
     public abstract class Idle : PlayerState
     {
-        protected const float JUMP_HEIGHT = 8f;
+        const float JUMP_HEIGHT = 8f;
         const float ROTATION_SMOOTHING_AMOUNT = 0.75f;
         const float MOVEMENT_SPEED = 6f;
         const float DEG2RAD = Mathf.PI/ 180;

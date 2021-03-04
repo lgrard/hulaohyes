@@ -9,7 +9,7 @@ namespace hulaohyes.player.states
     public class Carrying : Idle
     {
         private const int HIT_BEFORE_DROP = 3;
-        private int currentHit;
+        private int _currentHit;
 
         public Carrying(PlayerStateMachine pStateMachine, PlayerController pPlayer, ControlScheme pControlScheme,
             Transform pCameraContainer, Rigidbody pRb, Animator pAnimator, List<ParticleSystem> pParticles)
@@ -18,9 +18,9 @@ namespace hulaohyes.player.states
         public void TakeCarryDamage()
         {
             _animator.SetTrigger("TakeDamage");
-            currentHit -= 1;
+            _currentHit -= 1;
 
-            if (currentHit <= 0)
+            if (_currentHit <= 0)
             {
                 _player.Drop();
                 _stateMachine.CurrentState = _stateMachine.Wait;
@@ -30,7 +30,7 @@ namespace hulaohyes.player.states
         void PickUpTarget()
         {
             if(_player.pickUpTarget.isPickable) _player.pickUpTarget.GetPicked(_player);
-            currentHit = HIT_BEFORE_DROP;
+            _currentHit = HIT_BEFORE_DROP;
         }
 
         void OnDropTarget(InputAction.CallbackContext ctx) => _player.pickUpTarget.Drop();

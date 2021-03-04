@@ -13,7 +13,6 @@ namespace hulaohyes.player.states
         private Wait _wait;
         private Downed _downed;
         private Thrown _thrown;
-
         private Wait _dropping;
 
         ///Create a new state machine object
@@ -24,11 +23,11 @@ namespace hulaohyes.player.states
         /// <param name="pAnimator">Associated rigidbody</param>
         /// <param name="pParticles">Associated player particle systems</param>
         public PlayerStateMachine(PlayerController pPlayer, ControlScheme pControlScheme, Transform pCameraContainer,
-            Rigidbody pRb, Animator pAnimator, List<ParticleSystem> pParticles)
+            Rigidbody pRb, Animator pAnimator, List<ParticleSystem> pParticles, Collider pCollider)
         {
             _running = new Running(this, pPlayer, pControlScheme, pCameraContainer, pRb, pAnimator, pParticles);
             _carrying = new Carrying(this, pPlayer, pControlScheme, pCameraContainer, pRb, pAnimator, pParticles);
-            _carried = new Carried(this, pPlayer, pControlScheme, pCameraContainer, pRb, pAnimator, pParticles);
+            _carried = new Carried(this, pPlayer, pControlScheme, pCameraContainer, pRb, pAnimator, pParticles, pCollider);
             _wait = new Wait(this, pPlayer, pControlScheme, pCameraContainer, pRb, pAnimator, pParticles);
             _downed = new Downed(this, pPlayer, pControlScheme, pCameraContainer, pRb, pAnimator, pParticles);
             _thrown = new Thrown(this, pPlayer, pControlScheme, pCameraContainer, pRb, pAnimator, pParticles);

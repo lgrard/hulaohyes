@@ -9,6 +9,7 @@ public class Pickable : MonoBehaviour
     private const float THROW_FORCE = 20f;
     private const float DROP_FORCE = 9f;
 
+    private LayerMask _collisionLayer;
     private Vector3 _forwardVelocity;
     private Vector3 _diretionOffset = new Vector3(0,-0.15f);
 
@@ -24,6 +25,7 @@ public class Pickable : MonoBehaviour
     {
         _rb = GetComponent<Rigidbody>();
         _collider = GetComponent<Collider>();
+        _collisionLayer = LayerMask.GetMask("Enemy","Player","KillZone","Default","Bricks","Ground");
     }
 
     public virtual void Propel() => GetDropped(THROW_FORCE);
@@ -52,8 +54,13 @@ public class Pickable : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        HitSomething();
-        if (gameObject.TryGetComponent<EnemyController>(out EnemyController pEnemy)) HitEnemy(pEnemy);
+        if ((_collisionLayer & 1 << other.gameObject.layer) == 1 << other.gameObject.layer)
+        {
+            HitSomething();
+            if (gameObject.TryGetComponent<EnemyController>(out EnemyController pEnemy)) HitEnemy(pEnemy);
+        }
+
+        else Debug.Log(gameObject.name + ": " +other.gameObject.layer);
     }
 
     protected virtual void HitEnemy(EnemyController pEnemy)

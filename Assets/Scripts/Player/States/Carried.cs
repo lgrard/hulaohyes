@@ -8,9 +8,11 @@ namespace hulaohyes.player.states
 {
     public class Carried : Idle
     {
+        private Collider _collider;
+
         public Carried(PlayerStateMachine pStateMachine, PlayerController pPlayer, ControlScheme pControlScheme,
-            Transform pCameraContainer, Rigidbody pRb, Animator pAnimator, List<ParticleSystem> pParticles)
-            : base(pStateMachine, pPlayer, pControlScheme, pCameraContainer, pRb, pAnimator, pParticles) { }
+            Transform pCameraContainer, Rigidbody pRb, Animator pAnimator, List<ParticleSystem> pParticles, Collider pCollider)
+            : base(pStateMachine, pPlayer, pControlScheme, pCameraContainer, pRb, pAnimator, pParticles) { _collider = pCollider; }
 
         void OnDrop(InputAction.CallbackContext ctx) => _player.Drop();
 
@@ -18,6 +20,7 @@ namespace hulaohyes.player.states
         {
             _player.Drop();
             base.Jump();
+            _collider.isTrigger = false;
             _stateMachine.CurrentState = _stateMachine.Running;
         }
 

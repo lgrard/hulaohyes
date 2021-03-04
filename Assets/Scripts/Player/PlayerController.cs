@@ -80,7 +80,7 @@ namespace hulaohyes.player
             _playerInput = GetComponent<PlayerInput>();
             _playerInput.actions = _controlScheme.asset;
             SetPlayerDevice();
-            _stateMachine = new PlayerStateMachine(this, _controlScheme, _cameraContainer, _rb, _playerAnimator, _playerParticles);
+            _stateMachine = new PlayerStateMachine(this, _controlScheme, _cameraContainer, _rb, _playerAnimator, _playerParticles, _collider);
 
             _hp = maxHp;
         }

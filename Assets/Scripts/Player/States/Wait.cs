@@ -7,7 +7,6 @@ namespace hulaohyes.player.states
 {
     public class Wait : PlayerState
     {
-        const float MOVEMENT_SPEED = 6f;
         const float MAX_TIMER = 0.5f;
         float _timer;
 
@@ -19,7 +18,7 @@ namespace hulaohyes.player.states
         {
             base.OnEnter();
             _timer = MAX_TIMER;
-            base._animator.SetFloat("Speed", _rb.velocity.magnitude / MOVEMENT_SPEED);
+            base._animator.SetFloat("Speed", 0);
         }
 
         public override void LoopLogic()
