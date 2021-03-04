@@ -118,12 +118,6 @@ namespace hulaohyes.player
             }
         }
 
-        protected override void HitEnemy(EnemyController pEnemy)
-        {
-            base.HitEnemy(pEnemy);
-            Effects.HitStop(_playerAnimator, pEnemy.EnemyAnimator, 0.5f, 0.1f);
-        }
-
         bool isThrown => _stateMachine.CurrentState == _stateMachine.Thrown;
 
         public ControlScheme getActiveControlScheme() { return _controlScheme; }

@@ -16,36 +16,17 @@ namespace hulaohyes.enemy
         private NavMeshAgent _navMeshAgent;
         private EnemyStateMachine _stateMachine;
         private Animator _enemyAnimator;
-        private Transform _currentTarget;
+        private SphereCollider _detectionZone;
 
-        private int _hp = 1;
+        [Header("Zone size")]
+        [Range(1,10)][SerializeField] float _zoneRadius = 1;
 
         [Header("Particles list")]
         [SerializeField] List<ParticleSystem> _enemyParticles;
-
-        [Header("Current pick up target")]
-        public Pickable pickUpTarget;
-
+        
+        public Transform currentTarget;
 
         private void Start() => Init();
-
-        /// The enemy takes damage and check the amount of HPs
-        /// <param name="damage">Amount of damage taken by the enemy</param>
-        public void TakeDamage(int pDamage)
-        {
-            if (_hp - pDamage <= 0)
-            {
-                //dies
-                Debug.Log(gameObject.name+" is dead");
-                _enemyAnimator.SetTrigger("TakeDamage");
-            }
-
-            else
-            {
-                _hp -= pDamage;
-                _enemyAnimator.SetTrigger("TakeDamage");
-            }
-        }
 
         public IEnumerator KnockBack(Transform pOrigin)
         {
@@ -60,35 +41,79 @@ namespace hulaohyes.enemy
             }
         }
 
-        //private void Update() => _stateMachine.CurrentState.LoopLogic();
+        private void Update() => _stateMachine.CurrentState.LoopLogic();
         private void FixedUpdate()
         {
-            //_stateMachine.CurrentState.PhysLoopLogic();
-            base._rb.AddForce(Physics.gravity * _gravity, ForceMode.Acceleration);
+            _stateMachine.CurrentState.PhysLoopLogic();
+            _rb.AddForce(Physics.gravity * _gravity, ForceMode.Acceleration);
         }
 
         public Animator EnemyAnimator => _enemyAnimator;
+
+        private void CreateZone()
+        {
+            _detectionZone = gameObject.AddComponent<SphereCollider>();
+            _detectionZone.radius = _zoneRadius;
+            _detectionZone.isTrigger = true;
+        }
 
         protected override void Init()
         {
             base.Init();
             _navMeshAgent = GetComponent<NavMeshAgent>();
             _enemyAnimator = GetComponent<Animator>();
-            _stateMachine = new EnemyStateMachine(this, _rb, _enemyAnimator, null, _enemyParticles,_navMeshAgent);
+            _stateMachine = new EnemyStateMachine(this, _rb, _enemyAnimator, _enemyParticles,_navMeshAgent);
+            CreateZone();
             GameManager.AddEnemy(this);
+        }
 
-            _hp = MAX_HP;
+        public override void Propel()
+        {
+            _stateMachine.CurrentState = _stateMachine.Thrown;
+            base.Propel();
         }
 
         override public void GetPicked(PlayerController pPlayer)
         {
-            base.GetPicked(pPlayer);
+            _stateMachine.CurrentState = _stateMachine.Carried;
+            _detectionZone.enabled = false;
             _navMeshAgent.enabled = false;
+            base.GetPicked(pPlayer);
+        }
+
+        protected override void HitSomething()
+        {
+            if(_stateMachine.CurrentState == _stateMachine.Thrown)
+            {
+                base.HitSomething();
+                destroyEnemy();
+            }
+        }
+
+        /*private void OnTriggerEnter(Collider other)
+        {
+            if(currentTarget == null && other.TryGetComponent<PlayerController>(out PlayerController pPlayer)
+                && _stateMachine.CurrentState != _stateMachine.Carried)
+            {
+                currentTarget = pPlayer.transform;
+                _stateMachine.CurrentState = _stateMachine.Attacking;
+            }
+        }*/
+
+        private void OnTriggerExit(Collider other)
+        {
+            if (other.transform == currentTarget)
+            {
+                _stateMachine.CurrentState = _stateMachine.Idle;
+                currentTarget = null;
+            }
         }
 
         public void destroyEnemy()
         {
-            //Destructor
+            Debug.Log(gameObject.name + " is dead");
+            _rb.isKinematic = true;
+            Destroy(gameObject, 0.5f);
         }
     }
 }
