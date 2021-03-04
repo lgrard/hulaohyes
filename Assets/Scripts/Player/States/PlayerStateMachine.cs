@@ -27,10 +27,10 @@ namespace hulaohyes.player.states
         {
             _running = new Running(this, pPlayer, pControlScheme, pCameraContainer, pRb, pAnimator, pParticles);
             _carrying = new Carrying(this, pPlayer, pControlScheme, pCameraContainer, pRb, pAnimator, pParticles);
-            _carried = new Carried(this, pPlayer, pControlScheme, pCameraContainer, pRb, pAnimator, pParticles, pCollider);
-            _wait = new Wait(this, pPlayer, pControlScheme, pCameraContainer, pRb, pAnimator, pParticles);
-            _downed = new Downed(this, pPlayer, pControlScheme, pCameraContainer, pRb, pAnimator, pParticles);
-            _thrown = new Thrown(this, pPlayer, pControlScheme, pCameraContainer, pRb, pAnimator, pParticles);
+            _carried = new Carried(this,pPlayer,pControlScheme,pRb,pAnimator,pParticles,pCollider);
+            _wait = new Wait(this,pAnimator,pParticles);
+            _downed = new Downed(this,pAnimator,pParticles);
+            _thrown = new Thrown(this,pAnimator,pParticles);
             CurrentState = _running;
         }
 

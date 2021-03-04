@@ -7,12 +7,12 @@ namespace hulaohyes.player.states
 {
     public class Wait : PlayerState
     {
-        const float MAX_TIMER = 0.5f;
-        float _timer;
+        protected float MAX_TIMER = 0.4f;
 
-        public Wait(PlayerStateMachine pStateMachine, PlayerController pPlayer, ControlScheme pControlScheme,
-            Transform pCameraContainer, Rigidbody pRb, Animator pAnimator, List<ParticleSystem> pParticles)
-            : base(pStateMachine, pPlayer, pControlScheme, pCameraContainer, pRb, pAnimator, pParticles) { }
+        private float _timer;
+
+        public Wait(PlayerStateMachine pStateMachine, Animator pAnimator, List<ParticleSystem> pParticles)
+            : base(pStateMachine, pAnimator, pParticles) { }
 
         public override void OnEnter()
         {

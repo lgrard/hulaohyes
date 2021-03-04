@@ -6,9 +6,8 @@ namespace hulaohyes.player.states
 {
     public class Downed : PlayerState
     {
-        public Downed(PlayerStateMachine pStateMachine, PlayerController pPlayer, ControlScheme pControlScheme,
-            Transform pCameraContainer, Rigidbody pRb, Animator pAnimator, List<ParticleSystem> pParticles)
-            : base(pStateMachine, pPlayer, pControlScheme, pCameraContainer, pRb, pAnimator, pParticles) { }
+        public Downed(PlayerStateMachine pStateMachine, Animator pAnimator, List<ParticleSystem> pParticles)
+            : base(pStateMachine, pAnimator, pParticles) { }
 
         public override void OnEnter()
         {

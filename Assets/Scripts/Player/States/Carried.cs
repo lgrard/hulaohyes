@@ -6,20 +6,36 @@ using UnityEngine.InputSystem;
 
 namespace hulaohyes.player.states
 {
-    public class Carried : Idle
+    public class Carried : PlayerState
     {
+        const float VERTICAL_PROPEL_HEIGHT = 8f;
+
+        private PlayerController _player;
+        private ControlScheme _controlScheme;
+        private Rigidbody _rb;
         private Collider _collider;
 
         public Carried(PlayerStateMachine pStateMachine, PlayerController pPlayer, ControlScheme pControlScheme,
-            Transform pCameraContainer, Rigidbody pRb, Animator pAnimator, List<ParticleSystem> pParticles, Collider pCollider)
-            : base(pStateMachine, pPlayer, pControlScheme, pCameraContainer, pRb, pAnimator, pParticles) { _collider = pCollider; }
+            Rigidbody pRb, Animator pAnimator, List<ParticleSystem> pParticles, Collider pCollider)
+            : base(pStateMachine, pAnimator, pParticles)
+        {
+            _player = pPlayer;
+            _controlScheme = pControlScheme;
+            _rb = pRb;
+            _collider = pCollider;
+        }
 
-        void OnDrop(InputAction.CallbackContext ctx) => _player.Drop();
+        private void OnDrop(InputAction.CallbackContext ctx) => _player.Drop();
 
-        protected override void Jump()
+        private void OnJump(InputAction.CallbackContext ctx)
         {
             _player.Drop();
-            base.Jump();
+
+            _particles[0].Play();
+            _animator.SetTrigger("Jump");
+            Vector3 upDir = new Vector3(0, VERTICAL_PROPEL_HEIGHT, 0);
+            _rb.velocity = upDir;
+
             _collider.isTrigger = false;
             _stateMachine.CurrentState = _stateMachine.Running;
         }
@@ -28,16 +44,18 @@ namespace hulaohyes.player.states
         {
             base.OnEnter();
             _animator.SetBool("Carried", true);
-            base._controlScheme.Player.PickUp.performed += OnDrop;
-            base._controlScheme.Player.Punch.performed += OnDrop;
+            _controlScheme.Player.Jump.performed += OnJump;
+            _controlScheme.Player.PickUp.performed += OnDrop;
+            _controlScheme.Player.Punch.performed += OnDrop;
         }
 
         public override void OnExit()
         {
             base.OnExit();
             _animator.SetBool("Carried", false);
-            base._controlScheme.Player.PickUp.performed -= OnDrop;
-            base._controlScheme.Player.Punch.performed -= OnDrop;
+            _controlScheme.Player.Jump.performed -= OnJump;
+            _controlScheme.Player.PickUp.performed -= OnDrop;
+            _controlScheme.Player.Punch.performed -= OnDrop;
         }
     }
 }

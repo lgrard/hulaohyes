@@ -5,28 +5,16 @@ using hulaohyes.enemy;
 
 namespace hulaohyes.player.states
 {
-    public class Thrown : PlayerState
+    public class Thrown : Wait
     {
-        const float MAX_THROW_TIME = 3f;
-        private float _throwTime;
-
-        public Thrown(PlayerStateMachine pStateMachine, PlayerController pPlayer, ControlScheme pControlScheme,
-            Transform pCameraContainer, Rigidbody pRb, Animator pAnimator, List<ParticleSystem> pParticles)
-            : base(pStateMachine, pPlayer, pControlScheme, pCameraContainer, pRb, pAnimator, pParticles) { }
-
+        public Thrown(PlayerStateMachine pStateMachine, Animator pAnimator, List<ParticleSystem> pParticles)
+            : base(pStateMachine, pAnimator, pParticles)
+        { MAX_TIMER = 3; }
 
         public override void OnEnter()
         {
             base.OnEnter();
             _animator.SetBool("Thrown", true);
-            _throwTime = MAX_THROW_TIME;
-        }
-
-        public override void LoopLogic()
-        {
-            base.LoopLogic();
-            if (_throwTime >= 0) _throwTime -= Time.deltaTime;
-            else _stateMachine.CurrentState = _stateMachine.Running;
         }
 
         public override void OnExit()
