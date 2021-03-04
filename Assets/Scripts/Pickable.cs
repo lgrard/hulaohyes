@@ -6,6 +6,7 @@ using hulaohyes.enemy;
 
 public class Pickable : MonoBehaviour
 {
+    private const float DEG2RAD = Mathf.PI / 180;
     //private const float THROW_FORCE = 20f;
     //private const float DROP_FORCE = 9f;
     //private const float THROW_ANGLE_OFFSET = 0.15f;
@@ -23,8 +24,8 @@ public class Pickable : MonoBehaviour
 
     [Range(1, 30)] public float THROW_FORCE = 20f;                                                                                                  //const to change
     [Range(1, 30)] public float DROP_FORCE = 9f;                                                                                                    //const to change
-    [Range(0,1)]public float THROW_ANGLE_OFFSET = 0.15f;                                                                                            //const to change
-    [Range(0, 1)]public float DROP_ANGLE_OFFSET = 0.15f;                                                                                            //const to change
+    [Range(0, 90)] public float THROW_ANGLE_OFFSET = 10f;                                                                                            //const to change
+    [Range(0, 90)] public float DROP_ANGLE_OFFSET = 10f;                                                                                            //const to change
     [Range(0, 10)] public float GRAVITY_AMOUNT_RISE = 2f;                                                                                           //const to change
     [Range(0, 10)] public float GRAVITY_AMOUNT_FALL = 4f;                                                                                           //const to change
                                       
@@ -60,12 +61,12 @@ public class Pickable : MonoBehaviour
 
     private void GetDropped(float pDropForce, float pAngleOffset)
     {
-        Vector3 lDiretionOffset = new Vector3(0, -pAngleOffset);
+        Vector3 lDiretionOffset = new Vector3(0, Mathf.Sin(pAngleOffset*DEG2RAD), 0);
         _currentPicker.DropTarget();
         transform.parent = null;
         _currentPicker = null;
         _rb.isKinematic = false;
-        _forwardVelocity = (transform.forward - lDiretionOffset) * pDropForce;
+        _forwardVelocity = (transform.forward + lDiretionOffset) * pDropForce;
         _rb.velocity = _forwardVelocity;
     }
 
@@ -93,14 +94,14 @@ public class Pickable : MonoBehaviour
         if(_currentPicker != null)
         {
             Gizmos.color = Color.red;
-            Vector3 lDiretionOffsetThrow = new Vector3(0, -THROW_ANGLE_OFFSET);
-            Gizmos.DrawLine(transform.position, transform.position+(transform.forward - lDiretionOffsetThrow) * 5);
-            Gizmos.DrawSphere(transform.position + (transform.forward - lDiretionOffsetThrow) * 5, 0.1f);
+            Vector3 lDiretionOffsetThrow = new Vector3(0, Mathf.Sin(THROW_ANGLE_OFFSET * DEG2RAD), 0);
+            Gizmos.DrawLine(transform.position, transform.position+(transform.forward + lDiretionOffsetThrow) * 5);
+            Gizmos.DrawSphere(transform.position + (transform.forward + lDiretionOffsetThrow) * 5, 0.1f);
 
             Gizmos.color = Color.magenta;
-            Vector3 lDiretionOffsetDrop = new Vector3(0, -DROP_ANGLE_OFFSET);
-            Gizmos.DrawLine(transform.position, transform.position+(transform.forward - lDiretionOffsetDrop) * 3);
-            Gizmos.DrawSphere(transform.position + (transform.forward - lDiretionOffsetDrop) * 3, 0.1f);
+            Vector3 lDiretionOffsetDrop = new Vector3(0, Mathf.Sin(DROP_ANGLE_OFFSET * DEG2RAD), 0);
+            Gizmos.DrawLine(transform.position, transform.position+(transform.forward + lDiretionOffsetDrop) * 3);
+            Gizmos.DrawSphere(transform.position + (transform.forward + lDiretionOffsetDrop) * 3, 0.1f);
 
             Gizmos.color = Color.white;
         }

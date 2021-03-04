@@ -43,7 +43,7 @@ namespace hulaohyes.player.states
 
             if (Physics.Raycast(lFrontRay,out hit, _player.PICK_UP_DISTANCE, _pickableLayers) && hit.collider.gameObject != _player)                 //const to change
             {
-                if (hit.collider.TryGetComponent<Pickable>(out Pickable pickableTarget) != _player.pickUpTarget && pickableTarget.isPickable)
+                if (hit.collider.TryGetComponent<Pickable>(out Pickable pickableTarget) && pickableTarget != _player.pickUpTarget && pickableTarget.isPickable)
                 {
                     _player.pickUpTarget = pickableTarget;
                     Debug.Log("Current target: " + _player.pickUpTarget.gameObject.name);
