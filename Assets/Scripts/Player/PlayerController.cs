@@ -12,9 +12,6 @@ namespace hulaohyes.player
 {
     public class PlayerController : Pickable
     {
-        const float GRAVITY_AMOUNT_RISE = 2f;
-        const float GRAVITY_AMOUNT_FALL = 4f;
-
         private GameManager _gameManager;
         private Animator _playerAnimator;
         private PlayerStateMachine _stateMachine;
@@ -34,6 +31,13 @@ namespace hulaohyes.player
 
         [Header("Particles list")]
         [SerializeField] List<ParticleSystem> _playerParticles;
+
+        [Header("Player values")]
+        public float MOVEMENT_SPEED = 6;                                                                                                //const to change
+        public float JUMP_HEIGHT = 8;                                                                                                   //const to change
+        public float GROUND_CHECK_DISTANCE = 0.5f;
+        public float PICK_UP_DISTANCE =2f;                                                                                              //const to change
+        public float VERTICAL_PROPEL_HEIGHT = 8f;                                                                                       //const to change
 
         [HideInInspector]
         public Pickable pickUpTarget;
@@ -121,12 +125,13 @@ namespace hulaohyes.player
         }
 
         bool isThrown => _stateMachine.CurrentState == _stateMachine.Thrown;
-        float _gravity => (_rb.velocity.y < 0) ? GRAVITY_AMOUNT_FALL : GRAVITY_AMOUNT_RISE;
+
         public ControlScheme getActiveControlScheme() { return _controlScheme; }
 
-        private void OnDrawGizmosSelected()
+        protected override void OnGizmos()
         {
-            Gizmos.DrawLine(transform.position, new Vector3(transform.position.x, transform.position.y - 0.5f, transform.position.z));
+            Gizmos.DrawLine(transform.position, new Vector3(transform.position.x, transform.position.y - GROUND_CHECK_DISTANCE, transform.position.z));             //GroundCheck debug line
+            base.OnGizmos();
         }
 
         ///Destroy player's object and delete references

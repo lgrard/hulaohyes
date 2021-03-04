@@ -25,7 +25,7 @@ namespace hulaohyes.levelbrick.unitcube
             Destroy(this.gameObject,0.5f);
         }
 
-        private void FixedUpdate() => base._rb.AddForce(Physics.gravity * 4, ForceMode.Acceleration);
+        private void FixedUpdate() => base._rb.AddForce(Physics.gravity * _gravity, ForceMode.Acceleration);
 
         /// Freeze this cube into place and sets its parent slab
         /// <param name="pSlab"> Associated parent slab </param>

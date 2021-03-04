@@ -7,9 +7,9 @@ namespace hulaohyes.player.states
 {
     public abstract class Idle : PlayerState
     {
-        const float JUMP_HEIGHT = 8f;
+        //private const float MOVEMENT_SPEED = 6f;
+        //private const float JUMP_HEIGHT = 8f;
         const float ROTATION_SMOOTHING_AMOUNT = 0.75f;
-        const float MOVEMENT_SPEED = 6f;
         const float DEG2RAD = Mathf.PI/ 180;
 
         protected PlayerController _player;
@@ -65,23 +65,23 @@ namespace hulaohyes.player.states
             _camRight = _cameraContainer.transform.right;
         }
 
-        private void MovePlayer()
+        private void MovePlayer()                                                                                                                   //const to change
         {
             Vector3 lDesiredPosition = _camForward * _movementInput.y + _camRight * _movementInput.x;
-            _rb.velocity = new Vector3(lDesiredPosition.x * MOVEMENT_SPEED, _rb.velocity.y, lDesiredPosition.z * MOVEMENT_SPEED);
-            base._animator.SetFloat("Speed", _rb.velocity.magnitude / MOVEMENT_SPEED);
+            _rb.velocity = new Vector3(lDesiredPosition.x * _player.MOVEMENT_SPEED, _rb.velocity.y, lDesiredPosition.z * _player.MOVEMENT_SPEED);   //const to change
+            base._animator.SetFloat("Speed", _rb.velocity.magnitude / _player.MOVEMENT_SPEED);                                                      //const to change
             base._animator.SetBool("isGrounded", isGrounded);
         }
 
-        private bool isGrounded =>(Physics.Raycast(_player.transform.position, -_player.transform.up, 0.5f, _groundLayer));
+        private bool isGrounded =>(Physics.Raycast(_player.transform.position, -_player.transform.up, _player.GROUND_CHECK_DISTANCE, _groundLayer));
 
-        private void OnJump(InputAction.CallbackContext ctx)
+        private void OnJump(InputAction.CallbackContext ctx)                                                                                        //const to change
         { 
             if (isGrounded)
             {
                 _particles[0].Play();
                 _animator.SetTrigger("Jump");
-                Vector3 upDir = new Vector3(0, JUMP_HEIGHT, 0);
+                Vector3 upDir = new Vector3(0, _player.JUMP_HEIGHT, 0);                                                                             //const to change
                 _rb.velocity = upDir;
             }
         }

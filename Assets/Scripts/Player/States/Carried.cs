@@ -8,7 +8,7 @@ namespace hulaohyes.player.states
 {
     public class Carried : PlayerState
     {
-        const float VERTICAL_PROPEL_HEIGHT = 8f;
+        //private const float VERTICAL_PROPEL_HEIGHT = 8f;
 
         private PlayerController _player;
         private ControlScheme _controlScheme;
@@ -33,7 +33,7 @@ namespace hulaohyes.player.states
 
             _particles[0].Play();
             _animator.SetTrigger("Jump");
-            Vector3 upDir = new Vector3(0, VERTICAL_PROPEL_HEIGHT, 0);
+            Vector3 upDir = new Vector3(0, _player.VERTICAL_PROPEL_HEIGHT, 0);                                                                                  //const to change
             _rb.velocity = upDir;
 
             _collider.isTrigger = false;

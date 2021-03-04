@@ -64,7 +64,7 @@ namespace hulaohyes.enemy
         private void FixedUpdate()
         {
             //_stateMachine.CurrentState.PhysLoopLogic();
-            _rb.AddForce(Physics.gravity * 4, ForceMode.Acceleration);
+            base._rb.AddForce(Physics.gravity * _gravity, ForceMode.Acceleration);
         }
 
         public Animator EnemyAnimator => _enemyAnimator;

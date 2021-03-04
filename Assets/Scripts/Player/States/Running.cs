@@ -8,7 +8,7 @@ namespace hulaohyes.player.states
 {
     public class Running : Idle
     {
-        const float PICK_UP_DISTANCE = 2;
+        //private const float PICK_UP_DISTANCE = 2;
         private Vector3 _targettingOffset = new Vector3(0, 0.5f, 0);
         private LayerMask _pickableLayers;
         private UnitCubeSpawner _currentSpawner;
@@ -41,7 +41,7 @@ namespace hulaohyes.player.states
             Ray lFrontRay = new Ray(_player.transform.position+_targettingOffset,_player.transform.forward);
             RaycastHit hit;
 
-            if (Physics.Raycast(lFrontRay,out hit, PICK_UP_DISTANCE, _pickableLayers) && hit.collider.gameObject != _player)
+            if (Physics.Raycast(lFrontRay,out hit, _player.PICK_UP_DISTANCE, _pickableLayers) && hit.collider.gameObject != _player)                 //const to change
             {
                 if (hit.collider.TryGetComponent<Pickable>(out Pickable pickableTarget) != _player.pickUpTarget && pickableTarget.isPickable)
                 {
