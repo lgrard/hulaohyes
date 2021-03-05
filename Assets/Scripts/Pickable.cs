@@ -29,10 +29,13 @@ public class Pickable : MonoBehaviour
     [Range(0, 10)] public float GRAVITY_AMOUNT_RISE = 2f;                                                                                           //const to change
     [Range(0, 10)] public float GRAVITY_AMOUNT_FALL = 4f;                                                                                           //const to change
                                       
-
     [SerializeField] bool _drawGizmos = true;
 
-    public bool isPickable => _currentPicker == null;
+    [HideInInspector]
+    public bool isPickableState = true;
+
+    public bool isPickable =>_currentPicker == null && isPickableState;
+
     protected float _gravity => (_rb.velocity.y < 0) ? GRAVITY_AMOUNT_FALL : GRAVITY_AMOUNT_RISE;
 
 
@@ -64,7 +67,6 @@ public class Pickable : MonoBehaviour
         Vector3 lDiretionOffset = new Vector3(0, Mathf.Sin(pAngleOffset*DEG2RAD), 0);
         _currentPicker.DropTarget();
         transform.parent = null;
-        _currentPicker = null;
         _rb.isKinematic = false;
         _forwardVelocity = (transform.forward + lDiretionOffset) * pDropForce;
         _rb.velocity = _forwardVelocity;
@@ -72,22 +74,22 @@ public class Pickable : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if ((_collisionLayer & 1 << other.gameObject.layer) == 1 << other.gameObject.layer)
+        if ((_collisionLayer & 1 << other.gameObject.layer) == 1 << other.gameObject.layer
+            && other.gameObject.TryGetComponent<PlayerController>(out PlayerController pPlayer) != _currentPicker
+            && !other.isTrigger)
         {
-            HitSomething();
-            if (gameObject.TryGetComponent<EnemyController>(out EnemyController pEnemy)) HitEnemy(pEnemy);
+            HitSomething(other);
+            if (other.gameObject.TryGetComponent<EnemyController>(out EnemyController pEnemy)
+                && gameObject != pEnemy.gameObject) pEnemy.destroyEnemy();
         }
-
-        else Debug.Log(gameObject.name + ": " +other.gameObject.layer);
     }
 
-    protected virtual void HitEnemy(EnemyController pEnemy)
+    protected virtual void HitSomething(Collider pCollider)
     {
-        pEnemy.TakeDamage(1);
-        pEnemy.StartCoroutine(pEnemy.KnockBack(this.transform));
+        _currentPicker = null;
+        _rb.velocity = Vector3.zero;
+        _collider.isTrigger = false;
     }
-
-    protected virtual void HitSomething() => _collider.isTrigger = false;
 
     protected virtual void OnGizmos()
     {

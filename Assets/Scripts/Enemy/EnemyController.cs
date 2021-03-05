@@ -16,36 +16,23 @@ namespace hulaohyes.enemy
         private NavMeshAgent _navMeshAgent;
         private EnemyStateMachine _stateMachine;
         private Animator _enemyAnimator;
-        private Transform _currentTarget;
+        private SphereCollider _detectionZone;
+        private BoxCollider _damageZone;
+        private bool _isDropped = false;
 
-        private int _hp = 1;
+        [Header("Zone size")]
+        [Range(1,10)][SerializeField] float _zoneRadius = 1;
+        [SerializeField] Transform _damageZoneSetting;
 
         [Header("Particles list")]
         [SerializeField] List<ParticleSystem> _enemyParticles;
 
-        [Header("Current pick up target")]
-        public Pickable pickUpTarget;
+        [Header("Debug")]
+        [SerializeField] string currentState;
 
+        public Transform currentTarget;
 
         private void Start() => Init();
-
-        /// The enemy takes damage and check the amount of HPs
-        /// <param name="damage">Amount of damage taken by the enemy</param>
-        public void TakeDamage(int pDamage)
-        {
-            if (_hp - pDamage <= 0)
-            {
-                //dies
-                Debug.Log(gameObject.name+" is dead");
-                _enemyAnimator.SetTrigger("TakeDamage");
-            }
-
-            else
-            {
-                _hp -= pDamage;
-                _enemyAnimator.SetTrigger("TakeDamage");
-            }
-        }
 
         public IEnumerator KnockBack(Transform pOrigin)
         {
@@ -60,35 +47,122 @@ namespace hulaohyes.enemy
             }
         }
 
-        //private void Update() => _stateMachine.CurrentState.LoopLogic();
+        private void Update() => _stateMachine.CurrentState.LoopLogic();
         private void FixedUpdate()
         {
-            //_stateMachine.CurrentState.PhysLoopLogic();
-            base._rb.AddForce(Physics.gravity * _gravity, ForceMode.Acceleration);
+            currentState = _stateMachine.CurrentState.ToString();
+            _stateMachine.CurrentState.PhysLoopLogic();
+            _rb.AddForce(Physics.gravity * _gravity, ForceMode.Acceleration);
         }
 
-        public Animator EnemyAnimator => _enemyAnimator;
+        private void CreateDetectionZone()
+        {
+            _detectionZone = gameObject.AddComponent<SphereCollider>();
+            _detectionZone.radius = _zoneRadius;
+            _detectionZone.isTrigger = true;
+            _detectionZone.enabled = false;
+        }
+
+        private void CreateDamageZone()
+        {
+            _damageZone = gameObject.AddComponent<BoxCollider>();
+            _damageZone.size = _damageZoneSetting.localScale;
+            _damageZone.center = _damageZoneSetting.localPosition;
+            _damageZone.isTrigger = true;
+            _damageZone.enabled = false;
+        }
 
         protected override void Init()
         {
             base.Init();
+            isPickableState = false;
+            CreateDetectionZone();
+            CreateDamageZone();
             _navMeshAgent = GetComponent<NavMeshAgent>();
             _enemyAnimator = GetComponent<Animator>();
-            _stateMachine = new EnemyStateMachine(this, _rb, _enemyAnimator, null, _enemyParticles,_navMeshAgent);
+            _stateMachine = new EnemyStateMachine(this, _rb, _enemyAnimator, _enemyParticles,_navMeshAgent, _detectionZone, _damageZone);
             GameManager.AddEnemy(this);
+        }
 
-            _hp = MAX_HP;
+        public override void Propel()
+        {
+            _isDropped = false;
+            _stateMachine.CurrentState = _stateMachine.Thrown;
+            base.Propel();
+        }
+
+        public override void Drop()
+        {
+            _isDropped = true;
+            _stateMachine.CurrentState = _stateMachine.Thrown;
+            base.Drop();
         }
 
         override public void GetPicked(PlayerController pPlayer)
         {
-            base.GetPicked(pPlayer);
+            _stateMachine.CurrentState = _stateMachine.Carried;
+            _detectionZone.enabled = false;
             _navMeshAgent.enabled = false;
+            base.GetPicked(pPlayer);
         }
+
+        protected override void HitSomething(Collider pCollider)
+        {
+            if (isThrown)
+            {
+                base.HitSomething(pCollider);
+                destroyEnemy();
+            }
+
+            else if (pCollider.TryGetComponent<PlayerController>(out PlayerController pPlayer))
+            {
+                if (isAttacking)
+                {
+                    pPlayer.TakeDamage(1);
+                    _stateMachine.CurrentState = _stateMachine.Recovering;
+                }
+
+                else if (isIdling && currentTarget == null)
+                {
+                    currentTarget = pPlayer.transform;
+                    _stateMachine.CurrentState = _stateMachine.StartUp;
+                }
+            }
+
+            else if (_isDropped)
+            {
+                base.HitSomething(pCollider);
+                _navMeshAgent.enabled = true;
+                _navMeshAgent.velocity = Vector3.zero;
+                _stateMachine.CurrentState = _stateMachine.Idle;
+            }
+        }
+
+        private void OnTriggerExit(Collider other)
+        {
+            if (other.transform == currentTarget && isRecovering) currentTarget = null;
+        }
+
+        public Animator EnemyAnimator => _enemyAnimator;
+        private bool isThrown => _stateMachine.CurrentState == _stateMachine.Thrown && !_isDropped;
+        private bool isAttacking => _stateMachine.CurrentState == _stateMachine.Attacking;
+        private bool isIdling => _stateMachine.CurrentState == _stateMachine.Idle;
+        public bool isRecovering => _stateMachine.CurrentState == _stateMachine.Recovering;
 
         public void destroyEnemy()
         {
-            //Destructor
+            Debug.Log(gameObject.name + " is dead");
+            Destroy(gameObject, 0.5f);
+        }
+
+        protected override void OnGizmos()
+        {
+            base.OnGizmos();
+            Gizmos.matrix = Matrix4x4.TRS(transform.position, transform.rotation, transform.lossyScale);
+            Gizmos.color = Color.green;
+            Gizmos.DrawWireSphere(Vector3.zero, _zoneRadius);
+            Gizmos.color = Color.red;
+            if(_damageZoneSetting != null) Gizmos.DrawWireCube(_damageZoneSetting.localPosition, _damageZoneSetting.localScale);
         }
     }
 }

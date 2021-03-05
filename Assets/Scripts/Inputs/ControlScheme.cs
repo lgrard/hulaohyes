@@ -32,7 +32,7 @@ public class @ControlScheme : IInputActionCollection, IDisposable
                     ""id"": ""c82b1b22-ecf3-4084-88f7-7f3cc61f5072"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
-                    ""interactions"": ""Tap""
+                    ""interactions"": ""Press""
                 },
                 {
                     ""name"": ""Jump"",
@@ -40,7 +40,7 @@ public class @ControlScheme : IInputActionCollection, IDisposable
                     ""id"": ""c0e10532-0482-4cba-91b4-72a5c31719a7"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
-                    ""interactions"": """"
+                    ""interactions"": ""Press""
                 },
                 {
                     ""name"": ""Join"",
@@ -56,7 +56,7 @@ public class @ControlScheme : IInputActionCollection, IDisposable
                     ""id"": ""5aa1d712-09c4-4f6b-970f-61fc4ebf3750"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
-                    ""interactions"": """"
+                    ""interactions"": ""Press""
                 },
                 {
                     ""name"": ""Pause"",
@@ -72,7 +72,7 @@ public class @ControlScheme : IInputActionCollection, IDisposable
                     ""id"": ""7cba55b3-c243-4783-a6e1-975ad467387a"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
-                    ""interactions"": ""Tap""
+                    ""interactions"": ""Press""
                 },
                 {
                     ""name"": ""Debug_Reload"",
@@ -80,7 +80,7 @@ public class @ControlScheme : IInputActionCollection, IDisposable
                     ""id"": ""06fd18f8-0a97-4d3d-aebd-fb21c1713f52"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
-                    ""interactions"": ""Tap""
+                    ""interactions"": ""Press""
                 }
             ],
             ""bindings"": [

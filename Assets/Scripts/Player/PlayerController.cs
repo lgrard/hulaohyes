@@ -78,6 +78,7 @@ namespace hulaohyes.player
         override protected void Init()
         {
             base.Init();
+            isPickableState = false;
             _cameraContainer = CameraManager.getInstance().GetCamera(playerIndex).transform;
             _playerAnimator = GetComponent<Animator>();
             _controlScheme = new ControlScheme();
@@ -108,20 +109,14 @@ namespace hulaohyes.player
             _stateMachine.CurrentState = _stateMachine.Carried;
         }
 
-        protected override void HitSomething()
+        protected override void HitSomething(Collider pCollider)
         {
             if (isThrown)
             {
-                base.HitSomething();
+                base.HitSomething(pCollider);
                 _stateMachine.CurrentState = _stateMachine.Running;
                 _playerParticles[2].Play();
             }
-        }
-
-        protected override void HitEnemy(EnemyController pEnemy)
-        {
-            base.HitEnemy(pEnemy);
-            Effects.HitStop(_playerAnimator, pEnemy.EnemyAnimator, 0.5f, 0.1f);
         }
 
         bool isThrown => _stateMachine.CurrentState == _stateMachine.Thrown;

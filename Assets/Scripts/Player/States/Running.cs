@@ -41,13 +41,14 @@ namespace hulaohyes.player.states
             Ray lFrontRay = new Ray(_player.transform.position+_targettingOffset,_player.transform.forward);
             RaycastHit hit;
 
-            if (Physics.Raycast(lFrontRay,out hit, _player.PICK_UP_DISTANCE, _pickableLayers) && hit.collider.gameObject != _player)                 //const to change
+            if (Physics.Raycast(lFrontRay,out hit, _player.PICK_UP_DISTANCE, _pickableLayers)                   //const to change
+                && hit.collider.gameObject != _player
+                && !hit.collider.isTrigger)
             {
-                if (hit.collider.TryGetComponent<Pickable>(out Pickable pickableTarget) && pickableTarget != _player.pickUpTarget && pickableTarget.isPickable)
-                {
+                if (hit.collider.TryGetComponent<Pickable>(out Pickable pickableTarget)
+                    && pickableTarget != _player.pickUpTarget
+                    && pickableTarget.isPickable)
                     _player.pickUpTarget = pickableTarget;
-                    Debug.Log("Current target: " + _player.pickUpTarget.gameObject.name);
-                }
 
                 else if (hit.collider.TryGetComponent<UnitCubeSpawner>(out UnitCubeSpawner pSpawner)) _currentSpawner = pSpawner;
             }
@@ -55,10 +56,7 @@ namespace hulaohyes.player.states
             else if(hit.collider == null)
             {
                 if(_player.pickUpTarget != null)
-                {
                     _player.pickUpTarget = null;
-                    Debug.Log("Current target: null");
-                }
 
                 else if(_currentSpawner != null)
                 {
@@ -71,6 +69,7 @@ namespace hulaohyes.player.states
         {
             base.OnEnter();
             base._controlScheme.Player.PickUp.performed += OnPickup;
+            _player.isPickableState = true;
         }
 
         public override void PhysLoopLogic()
@@ -84,6 +83,7 @@ namespace hulaohyes.player.states
         {
             base.OnExit();
             base._controlScheme.Player.PickUp.performed -= OnPickup;
+            _player.isPickableState = false;
         }
     }
 }
