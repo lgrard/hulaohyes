@@ -9,17 +9,12 @@ public class Carried : Wait
 {
     public Carried(EnemyStateMachine pStateMachine, EnemyController pEnemy, Animator pAnimator)
         : base(pStateMachine, pEnemy, pAnimator)
-    { MAX_TIMER = 10f; }
+    { MAX_TIMER = 5f; }
 
-    public override void OnEnter()
-    {
-        base.OnEnter();
-    }
 
     protected override void TimerEnd()
     {
         base.TimerEnd();
-        _stateMachine.CurrentState = _stateMachine.Idle;
         _enemy.Drop();
     }
 

@@ -13,6 +13,7 @@ namespace hulaohyes.enemy.states
         private Idle _idle;
         private Recovering _recovering;
         private Thrown _thrown;
+        private StartUp _startUp;
 
         ///Create a new state machine object
         /// <param name="pEnemy">Associated player controller</param>
@@ -22,13 +23,14 @@ namespace hulaohyes.enemy.states
         /// <param name="pParticles">Associated particles list</param>
         /// <param name="pNavMeshAgent">Associated NavMesh agent</param>
         public EnemyStateMachine(EnemyController pEnemy, Rigidbody pRb,
-            Animator pAnimator, List<ParticleSystem> pParticles, NavMeshAgent pNavMeshAgent)
+            Animator pAnimator, List<ParticleSystem> pParticles, NavMeshAgent pNavMeshAgent, SphereCollider pDetectionZone, BoxCollider pDamageZone)
         {
             _carried = new Carried(this, pEnemy, pAnimator);
-            _attacking = new Attacking(this, pEnemy, pAnimator, pNavMeshAgent);
-            _idle = new Idle(this, pEnemy, pAnimator);
+            _attacking = new Attacking(this, pEnemy, pAnimator, pNavMeshAgent, pDamageZone);
+            _idle = new Idle(this, pEnemy, pAnimator, pDetectionZone);
             _thrown = new Thrown(this, pEnemy, pAnimator);
             _recovering = new Recovering(this, pEnemy, pAnimator);
+            _startUp = new StartUp(this, pEnemy, pAnimator, pNavMeshAgent);
             CurrentState = _idle;
         }
 
@@ -37,6 +39,7 @@ namespace hulaohyes.enemy.states
         public Idle Idle => _idle;
         public Recovering Recovering => _recovering;
         public Thrown Thrown => _thrown;
+        public StartUp StartUp => _startUp;
     }
 }
 

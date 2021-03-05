@@ -13,6 +13,7 @@ namespace hulaohyes.levelbrick.door
         private UnitCube _currentUnitCube;
         private PlayerController _currentPlayer;
         private int _currentUnits;
+        private LayerMask _collisionLayer;
 
         [Range(1,2)][SerializeField] int _maxUnit = 2;
         [Tooltip("Where will the unit cube will magnet")]
@@ -22,7 +23,11 @@ namespace hulaohyes.levelbrick.door
         [Tooltip("Are the gizmos drawing fo this object")]
         [SerializeField] bool _drawGizmos;
 
-        void Start() => CreateTrigger();
+        void Start()
+        {
+            _collisionLayer = LayerMask.GetMask("Player", "Bricks");
+            CreateTrigger();
+        }
 
         void CreateTrigger()
         {
@@ -43,22 +48,25 @@ namespace hulaohyes.levelbrick.door
 
         private void OnTriggerEnter(Collider other)
         {
-            if (_currentUnits >= _maxUnit) return;
-
-            if(other.TryGetComponent<UnitCube>(out UnitCube pCube))
+            if ((_collisionLayer & 1 << other.gameObject.layer) == 1 << other.gameObject.layer)
             {
-                if (_currentUnitCube == null) MagnetCube(pCube);
-                else return;
-            }
+                if (_currentUnits >= _maxUnit) return;
 
-            else if (other.TryGetComponent<PlayerController>(out PlayerController pPlayer))
-            {
-                if (_currentPlayer == null) _currentPlayer = pPlayer;
-                else return;
-            }
+                if(other.TryGetComponent<UnitCube>(out UnitCube pCube))
+                {
+                    if (_currentUnitCube == null) MagnetCube(pCube);
+                    else return;
+                }
 
-            _currentUnits += 1;
-            _doorManager.SetUnit(1);
+                else if (other.TryGetComponent<PlayerController>(out PlayerController pPlayer))
+                {
+                    if (_currentPlayer == null) _currentPlayer = pPlayer;
+                    else return;
+                }
+
+                _currentUnits += 1;
+                _doorManager.SetUnit(1);
+            }
         }
 
         private void OnTriggerExit(Collider other)

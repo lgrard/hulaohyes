@@ -29,10 +29,13 @@ public class Pickable : MonoBehaviour
     [Range(0, 10)] public float GRAVITY_AMOUNT_RISE = 2f;                                                                                           //const to change
     [Range(0, 10)] public float GRAVITY_AMOUNT_FALL = 4f;                                                                                           //const to change
                                       
-
     [SerializeField] bool _drawGizmos = true;
 
-    public bool isPickable => _currentPicker == null;
+    [HideInInspector]
+    public bool isPickableState = true;
+
+    public bool isPickable =>_currentPicker == null && isPickableState;
+
     protected float _gravity => (_rb.velocity.y < 0) ? GRAVITY_AMOUNT_FALL : GRAVITY_AMOUNT_RISE;
 
 
@@ -72,16 +75,16 @@ public class Pickable : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         if ((_collisionLayer & 1 << other.gameObject.layer) == 1 << other.gameObject.layer
-            && !other.isTrigger
-            && other.gameObject.TryGetComponent<PlayerController>(out PlayerController pPlayer) != _currentPicker)
+            && other.gameObject.TryGetComponent<PlayerController>(out PlayerController pPlayer) != _currentPicker
+            && !other.isTrigger)
         {
-            HitSomething();
+            HitSomething(other);
             if (other.gameObject.TryGetComponent<EnemyController>(out EnemyController pEnemy)
                 && gameObject != pEnemy.gameObject) pEnemy.destroyEnemy();
         }
     }
 
-    protected virtual void HitSomething()
+    protected virtual void HitSomething(Collider pCollider)
     {
         _currentPicker = null;
         _rb.velocity = Vector3.zero;

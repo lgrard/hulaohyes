@@ -45,6 +45,7 @@ namespace hulaohyes.player.states
             base._controlScheme.Player.Punch.performed += OnThrowTarget;
             _animator.SetBool("Carrying", true);
             _animator.ResetTrigger("Throw");
+            _player.isPickableState = true;
         }
 
         public override void OnExit()
@@ -54,6 +55,7 @@ namespace hulaohyes.player.states
             base._controlScheme.Player.Punch.performed -= OnThrowTarget;
             _animator.SetBool("Carrying", false);
             _animator.ResetTrigger("Throw");
+            _player.isPickableState = false;
         }
     }
 }

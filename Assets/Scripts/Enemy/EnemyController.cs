@@ -17,13 +17,19 @@ namespace hulaohyes.enemy
         private EnemyStateMachine _stateMachine;
         private Animator _enemyAnimator;
         private SphereCollider _detectionZone;
+        private BoxCollider _damageZone;
+        private bool _isDropped = false;
 
         [Header("Zone size")]
         [Range(1,10)][SerializeField] float _zoneRadius = 1;
+        [SerializeField] Transform _damageZoneSetting;
 
         [Header("Particles list")]
         [SerializeField] List<ParticleSystem> _enemyParticles;
-        
+
+        [Header("Debug")]
+        [SerializeField] string currentState;
+
         public Transform currentTarget;
 
         private void Start() => Init();
@@ -44,33 +50,52 @@ namespace hulaohyes.enemy
         private void Update() => _stateMachine.CurrentState.LoopLogic();
         private void FixedUpdate()
         {
+            currentState = _stateMachine.CurrentState.ToString();
             _stateMachine.CurrentState.PhysLoopLogic();
             _rb.AddForce(Physics.gravity * _gravity, ForceMode.Acceleration);
         }
 
-        public Animator EnemyAnimator => _enemyAnimator;
-
-        private void CreateZone()
+        private void CreateDetectionZone()
         {
             _detectionZone = gameObject.AddComponent<SphereCollider>();
             _detectionZone.radius = _zoneRadius;
             _detectionZone.isTrigger = true;
+            _detectionZone.enabled = false;
+        }
+
+        private void CreateDamageZone()
+        {
+            _damageZone = gameObject.AddComponent<BoxCollider>();
+            _damageZone.size = _damageZoneSetting.localScale;
+            _damageZone.center = _damageZoneSetting.localPosition;
+            _damageZone.isTrigger = true;
+            _damageZone.enabled = false;
         }
 
         protected override void Init()
         {
             base.Init();
+            isPickableState = false;
+            CreateDetectionZone();
+            CreateDamageZone();
             _navMeshAgent = GetComponent<NavMeshAgent>();
             _enemyAnimator = GetComponent<Animator>();
-            _stateMachine = new EnemyStateMachine(this, _rb, _enemyAnimator, _enemyParticles,_navMeshAgent);
-            CreateZone();
+            _stateMachine = new EnemyStateMachine(this, _rb, _enemyAnimator, _enemyParticles,_navMeshAgent, _detectionZone, _damageZone);
             GameManager.AddEnemy(this);
         }
 
         public override void Propel()
         {
+            _isDropped = false;
             _stateMachine.CurrentState = _stateMachine.Thrown;
             base.Propel();
+        }
+
+        public override void Drop()
+        {
+            _isDropped = true;
+            _stateMachine.CurrentState = _stateMachine.Thrown;
+            base.Drop();
         }
 
         override public void GetPicked(PlayerController pPlayer)
@@ -81,39 +106,63 @@ namespace hulaohyes.enemy
             base.GetPicked(pPlayer);
         }
 
-        protected override void HitSomething()
+        protected override void HitSomething(Collider pCollider)
         {
-            if(_stateMachine.CurrentState == _stateMachine.Thrown)
+            if (isThrown)
             {
-                base.HitSomething();
+                base.HitSomething(pCollider);
                 destroyEnemy();
             }
-        }
 
-        /*private void OnTriggerEnter(Collider other)
-        {
-            if(currentTarget == null && other.TryGetComponent<PlayerController>(out PlayerController pPlayer)
-                && _stateMachine.CurrentState != _stateMachine.Carried)
+            else if (pCollider.TryGetComponent<PlayerController>(out PlayerController pPlayer))
             {
-                currentTarget = pPlayer.transform;
-                _stateMachine.CurrentState = _stateMachine.Attacking;
+                if (isAttacking)
+                {
+                    pPlayer.TakeDamage(1);
+                    _stateMachine.CurrentState = _stateMachine.Recovering;
+                }
+
+                else if (isIdling && currentTarget == null)
+                {
+                    currentTarget = pPlayer.transform;
+                    _stateMachine.CurrentState = _stateMachine.StartUp;
+                }
             }
-        }*/
+
+            else if (_isDropped)
+            {
+                base.HitSomething(pCollider);
+                _navMeshAgent.enabled = true;
+                _navMeshAgent.velocity = Vector3.zero;
+                _stateMachine.CurrentState = _stateMachine.Idle;
+            }
+        }
 
         private void OnTriggerExit(Collider other)
         {
-            if (other.transform == currentTarget)
-            {
-                _stateMachine.CurrentState = _stateMachine.Idle;
-                currentTarget = null;
-            }
+            if (other.transform == currentTarget && isRecovering) currentTarget = null;
         }
+
+        public Animator EnemyAnimator => _enemyAnimator;
+        private bool isThrown => _stateMachine.CurrentState == _stateMachine.Thrown && !_isDropped;
+        private bool isAttacking => _stateMachine.CurrentState == _stateMachine.Attacking;
+        private bool isIdling => _stateMachine.CurrentState == _stateMachine.Idle;
+        public bool isRecovering => _stateMachine.CurrentState == _stateMachine.Recovering;
 
         public void destroyEnemy()
         {
             Debug.Log(gameObject.name + " is dead");
-            _rb.isKinematic = true;
             Destroy(gameObject, 0.5f);
+        }
+
+        protected override void OnGizmos()
+        {
+            base.OnGizmos();
+            Gizmos.matrix = Matrix4x4.TRS(transform.position, transform.rotation, transform.lossyScale);
+            Gizmos.color = Color.green;
+            Gizmos.DrawWireSphere(Vector3.zero, _zoneRadius);
+            Gizmos.color = Color.red;
+            if(_damageZoneSetting != null) Gizmos.DrawWireCube(_damageZoneSetting.localPosition, _damageZoneSetting.localScale);
         }
     }
 }

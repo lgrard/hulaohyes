@@ -16,4 +16,15 @@ public class Recovering : Wait
         _stateMachine.CurrentState = _stateMachine.Idle;
     }
 
+    public override void OnEnter()
+    {
+        base.OnEnter();
+        _enemy.isPickableState = true;
+    }
+
+    public override void OnExit()
+    {
+        base.OnExit();
+        _enemy.isPickableState = false;
+    }
 }
