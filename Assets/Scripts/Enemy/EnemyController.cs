@@ -16,7 +16,6 @@ namespace hulaohyes.enemy
         private Animator _enemyAnimator;
         private SphereCollider _detectionZone;
         private BoxCollider _damageZone;
-        private bool _isDropped = false;
 
         [Header("Zone size")]
         [Range(1,10)][SerializeField] float _zoneRadius = 1;
@@ -136,6 +135,8 @@ namespace hulaohyes.enemy
 
         public void destroyEnemy()
         {
+            _enemyAnimator.SetTrigger("TakeDamage");
+            _rb.isKinematic = true;
             Debug.Log(gameObject.name + " is dead");
             Destroy(gameObject, 0.5f);
         }

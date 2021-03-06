@@ -19,25 +19,7 @@ namespace hulaohyes.enemy.states
 
         private void PlayerCheck()
         {
-            Transform lNearestTarget = null;
-            float lNearestDistance = 0;
-
-            foreach (Collider lTarget in Physics.OverlapSphere(_enemy.transform.position, _detectionZone.radius, _playerLayer))
-            {
-                Debug.Log(lTarget.gameObject.name + "is in range");
-
-                float lTargetDistance = Vector3.Distance(_enemy.transform.position, lTarget.transform.position);
-
-                if (lNearestTarget == null)
-                {
-                    lNearestTarget = lTarget.transform;
-                    lNearestDistance = lTargetDistance;
-                }
-                else if (lNearestTarget != null && lTargetDistance < lNearestDistance) lNearestTarget = lTarget.transform;
-            }
-
-            _enemy.currentTarget = lNearestTarget;
-
+            _enemy.currentTarget = Utility.GetClosestTarget(_enemy.transform, Physics.OverlapSphere(_enemy.transform.position, _detectionZone.radius, _playerLayer));
             if(_enemy.currentTarget != null)_stateMachine.CurrentState = _stateMachine.StartUp;
         }
 

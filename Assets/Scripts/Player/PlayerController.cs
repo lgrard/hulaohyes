@@ -132,7 +132,6 @@ namespace hulaohyes.player
             {
                 base.HitSomething(pCollider);
                 _stateMachine.CurrentState = _stateMachine.Running;
-                _playerParticles[2].Play();
             }
         }
 
