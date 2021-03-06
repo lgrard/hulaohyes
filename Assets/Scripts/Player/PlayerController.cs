@@ -5,13 +5,14 @@ using UnityEngine.InputSystem;
 using hulaohyes.player.states;
 using hulaohyes.inputs;
 using hulaohyes.camera;
-using hulaohyes.enemy;
-using hulaohyes.effects;
 
 namespace hulaohyes.player
 {
     public class PlayerController : Pickable
     {
+        const float KNOCK_BACK_AMOUNT = 0.3f;
+        const float KNOCK_BACK_TIME = 0.1f;
+
         private GameManager _gameManager;
         private Animator _playerAnimator;
         private PlayerStateMachine _stateMachine;
@@ -52,7 +53,7 @@ namespace hulaohyes.player
 
         /// The player takes a certain amount of damage
         /// <param name="pDamage"> Amount of damage taken </param>
-        public void TakeDamage(int pDamage)
+        public void TakeDamage(int pDamage, Transform pDealer)
         {
             _hp -= pDamage;
             if (_hp >= 0 && _stateMachine.CurrentState == _stateMachine.Carrying)
@@ -60,6 +61,7 @@ namespace hulaohyes.player
 
             else if (_hp >= 0 && _stateMachine.CurrentState != _stateMachine.Carrying && _stateMachine.CurrentState != _stateMachine.Carried)
             {
+                StartCoroutine(KnockBack(pDealer));
                 _playerAnimator.SetTrigger("TakeDamage");
                 _stateMachine.CurrentState = _stateMachine.Wait;
             }
@@ -67,6 +69,21 @@ namespace hulaohyes.player
             else if (_hp <= 0)
                 _stateMachine.CurrentState = _stateMachine.Downed;
         }
+
+        private IEnumerator KnockBack(Transform pOrigin)
+        {
+            float lTimeStamp = KNOCK_BACK_TIME;
+            Vector3 lFirstPosition = transform.position;
+            Vector3 lKnockBackDestination = transform.position + (pOrigin.forward * KNOCK_BACK_AMOUNT);
+            transform.rotation = Quaternion.LookRotation(pOrigin.position- transform.position, Vector3.up);
+            while (lTimeStamp > 0)
+            {
+                transform.position = Vector3.Lerp(lKnockBackDestination, lFirstPosition, lTimeStamp / KNOCK_BACK_TIME);
+                lTimeStamp -= Time.deltaTime;
+                yield return new WaitForEndOfFrame();
+            }
+        }
+
 
         public void SetPlayerDevice()
         {

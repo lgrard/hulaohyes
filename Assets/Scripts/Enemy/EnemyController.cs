@@ -10,8 +10,6 @@ namespace hulaohyes.enemy
     public class EnemyController : Pickable
     {
         const int MAX_HP = 10;
-        const float KNOCK_BACK_AMOUNT = 0.3f;
-        const float KNOCK_BACK_TIME = 0.1f;
 
         private NavMeshAgent _navMeshAgent;
         private EnemyStateMachine _stateMachine;
@@ -33,19 +31,6 @@ namespace hulaohyes.enemy
         public Transform currentTarget;
 
         private void Start() => Init();
-
-        public IEnumerator KnockBack(Transform pOrigin)
-        {
-            float lTimeStamp = KNOCK_BACK_TIME;
-            Vector3 lFirstPosition = transform.position;
-            Vector3 lKnockBackDestination = transform.position + (pOrigin.forward * KNOCK_BACK_AMOUNT);
-            while (lTimeStamp > 0)
-            {
-                transform.position = Vector3.Lerp(lKnockBackDestination, lFirstPosition, lTimeStamp/ KNOCK_BACK_TIME);
-                lTimeStamp -= Time.deltaTime;
-                yield return new WaitForEndOfFrame();
-            }
-        }
 
         private void Update() => _stateMachine.CurrentState.LoopLogic();
         private void FixedUpdate()
@@ -118,7 +103,7 @@ namespace hulaohyes.enemy
             {
                 if (isAttacking)
                 {
-                    pPlayer.TakeDamage(1);
+                    pPlayer.TakeDamage(1, transform);
                     _stateMachine.CurrentState = _stateMachine.Recovering;
                 }
 

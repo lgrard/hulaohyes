@@ -38,19 +38,21 @@ namespace hulaohyes.enemy.states
 
             _enemy.currentTarget = lNearestTarget;
 
-            if(_enemy.currentTarget != null) _stateMachine.CurrentState = _stateMachine.StartUp;
+            if(_enemy.currentTarget != null)_stateMachine.CurrentState = _stateMachine.StartUp;
         }
 
         public override void OnEnter()
         {
+            Debug.Log("Enter Idle");
             base.OnEnter();
-            PlayerCheck();
             _detectionZone.enabled = true;
+            PlayerCheck();
         }
 
         public override void OnExit()
         {
-            base.OnEnter();
+            Debug.Log("Exit Idle");
+            base.OnExit();
             _detectionZone.enabled = false;
         }
     }
