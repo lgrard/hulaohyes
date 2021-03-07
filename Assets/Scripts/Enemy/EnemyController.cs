@@ -9,43 +9,24 @@ namespace hulaohyes.enemy
 {
     public class EnemyController : Pickable
     {
-        const int MAX_HP = 10;
-        const float KNOCK_BACK_AMOUNT = 0.3f;
-        const float KNOCK_BACK_TIME = 0.1f;
-
-        private NavMeshAgent _navMeshAgent;
-        private EnemyStateMachine _stateMachine;
-        private Animator _enemyAnimator;
-        private SphereCollider _detectionZone;
-        private BoxCollider _damageZone;
-        private bool _isDropped = false;
+        protected NavMeshAgent _navMeshAgent;
+        protected EnemyStateMachine _stateMachine;
+        protected Animator _enemyAnimator;
+        protected SphereCollider _detectionZone;
 
         [Header("Zone size")]
         [Range(1,10)][SerializeField] float _zoneRadius = 1;
-        [SerializeField] Transform _damageZoneSetting;
 
         [Header("Particles list")]
-        [SerializeField] List<ParticleSystem> _enemyParticles;
+        [SerializeField] protected List<ParticleSystem> _enemyParticles;
 
         [Header("Debug")]
         [SerializeField] string currentState;
 
+        [HideInInspector]
         public Transform currentTarget;
 
         private void Start() => Init();
-
-        public IEnumerator KnockBack(Transform pOrigin)
-        {
-            float lTimeStamp = KNOCK_BACK_TIME;
-            Vector3 lFirstPosition = transform.position;
-            Vector3 lKnockBackDestination = transform.position + (pOrigin.forward * KNOCK_BACK_AMOUNT);
-            while (lTimeStamp > 0)
-            {
-                transform.position = Vector3.Lerp(lKnockBackDestination, lFirstPosition, lTimeStamp/ KNOCK_BACK_TIME);
-                lTimeStamp -= Time.deltaTime;
-                yield return new WaitForEndOfFrame();
-            }
-        }
 
         private void Update() => _stateMachine.CurrentState.LoopLogic();
         private void FixedUpdate()
@@ -63,24 +44,13 @@ namespace hulaohyes.enemy
             _detectionZone.enabled = false;
         }
 
-        private void CreateDamageZone()
-        {
-            _damageZone = gameObject.AddComponent<BoxCollider>();
-            _damageZone.size = _damageZoneSetting.localScale;
-            _damageZone.center = _damageZoneSetting.localPosition;
-            _damageZone.isTrigger = true;
-            _damageZone.enabled = false;
-        }
-
         protected override void Init()
         {
             base.Init();
             isPickableState = false;
             CreateDetectionZone();
-            CreateDamageZone();
             _navMeshAgent = GetComponent<NavMeshAgent>();
             _enemyAnimator = GetComponent<Animator>();
-            _stateMachine = new EnemyStateMachine(this, _rb, _enemyAnimator, _enemyParticles,_navMeshAgent, _detectionZone, _damageZone);
             GameManager.AddEnemy(this);
         }
 
@@ -114,11 +84,18 @@ namespace hulaohyes.enemy
                 destroyEnemy();
             }
 
+            else if (isDropped)
+            {
+                base.HitSomething(pCollider);
+                _navMeshAgent.enabled = true;
+                _stateMachine.CurrentState = _stateMachine.Idle;
+            }
+
             else if (pCollider.TryGetComponent<PlayerController>(out PlayerController pPlayer))
             {
                 if (isAttacking)
                 {
-                    pPlayer.TakeDamage(1);
+                    pPlayer.TakeDamage(1, transform);
                     _stateMachine.CurrentState = _stateMachine.Recovering;
                 }
 
@@ -127,14 +104,6 @@ namespace hulaohyes.enemy
                     currentTarget = pPlayer.transform;
                     _stateMachine.CurrentState = _stateMachine.StartUp;
                 }
-            }
-
-            else if (_isDropped)
-            {
-                base.HitSomething(pCollider);
-                _navMeshAgent.enabled = true;
-                _navMeshAgent.velocity = Vector3.zero;
-                _stateMachine.CurrentState = _stateMachine.Idle;
             }
         }
 
@@ -145,12 +114,16 @@ namespace hulaohyes.enemy
 
         public Animator EnemyAnimator => _enemyAnimator;
         private bool isThrown => _stateMachine.CurrentState == _stateMachine.Thrown && !_isDropped;
-        private bool isAttacking => _stateMachine.CurrentState == _stateMachine.Attacking;
+        private bool isDropped => _stateMachine.CurrentState == _stateMachine.Thrown && _isDropped;
         private bool isIdling => _stateMachine.CurrentState == _stateMachine.Idle;
         public bool isRecovering => _stateMachine.CurrentState == _stateMachine.Recovering;
+        private bool isAttacking => _stateMachine.CurrentState == _stateMachine.Attacking;
+
 
         public void destroyEnemy()
         {
+            _enemyAnimator.SetTrigger("TakeDamage");
+            _rb.isKinematic = true;
             Debug.Log(gameObject.name + " is dead");
             Destroy(gameObject, 0.5f);
         }
@@ -161,8 +134,6 @@ namespace hulaohyes.enemy
             Gizmos.matrix = Matrix4x4.TRS(transform.position, transform.rotation, transform.lossyScale);
             Gizmos.color = Color.green;
             Gizmos.DrawWireSphere(Vector3.zero, _zoneRadius);
-            Gizmos.color = Color.red;
-            if(_damageZoneSetting != null) Gizmos.DrawWireCube(_damageZoneSetting.localPosition, _damageZoneSetting.localScale);
         }
     }
 }

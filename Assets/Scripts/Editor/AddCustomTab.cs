@@ -5,11 +5,14 @@ using hulaohyes.levelbrick.door;
 
 public class AddCustomTab : MonoBehaviour
 {
-    [MenuItem("HulaOhYes/Player")] static void newPlayer() => newItemFromPrefab("Prefabs/Player");
+    [MenuItem("HulaOhYes/Player/0")] static void newPlayer0() => newItemFromPrefab("Prefabs/Player_0");
+    [MenuItem("HulaOhYes/Player/1")] static void newPlayer1() => newItemFromPrefab("Prefabs/Player_1");
     [MenuItem("HulaOhYes/Managers/GameManager")] static void newGameManager() => newItemFromPrefab("Prefabs/Managers/GameManager");
     [MenuItem("HulaOhYes/Managers/CameraManager")] static void newCameraManager() => newItemFromPrefab("Prefabs/Managers/CameraManager");
     [MenuItem("HulaOhYes/Cameras/Look At Camera")] static void newLookAtCamera() => newItemFromPrefab("Prefabs/Cameras/LookAtCamera");
     [MenuItem("HulaOhYes/Cameras/Angled Camera")] static void newAngledCamera() => newItemFromPrefab("Prefabs/Cameras/AngledCamera");
+    [MenuItem("HulaOhYes/Enemy/Walker")] static void newEnemyWalker() => newItemFromPrefab("Prefabs/Enemy/Enemy_Walker");
+    [MenuItem("HulaOhYes/Enemy/Turret")] static void newEnemyTurret() => newItemFromPrefab("Prefabs/Enemy/Enemy_Turret");
     [MenuItem("HulaOhYes/Bricks/Unit Cube Spawner")] static void newUnitCubeSpawner() => newItemFromPrefab("Prefabs/Bricks/UnitCubeSpawner");
     [MenuItem("HulaOhYes/Bricks/Door Group")] static void newDoorGroup()
     {
@@ -36,7 +39,6 @@ public class AddCustomTab : MonoBehaviour
 
         else lDebugToolObject.AddComponent<InputDebugTool>();
     }
-
 
     static GameObject newItemFromPrefab(string pFilePath)
     {

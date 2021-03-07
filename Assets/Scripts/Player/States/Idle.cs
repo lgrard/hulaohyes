@@ -58,10 +58,8 @@ namespace hulaohyes.player.states
 
         private void CameraDirection()
         {
-            float lAngleOffset = _cameraContainer.transform.eulerAngles.x * DEG2RAD;
-            Vector3 lDirOffset = new Vector3(0, Mathf.Sin(lAngleOffset), Mathf.Cos(lAngleOffset));
-
-            _camForward = _cameraContainer.transform.forward + lDirOffset;
+            Vector3 lPreCamForward = _cameraContainer.transform.forward;
+            _camForward = Quaternion.AngleAxis(-_cameraContainer.eulerAngles.x, _cameraContainer.right) * _cameraContainer.transform.forward;
             _camRight = _cameraContainer.transform.right;
         }
 
@@ -80,6 +78,7 @@ namespace hulaohyes.player.states
             if (isGrounded)
             {
                 _particles[0].Play();
+                _animator.ResetTrigger("Jump");
                 _animator.SetTrigger("Jump");
                 Vector3 upDir = new Vector3(0, _player.JUMP_HEIGHT, 0);                                                                             //const to change
                 _rb.velocity = upDir;

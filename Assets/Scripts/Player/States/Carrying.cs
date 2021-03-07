@@ -41,8 +41,8 @@ namespace hulaohyes.player.states
         {
             base.OnEnter();
             PickUpTarget();
-            base._controlScheme.Player.PickUp.performed += OnDropTarget;
-            base._controlScheme.Player.Punch.performed += OnThrowTarget;
+            base._controlScheme.Player.Drop.performed += OnDropTarget;
+            base._controlScheme.Player.PickUp.performed += OnThrowTarget;
             _animator.SetBool("Carrying", true);
             _animator.ResetTrigger("Throw");
             _player.isPickableState = true;
@@ -51,8 +51,8 @@ namespace hulaohyes.player.states
         public override void OnExit()
         {
             base.OnExit();
-            base._controlScheme.Player.PickUp.performed -= OnDropTarget;
-            base._controlScheme.Player.Punch.performed -= OnThrowTarget;
+            base._controlScheme.Player.Drop.performed -= OnDropTarget;
+            base._controlScheme.Player.PickUp.performed -= OnThrowTarget;
             _animator.SetBool("Carrying", false);
             _animator.ResetTrigger("Throw");
             _player.isPickableState = false;

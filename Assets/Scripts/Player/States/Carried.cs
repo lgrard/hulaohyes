@@ -46,7 +46,7 @@ namespace hulaohyes.player.states
             _animator.SetBool("Carried", true);
             _controlScheme.Player.Jump.performed += OnJump;
             _controlScheme.Player.PickUp.performed += OnDrop;
-            _controlScheme.Player.Punch.performed += OnDrop;
+            _controlScheme.Player.Drop.performed += OnDrop;
         }
 
         public override void OnExit()
@@ -55,7 +55,7 @@ namespace hulaohyes.player.states
             _animator.SetBool("Carried", false);
             _controlScheme.Player.Jump.performed -= OnJump;
             _controlScheme.Player.PickUp.performed -= OnDrop;
-            _controlScheme.Player.Punch.performed -= OnDrop;
+            _controlScheme.Player.Drop.performed -= OnDrop;
         }
     }
 }

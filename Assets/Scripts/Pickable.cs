@@ -21,6 +21,7 @@ public class Pickable : MonoBehaviour
     protected private PlayerController _currentPicker = null;
     protected private Rigidbody _rb;
     protected private Collider _collider;
+    protected bool _isDropped = false;
 
     [Range(1, 30)] public float THROW_FORCE = 20f;                                                                                                  //const to change
     [Range(1, 30)] public float DROP_FORCE = 9f;                                                                                                    //const to change
@@ -28,7 +29,9 @@ public class Pickable : MonoBehaviour
     [Range(0, 90)] public float DROP_ANGLE_OFFSET = 10f;                                                                                            //const to change
     [Range(0, 10)] public float GRAVITY_AMOUNT_RISE = 2f;                                                                                           //const to change
     [Range(0, 10)] public float GRAVITY_AMOUNT_FALL = 4f;                                                                                           //const to change
-                                      
+    [SerializeField] Vector3 _proprelZoneCheck;                                  
+    [SerializeField] ParticleSystem _impactParticles;
+
     [SerializeField] bool _drawGizmos = true;
 
     [HideInInspector]
@@ -48,8 +51,18 @@ public class Pickable : MonoBehaviour
         _collisionLayer = LayerMask.GetMask("Enemy","Player","KillZone","Default","Bricks","Ground");
     }
 
-    public virtual void Propel() => GetDropped(THROW_FORCE, THROW_ANGLE_OFFSET);
-    public virtual void Drop() => GetDropped(DROP_FORCE, DROP_ANGLE_OFFSET);
+    public virtual void Propel()
+    {
+        _isDropped = false;
+        Vector3 lPropelPos = transform.position + (transform.forward * _proprelZoneCheck.z) - new Vector3(0, 0.5f, 0); ;
+        Transform lTarget = Utility.GetClosestTarget(transform, Physics.OverlapBox(lPropelPos, _proprelZoneCheck, transform.rotation, LayerMask.GetMask("Enemy")));
+        GetDropped(THROW_FORCE, THROW_ANGLE_OFFSET, lTarget);
+    }
+    public virtual void Drop()
+    {
+        _isDropped = true;
+        GetDropped(DROP_FORCE, DROP_ANGLE_OFFSET);
+    }
 
     public virtual void GetPicked(PlayerController pPicker)
     {
@@ -62,13 +75,18 @@ public class Pickable : MonoBehaviour
         _collider.isTrigger = true;
     }
 
-    private void GetDropped(float pDropForce, float pAngleOffset)
+    private void GetDropped(float pDropForce, float pAngleOffset, Transform pTarget = null)
     {
-        Vector3 lDiretionOffset = new Vector3(0, Mathf.Sin(pAngleOffset*DEG2RAD), 0);
+        Vector3 lDiretionOffset = new Vector3(0, Mathf.Sin(pAngleOffset * DEG2RAD), 0);
+        Vector3 lForwardDirection = transform.forward;
+
+        if (pTarget != null)
+            lForwardDirection = ((pTarget.position+ new Vector3(0,1f,0)) - transform.position).normalized;
+
         _currentPicker.DropTarget();
         transform.parent = null;
         _rb.isKinematic = false;
-        _forwardVelocity = (transform.forward + lDiretionOffset) * pDropForce;
+        _forwardVelocity = (lForwardDirection + lDiretionOffset) * pDropForce;
         _rb.velocity = _forwardVelocity;
     }
 
@@ -80,7 +98,12 @@ public class Pickable : MonoBehaviour
         {
             HitSomething(other);
             if (other.gameObject.TryGetComponent<EnemyController>(out EnemyController pEnemy)
-                && gameObject != pEnemy.gameObject) pEnemy.destroyEnemy();
+                && gameObject != pEnemy.gameObject
+                && !_isDropped)
+            {
+                if(_impactParticles != null)_impactParticles.Play();
+                pEnemy.destroyEnemy();
+            }
         }
     }
 
@@ -92,9 +115,14 @@ public class Pickable : MonoBehaviour
     }
 
     protected virtual void OnGizmos()
-    {
-        if(_currentPicker != null)
+    {        
+        if (_currentPicker != null)
         {
+            Gizmos.matrix = Matrix4x4.TRS(transform.position, transform.rotation, transform.lossyScale);
+            Vector3 lPropelPos = new Vector3(0, 0, _proprelZoneCheck.z) - new Vector3(0, 0.5f, 0);
+            Gizmos.DrawWireCube(lPropelPos, _proprelZoneCheck*2);
+            Gizmos.matrix = Matrix4x4.zero;
+
             Gizmos.color = Color.red;
             Vector3 lDiretionOffsetThrow = new Vector3(0, Mathf.Sin(THROW_ANGLE_OFFSET * DEG2RAD), 0);
             Gizmos.DrawLine(transform.position, transform.position+(transform.forward + lDiretionOffsetThrow) * 5);
