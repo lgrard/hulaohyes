@@ -20,11 +20,13 @@ public class Recovering : Wait
     {
         base.OnEnter();
         _enemy.isPickableState = true;
+        _animator.SetBool("isRecovering", true);
     }
 
     public override void OnExit()
     {
         base.OnExit();
         _enemy.isPickableState = false;
+        _animator.SetBool("isRecovering", false);
     }
 }

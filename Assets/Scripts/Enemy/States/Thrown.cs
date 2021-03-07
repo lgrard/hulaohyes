@@ -14,4 +14,16 @@ public class Thrown : Wait
         base.TimerEnd();
         _enemy.destroyEnemy();
     }
+
+    public override void OnEnter()
+    {
+        base.OnEnter();
+        _animator.SetBool("Thrown", true);
+    }
+
+    public override void OnExit()
+    {
+        base.OnExit();
+        _animator.SetBool("Thrown", false);
+    }
 }

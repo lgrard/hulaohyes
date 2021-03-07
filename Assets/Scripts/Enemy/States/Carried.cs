@@ -18,8 +18,15 @@ public class Carried : Wait
         _enemy.Drop();
     }
 
+    public override void OnEnter()
+    {
+        base.OnEnter();
+        _animator.SetBool("Carried", true);
+    }
+
     public override void OnExit()
     {
         base.OnExit();
+        _animator.SetBool("Carried", false);
     }
 }

@@ -7,6 +7,8 @@ namespace hulaohyes.enemy.states.walker
 {
     public class Charging : Attacking
     {
+        private const float CHARGE_SPEED = 10;
+
         private NavMeshAgent _agent;
         private BoxCollider _damageZone;
 
@@ -22,13 +24,14 @@ namespace hulaohyes.enemy.states.walker
         {
             base.OnEnter();
             _damageZone.enabled = true;
-            _agent.speed = 10;
+            _agent.speed = CHARGE_SPEED;
             _agent.angularSpeed = 5;
         }
 
         public override void LoopLogic()
         {
             base.LoopLogic();
+            _animator.SetFloat("Speed", _agent.velocity.magnitude/ CHARGE_SPEED);
             _agent.destination = (base._enemy.currentTarget.position);
         }
 

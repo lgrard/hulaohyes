@@ -20,5 +20,17 @@ namespace hulaohyes.enemy.states
             base.TimerEnd();
             _stateMachine.CurrentState = _stateMachine.Recovering;
         }
+
+        public override void OnEnter()
+        {
+            base.OnEnter();
+            _animator.SetTrigger("Attacks");
+        }
+        
+        public override void OnExit()
+        {
+            base.OnExit();
+            _animator.SetBool("Attacking", false);
+        }
     }
 }

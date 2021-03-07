@@ -34,5 +34,6 @@ public class StartUp : Wait
         _agent.isStopped = false;
         _agent.speed = 0.1f;
         _agent.angularSpeed = 120;
+        _animator.SetBool("Attacking", true);
     }
 }
