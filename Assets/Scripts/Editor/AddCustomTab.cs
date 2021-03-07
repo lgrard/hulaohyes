@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 using UnityEditor;
 using hulaohyes.debugtool;
-using hulaohyes.levelbrick.door;
 
 public class AddCustomTab : MonoBehaviour
 {
@@ -14,23 +13,7 @@ public class AddCustomTab : MonoBehaviour
     [MenuItem("HulaOhYes/Enemy/Walker")] static void newEnemyWalker() => newItemFromPrefab("Prefabs/Enemy/Enemy_Walker");
     [MenuItem("HulaOhYes/Enemy/Turret")] static void newEnemyTurret() => newItemFromPrefab("Prefabs/Enemy/Enemy_Turret");
     [MenuItem("HulaOhYes/Bricks/Unit Cube Spawner")] static void newUnitCubeSpawner() => newItemFromPrefab("Prefabs/Bricks/UnitCubeSpawner");
-    [MenuItem("HulaOhYes/Bricks/Door Group")] static void newDoorGroup()
-    {
-        GameObject lDoorGroup = newItemFromPrefab("Prefabs/Bricks/DoorGroup");
-        GameObject lDoor = newItemFromPrefab("Prefabs/Bricks/Door");
-        lDoor.transform.parent = lDoorGroup.transform;
-        lDoor.name = "0_Door";
-        Slab lSlab = newItemFromPrefab("Prefabs/Bricks/Slab").GetComponent<Slab>();
-        lSlab.transform.parent = lDoorGroup.transform;
-        lSlab.name = "0_Slab";
-        if (lDoorGroup.TryGetComponent<DoorManager>(out DoorManager lDoorManager))
-        {
-            lDoorManager.DoorList.Add(lDoor);
-            lDoorManager.SlabList.Add(lSlab);
-        }
-        Selection.activeGameObject = lDoorGroup as GameObject;
-    }
-
+    [MenuItem("HulaOhYes/Bricks/Door Group")] static void newDoorGroup() => ContentAdder.SpawnDoorGroup();
     [MenuItem("HulaOhYes/DebugTools/Input Switcher")] static void newInputSwitcher()
     {
         GameObject lDebugToolObject = createDebugTool();
@@ -40,9 +23,10 @@ public class AddCustomTab : MonoBehaviour
         else lDebugToolObject.AddComponent<InputDebugTool>();
     }
 
-    static GameObject newItemFromPrefab(string pFilePath)
+    public static GameObject newItemFromPrefab(string pFilePath)
     {
-        Object lItem = Resources.Load(pFilePath);
+        GameObject lItem = ContentAdder.getItemFromPrefab(pFilePath);
+
         if (lItem != null)
         {
             Object lPrefab = PrefabUtility.InstantiatePrefab(lItem);
