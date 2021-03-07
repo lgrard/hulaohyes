@@ -9,11 +9,11 @@ namespace hulaohyes.enemy.states
     public class EnemyStateMachine : StateMachine
     {
         private Carried _carried;
-        private Attacking _attacking;
         private Idle _idle;
         private Recovering _recovering;
         private Thrown _thrown;
         private StartUp _startUp;
+        protected Attacking _attacking;
 
         ///Create a new state machine object
         /// <param name="pEnemy">Associated player controller</param>
@@ -23,10 +23,9 @@ namespace hulaohyes.enemy.states
         /// <param name="pParticles">Associated particles list</param>
         /// <param name="pNavMeshAgent">Associated NavMesh agent</param>
         public EnemyStateMachine(EnemyController pEnemy, Rigidbody pRb,
-            Animator pAnimator, List<ParticleSystem> pParticles, NavMeshAgent pNavMeshAgent, SphereCollider pDetectionZone, BoxCollider pDamageZone)
+            Animator pAnimator, List<ParticleSystem> pParticles, NavMeshAgent pNavMeshAgent, SphereCollider pDetectionZone)
         {
             _carried = new Carried(this, pEnemy, pAnimator);
-            _attacking = new Attacking(this, pEnemy, pAnimator, pNavMeshAgent, pDamageZone);
             _idle = new Idle(this, pEnemy, pAnimator, pDetectionZone);
             _thrown = new Thrown(this, pEnemy, pAnimator);
             _recovering = new Recovering(this, pEnemy, pAnimator);
@@ -35,11 +34,11 @@ namespace hulaohyes.enemy.states
         }
 
         public Carried Carried => _carried;
-        public Attacking Attacking => _attacking;
         public Idle Idle => _idle;
         public Recovering Recovering => _recovering;
         public Thrown Thrown => _thrown;
         public StartUp StartUp => _startUp;
+        public Attacking Attacking => _attacking;
     }
 }
 

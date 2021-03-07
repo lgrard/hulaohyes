@@ -116,13 +116,12 @@ public class Pickable : MonoBehaviour
 
     protected virtual void OnGizmos()
     {        
+        if (_currentPicker != null)
+        {
             Gizmos.matrix = Matrix4x4.TRS(transform.position, transform.rotation, transform.lossyScale);
             Vector3 lPropelPos = new Vector3(0, 0, _proprelZoneCheck.z) - new Vector3(0, 0.5f, 0);
             Gizmos.DrawWireCube(lPropelPos, _proprelZoneCheck*2);
             Gizmos.matrix = Matrix4x4.zero;
-
-        if (_currentPicker != null)
-        {
 
             Gizmos.color = Color.red;
             Vector3 lDiretionOffsetThrow = new Vector3(0, Mathf.Sin(THROW_ANGLE_OFFSET * DEG2RAD), 0);
