@@ -59,7 +59,7 @@ namespace hulaohyes.levelbrick.unitcube
                 if (currentUnitCube != null) Gizmos.DrawLine(this.transform.position, currentUnitCube.transform.position);
 
                 Gizmos.matrix = Matrix4x4.TRS(transform.position, transform.rotation, transform.lossyScale);
-               if(spawner!=null) Gizmos.DrawCube(spawner.transform.localPosition + spawnOffset, Vector3.one);
+               if(spawner!=null) Gizmos.DrawCube(spawner.transform.localPosition + spawnOffset, Vector3.one*1.4f);
             }
         }
     }

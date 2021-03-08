@@ -88,7 +88,7 @@ public class Pickable : MonoBehaviour
 
         _isPicked = false;
 
-        _currentPicker.DropTarget();
+        if(_currentPicker!=null) _currentPicker.DropTarget();
         transform.parent = null;
         rb.isKinematic = false;
         forwardVelocity = (lForwardDirection + lDiretionOffset) * pDropForce;
