@@ -8,9 +8,9 @@ namespace hulaohyes.enemy.states
 {
     public abstract class EnemyState : State
     {
-        protected EnemyStateMachine _stateMachine;
-        protected EnemyController _enemy;
-        protected Animator _animator;
+        protected EnemyStateMachine stateMachine;
+        protected EnemyController enemy;
+        protected Animator animator;
 
         /// Create a new state
         /// <param name="pStateMachine">Associated state machine</param>
@@ -19,9 +19,9 @@ namespace hulaohyes.enemy.states
         public EnemyState(EnemyStateMachine pStateMachine, EnemyController pEnemy, Animator pAnimator)
             : base()
         {
-            _stateMachine = pStateMachine;
-            _enemy = pEnemy;
-            _animator = pAnimator;
+            stateMachine = pStateMachine;
+            enemy = pEnemy;
+            animator = pAnimator;
         }
     }
 }

@@ -7,8 +7,8 @@ using hulaohyes.levelbrick.door;
 [CustomEditor(typeof(DoorManager))]
 public class DoorManager_Editor : Editor
 {
-    private Color _greenColor = new Color(0.2f, 0.65f, 0.2f, 1);
-    private Color _redColor = new Color(0.65f, 0.2f, 0.2f, 1);
+    private Color greenColor = new Color(0.2f, 0.65f, 0.2f, 1);
+    private Color redColor = new Color(0.65f, 0.2f, 0.2f, 1);
 
     public override void OnInspectorGUI()
     {
@@ -17,7 +17,7 @@ public class DoorManager_Editor : Editor
 
         GUILayout.Space(10f);
         GUILayout.BeginHorizontal();
-        GUI.color = _greenColor;
+        GUI.color = greenColor;
         if (GUILayout.Button("+ Add a new Slab"))
         {
             GameObject lSlabObject = (GameObject)PrefabUtility.InstantiatePrefab(Resources.Load("Prefabs/Bricks/Slab"), lDoorManager.transform);
@@ -41,7 +41,7 @@ public class DoorManager_Editor : Editor
         GUILayout.EndHorizontal();
 
         GUILayout.BeginHorizontal();
-        GUI.color = _redColor;
+        GUI.color = redColor;
         if (GUILayout.Button("x Clear slab list"))
         {
             foreach (Slab lSlab in lDoorManager.SlabList) if(lSlab != null) DestroyImmediate(lSlab.gameObject);
@@ -49,7 +49,7 @@ public class DoorManager_Editor : Editor
             Debug.Log(lDoorManager.gameObject.name + " slab list has been cleared");
             EditorUtility.SetDirty(lDoorManager);
         }
-        GUI.color = _redColor;
+        GUI.color = redColor;
         if (GUILayout.Button("x Clear door List"))
         {
             foreach (GameObject lDoor in lDoorManager.DoorList) if (lDoor != null) DestroyImmediate(lDoor);

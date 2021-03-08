@@ -9,16 +9,16 @@ namespace hulaohyes.enemy
 {
     public class EnemyController : Pickable
     {
-        protected NavMeshAgent _navMeshAgent;
-        protected EnemyStateMachine _stateMachine;
-        protected Animator _enemyAnimator;
-        protected SphereCollider _detectionZone;
+        protected NavMeshAgent navMeshAgent;
+        protected EnemyStateMachine stateMachine;
+        protected Animator enemyAnimator;
+        protected SphereCollider detectionZone;
 
         [Header("Zone size")]
-        [Range(1,10)][SerializeField] float _zoneRadius = 1;
+        [Range(1,10)][SerializeField] float zoneRadius = 1;
 
         [Header("Particles list")]
-        [SerializeField] protected List<ParticleSystem> _enemyParticles;
+        [SerializeField] protected List<ParticleSystem> enemyParticles;
 
         [Header("Debug")]
         [SerializeField] string currentState;
@@ -28,20 +28,20 @@ namespace hulaohyes.enemy
 
         private void Start() => Init();
 
-        private void Update() => _stateMachine.CurrentState.LoopLogic();
+        private void Update() => stateMachine.CurrentState.LoopLogic();
         private void FixedUpdate()
         {
-            currentState = _stateMachine.CurrentState.ToString();
-            _stateMachine.CurrentState.PhysLoopLogic();
-            _rb.AddForce(Physics.gravity * _gravity, ForceMode.Acceleration);
+            currentState = stateMachine.CurrentState.ToString();
+            stateMachine.CurrentState.PhysLoopLogic();
+            rb.AddForce(Physics.gravity * _gravity, ForceMode.Acceleration);
         }
 
         private void CreateDetectionZone()
         {
-            _detectionZone = gameObject.AddComponent<SphereCollider>();
-            _detectionZone.radius = _zoneRadius;
-            _detectionZone.isTrigger = true;
-            _detectionZone.enabled = false;
+            detectionZone = gameObject.AddComponent<SphereCollider>();
+            detectionZone.radius = zoneRadius;
+            detectionZone.isTrigger = true;
+            detectionZone.enabled = false;
         }
 
         protected virtual void HitPlayer(PlayerController pPlayer)
@@ -49,7 +49,7 @@ namespace hulaohyes.enemy
             if (isIdling && currentTarget == null)
             {
                 currentTarget = pPlayer.transform;
-                _stateMachine.CurrentState = _stateMachine.StartUp;
+                stateMachine.CurrentState = stateMachine.StartUp;
             }
         }
 
@@ -58,30 +58,30 @@ namespace hulaohyes.enemy
             base.Init();
             isPickableState = false;
             CreateDetectionZone();
-            _navMeshAgent = GetComponent<NavMeshAgent>();
-            _enemyAnimator = GetComponent<Animator>();
+            navMeshAgent = GetComponent<NavMeshAgent>();
+            enemyAnimator = GetComponent<Animator>();
             GameManager.AddEnemy(this);
         }
 
         public override void Propel()
         {
-            _isDropped = false;
-            _stateMachine.CurrentState = _stateMachine.Thrown;
+            base.isDropped = false;
+            stateMachine.CurrentState = stateMachine.Thrown;
             base.Propel();
         }
 
         public override void Drop()
         {
-            _isDropped = true;
-            _stateMachine.CurrentState = _stateMachine.Thrown;
+            base.isDropped = true;
+            stateMachine.CurrentState = stateMachine.Thrown;
             base.Drop();
         }
 
         override public void GetPicked(PlayerController pPlayer)
         {
-            _stateMachine.CurrentState = _stateMachine.Carried;
-            _detectionZone.enabled = false;
-            _navMeshAgent.enabled = false;
+            stateMachine.CurrentState = stateMachine.Carried;
+            detectionZone.enabled = false;
+            navMeshAgent.enabled = false;
             base.GetPicked(pPlayer);
         }
 
@@ -99,8 +99,8 @@ namespace hulaohyes.enemy
 
         protected override void HitElseDropped(Collider pCollider)
         {
-            _navMeshAgent.enabled = true;
-            _stateMachine.CurrentState = _stateMachine.Idle;
+            navMeshAgent.enabled = true;
+            stateMachine.CurrentState = stateMachine.Idle;
         }
 
         private void OnTriggerExit(Collider other)
@@ -108,18 +108,18 @@ namespace hulaohyes.enemy
             if (other.transform == currentTarget && isRecovering) currentTarget = null;
         }
 
-        public Animator EnemyAnimator => _enemyAnimator;
-        private bool isThrown => _stateMachine.CurrentState == _stateMachine.Thrown && !_isDropped;
-        private bool isDropped => _stateMachine.CurrentState == _stateMachine.Thrown && _isDropped;
-        private bool isIdling => _stateMachine.CurrentState == _stateMachine.Idle;
-        public bool isRecovering => _stateMachine.CurrentState == _stateMachine.Recovering;
-        protected bool isAttacking => _stateMachine.CurrentState == _stateMachine.Attacking;
+        public Animator EnemyAnimator => enemyAnimator;
+        private bool isThrown => stateMachine.CurrentState == stateMachine.Thrown && !base.isDropped;
+        private bool isDropped => stateMachine.CurrentState == stateMachine.Thrown && base.isDropped;
+        private bool isIdling => stateMachine.CurrentState == stateMachine.Idle;
+        public bool isRecovering => stateMachine.CurrentState == stateMachine.Recovering;
+        protected bool isAttacking => stateMachine.CurrentState == stateMachine.Attacking;
 
 
         public void destroyEnemy()
         {
-            _enemyAnimator.SetTrigger("TakeDamage");
-            _rb.isKinematic = true;
+            enemyAnimator.SetTrigger("TakeDamage");
+            rb.isKinematic = true;
             Debug.Log(gameObject.name + " is dead");
             Destroy(gameObject, 0.5f);
         }
@@ -129,7 +129,7 @@ namespace hulaohyes.enemy
             base.OnGizmos();
             Gizmos.matrix = Matrix4x4.TRS(transform.position, transform.rotation, transform.lossyScale);
             Gizmos.color = Color.green;
-            Gizmos.DrawWireSphere(Vector3.zero, _zoneRadius);
+            Gizmos.DrawWireSphere(Vector3.zero, zoneRadius);
         }
     }
 }

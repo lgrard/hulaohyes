@@ -15,18 +15,18 @@ public class Carried : Wait
     protected override void TimerEnd()
     {
         base.TimerEnd();
-        _enemy.Drop();
+        enemy.Drop();
     }
 
     public override void OnEnter()
     {
         base.OnEnter();
-        _animator.SetBool("Carried", true);
+        animator.SetBool("Carried", true);
     }
 
     public override void OnExit()
     {
         base.OnExit();
-        _animator.SetBool("Carried", false);
+        animator.SetBool("Carried", false);
     }
 }

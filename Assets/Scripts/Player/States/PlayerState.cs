@@ -7,18 +7,18 @@ namespace hulaohyes.player.states
 {
     public abstract class PlayerState:State
     {
-        protected PlayerStateMachine _stateMachine;
-        protected Animator _animator;
-        protected List<ParticleSystem> _particles;
+        protected PlayerStateMachine stateMachine;
+        protected Animator animator;
+        protected List<ParticleSystem> particles;
 
         /// Create a new state
         /// <param name="pAnimator">Associated animator component</param>
         /// <param name="pParticles">Associated particles list</param>
         public PlayerState(PlayerStateMachine pStateMachine, Animator pAnimator, List<ParticleSystem> pParticles):base()
         {
-            _stateMachine = pStateMachine;
-            _animator = pAnimator;
-            _particles = pParticles;
+            stateMachine = pStateMachine;
+            animator = pAnimator;
+            particles = pParticles;
         }
     }
 }

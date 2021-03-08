@@ -8,8 +8,8 @@ namespace hulaohyes.enemy.states
 {
     public class Attacking : Wait
     {
-        private NavMeshAgent _agent;
-        private BoxCollider _damageZone;
+        private NavMeshAgent agent;
+        private BoxCollider damageZone;
 
         public Attacking(EnemyStateMachine pStateMachine, EnemyController pEnemy, Animator pAnimator)
             : base(pStateMachine, pEnemy, pAnimator)
@@ -18,19 +18,19 @@ namespace hulaohyes.enemy.states
         protected override void TimerEnd()
         {
             base.TimerEnd();
-            _stateMachine.CurrentState = _stateMachine.Recovering;
+            stateMachine.CurrentState = stateMachine.Recovering;
         }
 
         public override void OnEnter()
         {
             base.OnEnter();
-            _animator.SetTrigger("Attacks");
+            animator.SetTrigger("Attacks");
         }
         
         public override void OnExit()
         {
             base.OnExit();
-            _animator.SetBool("Attacking", false);
+            animator.SetBool("Attacking", false);
         }
     }
 }

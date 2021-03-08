@@ -8,14 +8,14 @@ namespace hulaohyes.levelbrick.unitcube
 {
     public class UnitCube : Pickable
     {
-        private Slab _currentSlab;
+        private Slab currentSlab;
         private UnitCubeSpawner _currentSpawner;
-        private LayerMask _killZoneLayer;
+        private LayerMask killZoneLayer;
 
         protected override void Init()
         {
             base.Init();
-            _killZoneLayer = LayerMask.NameToLayer("KillZone");
+            killZoneLayer = LayerMask.NameToLayer("KillZone");
         }
 
         public void DestroyUnitCube()
@@ -25,14 +25,14 @@ namespace hulaohyes.levelbrick.unitcube
             Destroy(this.gameObject,0.5f);
         }
 
-        private void FixedUpdate() => base._rb.AddForce(Physics.gravity * _gravity, ForceMode.Acceleration);
+        private void FixedUpdate() => base.rb.AddForce(Physics.gravity * _gravity, ForceMode.Acceleration);
 
         /// Freeze this cube into place and sets its parent slab
         /// <param name="pSlab"> Associated parent slab </param>
         public void FreezeCube(Slab pSlab)
         {
-            _rb.isKinematic = true;
-            _currentSlab = pSlab;
+            rb.isKinematic = true;
+            currentSlab = pSlab;
         }
 
         ///  Set this unit cube's current spawner
@@ -41,16 +41,16 @@ namespace hulaohyes.levelbrick.unitcube
         override public void GetPicked(PlayerController pPlayer)
         {
             base.GetPicked(pPlayer);
-            if (_currentSlab != null)
+            if (currentSlab != null)
             {
-                _currentSlab.CurrentUnitCube = null;
-                _currentSlab = null;
+                currentSlab.CurrentUnitCube = null;
+                currentSlab = null;
             }
         }
 
         private void OnCollisionEnter(Collision collision)
         {
-            if (collision.gameObject.layer == _killZoneLayer) DestroyUnitCube();
+            if (collision.gameObject.layer == killZoneLayer) DestroyUnitCube();
         }
     }
 }

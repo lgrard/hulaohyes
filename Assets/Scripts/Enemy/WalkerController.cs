@@ -8,23 +8,23 @@ namespace hulaohyes.enemy
 {
     public class WalkerController : EnemyController
     {
-        private BoxCollider _damageZone;
-        [SerializeField] Transform _damageZoneSetting;
+        private BoxCollider damageZone;
+        [SerializeField] Transform damageZoneSetting;
 
         protected override void Init()
         {
             base.Init();
             CreateDamageZone();
-            _stateMachine = new WalkerStateMachine(this, _rb, _enemyAnimator, _enemyParticles, _navMeshAgent, _detectionZone, _damageZone);
+            stateMachine = new WalkerStateMachine(this, rb, enemyAnimator, enemyParticles, navMeshAgent, detectionZone, damageZone);
         }
 
         private void CreateDamageZone()
         {
-            _damageZone = gameObject.AddComponent<BoxCollider>();
-            _damageZone.size = _damageZoneSetting.localScale;
-            _damageZone.center = _damageZoneSetting.localPosition;
-            _damageZone.isTrigger = true;
-            _damageZone.enabled = false;
+            damageZone = gameObject.AddComponent<BoxCollider>();
+            damageZone.size = damageZoneSetting.localScale;
+            damageZone.center = damageZoneSetting.localPosition;
+            damageZone.isTrigger = true;
+            damageZone.enabled = false;
         }
 
         protected override void HitPlayer(PlayerController pPlayer)
@@ -32,7 +32,7 @@ namespace hulaohyes.enemy
             if (isAttacking)
             {
                 pPlayer.TakeDamage(1, transform);
-                _stateMachine.CurrentState = _stateMachine.Recovering;
+                stateMachine.CurrentState = stateMachine.Recovering;
             }
             
             base.HitPlayer(pPlayer);
@@ -42,7 +42,7 @@ namespace hulaohyes.enemy
         {
             base.OnGizmos();
             Gizmos.color = Color.red;
-            if (_damageZoneSetting != null) Gizmos.DrawWireCube(_damageZoneSetting.localPosition, _damageZoneSetting.localScale);
+            if (damageZoneSetting != null) Gizmos.DrawWireCube(damageZoneSetting.localPosition, damageZoneSetting.localScale);
         }
     }
 }

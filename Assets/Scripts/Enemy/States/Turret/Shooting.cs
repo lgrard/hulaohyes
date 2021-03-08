@@ -7,13 +7,13 @@ namespace hulaohyes.enemy.states.turret
 {
     public class Shooting : Attacking
     {
-        private NavMeshAgent _agent;
+        private NavMeshAgent agent;
 
         public Shooting(EnemyStateMachine pStateMachine, EnemyController pEnemy, Animator pAnimator, NavMeshAgent pAgent)
             : base(pStateMachine, pEnemy, pAnimator)
         {
             MAX_TIMER = 1f;
-            _agent = pAgent;
+            agent = pAgent;
         }
 
         public override void OnEnter()
@@ -25,7 +25,7 @@ namespace hulaohyes.enemy.states.turret
         public override void OnExit()
         {
             base.OnExit();
-            _agent.isStopped = true;
+            agent.isStopped = true;
         }
     }
 }

@@ -8,20 +8,20 @@ namespace hulaohyes.camera.elements
     public class CameraElement
     {
         private Camera _camera;
-        protected Transform _target;
+        protected Transform target;
         protected CinemachineVirtualCamera _camNormal;
         protected CinemachineVirtualCamera _camGlobal;
 
         public CameraElement(Camera pCamera, Transform pTarget)
         {
-            _target = pTarget;
+            target = pTarget;
             _camera = pCamera;
         }
 
         /// Returns associated target position
         public Vector3 TargetPosition
         {
-            get => _target.transform.position;
+            get => target.transform.position;
         }
 
         /// Returns associated camera

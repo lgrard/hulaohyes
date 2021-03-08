@@ -15,12 +15,12 @@ namespace hulaohyes.player.states
         protected PlayerController _player;
         protected ControlScheme _controlScheme;
 
-        private Transform _cameraContainer;
-        private Rigidbody _rb;
-        private Vector3 _camForward;
-        private Vector3 _camRight;
-        private Vector2 _movementInput;
-        private LayerMask _groundLayer;
+        private Transform cameraContainer;
+        private Rigidbody rb;
+        private Vector3 camForward;
+        private Vector3 camRight;
+        private Vector2 movementInput;
+        private LayerMask groundLayer;
 
         /// Create a new idle state
         /// <param name="pStateMachine">Associated state machine</param>
@@ -36,20 +36,20 @@ namespace hulaohyes.player.states
         {
             _player = pPlayer;
             _controlScheme = pControlScheme;
-            _cameraContainer = pCameraContainer;
-            _rb = pRb;
+            cameraContainer = pCameraContainer;
+            rb = pRb;
 
-            _movementInput = Vector2.zero;
-            _groundLayer = LayerMask.GetMask("Ground","Bricks");
+            movementInput = Vector2.zero;
+            groundLayer = LayerMask.GetMask("Ground","Bricks");
         }
 
 
         ///Rotate player facing last direction
         private void RotatePlayer()
         {
-            Vector3 lDesiredDirection = _camForward * _movementInput.y + _camRight * _movementInput.x;
+            Vector3 lDesiredDirection = camForward * movementInput.y + camRight * movementInput.x;
 
-            if (_movementInput != Vector2.zero)
+            if (movementInput != Vector2.zero)
             {
                 Quaternion lDesiredRotation = Quaternion.LookRotation(new Vector3(lDesiredDirection.x, 0, lDesiredDirection.z));
                 _player.transform.rotation = Quaternion.Slerp(lDesiredRotation, _player.transform.rotation, ROTATION_SMOOTHING_AMOUNT);
@@ -58,30 +58,30 @@ namespace hulaohyes.player.states
 
         private void CameraDirection()
         {
-            Vector3 lPreCamForward = _cameraContainer.transform.forward;
-            _camForward = Quaternion.AngleAxis(-_cameraContainer.eulerAngles.x, _cameraContainer.right) * _cameraContainer.transform.forward;
-            _camRight = _cameraContainer.transform.right;
+            Vector3 lPreCamForward = cameraContainer.transform.forward;
+            camForward = Quaternion.AngleAxis(-cameraContainer.eulerAngles.x, cameraContainer.right) * cameraContainer.transform.forward;
+            camRight = cameraContainer.transform.right;
         }
 
         private void MovePlayer()                                                                                                                   //const to change
         {
-            Vector3 lDesiredPosition = _camForward * _movementInput.y + _camRight * _movementInput.x;
-            _rb.velocity = new Vector3(lDesiredPosition.x * _player.MOVEMENT_SPEED, _rb.velocity.y, lDesiredPosition.z * _player.MOVEMENT_SPEED);   //const to change
-            base._animator.SetFloat("Speed", _rb.velocity.magnitude / _player.MOVEMENT_SPEED);                                                      //const to change
-            base._animator.SetBool("isGrounded", isGrounded);
+            Vector3 lDesiredPosition = camForward * movementInput.y + camRight * movementInput.x;
+            rb.velocity = new Vector3(lDesiredPosition.x * _player.MOVEMENT_SPEED, rb.velocity.y, lDesiredPosition.z * _player.MOVEMENT_SPEED);   //const to change
+            base.animator.SetFloat("Speed", rb.velocity.magnitude / _player.MOVEMENT_SPEED);                                                      //const to change
+            base.animator.SetBool("isGrounded", isGrounded);
         }
 
-        private bool isGrounded =>(Physics.Raycast(_player.transform.position, -_player.transform.up, _player.GROUND_CHECK_DISTANCE, _groundLayer));
+        private bool isGrounded =>(Physics.Raycast(_player.transform.position, -_player.transform.up, _player.GROUND_CHECK_DISTANCE, groundLayer));
 
         private void OnJump(InputAction.CallbackContext ctx)                                                                                        //const to change
         { 
             if (isGrounded)
             {
-                _particles[0].Play();
-                _animator.ResetTrigger("Jump");
-                _animator.SetTrigger("Jump");
+                particles[0].Play();
+                animator.ResetTrigger("Jump");
+                animator.SetTrigger("Jump");
                 Vector3 upDir = new Vector3(0, _player.JUMP_HEIGHT, 0);                                                                             //const to change
-                _rb.velocity = upDir;
+                rb.velocity = upDir;
             }
         }
 
@@ -95,7 +95,7 @@ namespace hulaohyes.player.states
         {
             base.LoopLogic();
             CameraDirection();
-            _movementInput = _controlScheme.Player.Movement.ReadValue<Vector2>();
+            movementInput = _controlScheme.Player.Movement.ReadValue<Vector2>();
         }
 
         public override void PhysLoopLogic()

@@ -11,29 +11,29 @@ namespace hulaohyes.levelbrick.door
         private Color _color;
         private DoorManager _doorManager;
         private UnitCube _currentUnitCube;
-        private PlayerController _currentPlayer;
-        private int _currentUnits;
-        private LayerMask _collisionLayer;
+        private PlayerController currentPlayer;
+        private int currentUnits;
+        private LayerMask collisionLayer;
 
-        [Range(1,2)][SerializeField] int _maxUnit = 2;
+        [Range(1,2)][SerializeField] int maxUnit = 2;
         [Tooltip("Where will the unit cube will magnet")]
-        [SerializeField] Vector3 _cubeSlotPosition;
+        [SerializeField] Vector3 cubeSlotPosition;
         [Tooltip("TriggerSize")]
-        [SerializeField] Vector3 _triggerZoneSize;
+        [SerializeField] Vector3 triggerZoneSize;
         [Tooltip("Are the gizmos drawing fo this object")]
-        [SerializeField] bool _drawGizmos;
+        [SerializeField] bool drawGizmos;
 
         void Start()
         {
-            _collisionLayer = LayerMask.GetMask("Player", "Bricks");
+            collisionLayer = LayerMask.GetMask("Player", "Bricks");
             CreateTrigger();
         }
 
         void CreateTrigger()
         {
             BoxCollider lTrigger = gameObject.AddComponent<BoxCollider>();
-            lTrigger.size = _triggerZoneSize;
-            lTrigger.center = new Vector3(0, _triggerZoneSize.y / 2, 0);
+            lTrigger.size = triggerZoneSize;
+            lTrigger.center = new Vector3(0, triggerZoneSize.y / 2, 0);
             lTrigger.isTrigger = true;
         }
 
@@ -41,16 +41,16 @@ namespace hulaohyes.levelbrick.door
         {
             _currentUnitCube = pCube;
             _currentUnitCube.transform.parent = this.transform;
-            _currentUnitCube.transform.localPosition = _cubeSlotPosition;
+            _currentUnitCube.transform.localPosition = cubeSlotPosition;
             _currentUnitCube.transform.eulerAngles = Vector3.zero;
             _currentUnitCube.FreezeCube(this);
         }
 
         private void OnTriggerEnter(Collider other)
         {
-            if ((_collisionLayer & 1 << other.gameObject.layer) == 1 << other.gameObject.layer)
+            if ((collisionLayer & 1 << other.gameObject.layer) == 1 << other.gameObject.layer)
             {
-                if (_currentUnits >= _maxUnit) return;
+                if (currentUnits >= maxUnit) return;
 
                 if(other.TryGetComponent<UnitCube>(out UnitCube pCube))
                 {
@@ -60,21 +60,21 @@ namespace hulaohyes.levelbrick.door
 
                 else if (other.TryGetComponent<PlayerController>(out PlayerController pPlayer))
                 {
-                    if (_currentPlayer == null) _currentPlayer = pPlayer;
+                    if (currentPlayer == null) currentPlayer = pPlayer;
                     else return;
                 }
 
-                _currentUnits += 1;
+                currentUnits += 1;
                 _doorManager.SetUnit(1);
             }
         }
 
         private void OnTriggerExit(Collider other)
         {
-            if (other.TryGetComponent<PlayerController>(out PlayerController pPlayer) && pPlayer == _currentPlayer)
+            if (other.TryGetComponent<PlayerController>(out PlayerController pPlayer) && pPlayer == currentPlayer)
             {
-                _currentPlayer = null;
-                _currentUnits -= 1;
+                currentPlayer = null;
+                currentUnits -= 1;
                 _doorManager.SetUnit(-1);
             }
         }
@@ -90,7 +90,7 @@ namespace hulaohyes.levelbrick.door
         {
             set
             {
-                if (value == null) _currentUnits -= 1;
+                if (value == null) currentUnits -= 1;
                 _doorManager.SetUnit(-1);
                 _currentUnitCube = value;
             }
@@ -98,13 +98,13 @@ namespace hulaohyes.levelbrick.door
 
         private void OnDrawGizmos()
         {
-            if (_drawGizmos)
+            if (drawGizmos)
             {
                 Gizmos.matrix = Matrix4x4.TRS(transform.position, transform.rotation, transform.lossyScale);
-                Vector3 lTriggerPosition = new Vector3(0, _triggerZoneSize.y / 2, 0);
-                Gizmos.DrawWireCube(lTriggerPosition, _triggerZoneSize);
+                Vector3 lTriggerPosition = new Vector3(0, triggerZoneSize.y / 2, 0);
+                Gizmos.DrawWireCube(lTriggerPosition, triggerZoneSize);
                 Gizmos.color = Color.green;
-                Vector3 lCubePosition = new Vector3(_cubeSlotPosition.x, _cubeSlotPosition.y+0.55f, _cubeSlotPosition.z);
+                Vector3 lCubePosition = new Vector3(cubeSlotPosition.x, cubeSlotPosition.y+0.55f, cubeSlotPosition.z);
                 Gizmos.DrawWireCube(lCubePosition, Vector3.one * 1);
             }
         }

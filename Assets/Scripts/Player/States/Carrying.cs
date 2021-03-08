@@ -9,7 +9,7 @@ namespace hulaohyes.player.states
     public class Carrying : Idle
     {
         private const int HIT_BEFORE_DROP = 3;
-        private int _currentHit;
+        private int currentHit;
 
         public Carrying(PlayerStateMachine pStateMachine, PlayerController pPlayer, ControlScheme pControlScheme,
             Transform pCameraContainer, Rigidbody pRb, Animator pAnimator, List<ParticleSystem> pParticles)
@@ -17,20 +17,20 @@ namespace hulaohyes.player.states
 
         public void TakeCarryDamage()
         {
-            _animator.SetTrigger("TakeDamage");
-            _currentHit -= 1;
+            animator.SetTrigger("TakeDamage");
+            currentHit -= 1;
 
-            if (_currentHit <= 0)
+            if (currentHit <= 0)
             {
                 _player.Drop();
-                _stateMachine.CurrentState = _stateMachine.Wait;
+                stateMachine.CurrentState = stateMachine.Wait;
             }
         }
 
         private void PickUpTarget()
         {
             if(_player.pickUpTarget.isPickable) _player.pickUpTarget.GetPicked(_player);
-            _currentHit = HIT_BEFORE_DROP;
+            currentHit = HIT_BEFORE_DROP;
         }
 
         private void OnDropTarget(InputAction.CallbackContext ctx) => _player.pickUpTarget.Drop();
@@ -43,8 +43,8 @@ namespace hulaohyes.player.states
             PickUpTarget();
             base._controlScheme.Player.Drop.performed += OnDropTarget;
             base._controlScheme.Player.PickUp.performed += OnThrowTarget;
-            _animator.SetBool("Carrying", true);
-            _animator.ResetTrigger("Throw");
+            animator.SetBool("Carrying", true);
+            animator.ResetTrigger("Throw");
             _player.isPickableState = true;
         }
 
@@ -53,8 +53,8 @@ namespace hulaohyes.player.states
             base.OnExit();
             base._controlScheme.Player.Drop.performed -= OnDropTarget;
             base._controlScheme.Player.PickUp.performed -= OnThrowTarget;
-            _animator.SetBool("Carrying", false);
-            _animator.ResetTrigger("Throw");
+            animator.SetBool("Carrying", false);
+            animator.ResetTrigger("Throw");
             _player.isPickableState = false;
         }
     }

@@ -10,52 +10,52 @@ namespace hulaohyes.player.states
     {
         //private const float VERTICAL_PROPEL_HEIGHT = 8f;
 
-        private PlayerController _player;
-        private ControlScheme _controlScheme;
-        private Rigidbody _rb;
-        private Collider _collider;
+        private PlayerController player;
+        private ControlScheme controlScheme;
+        private Rigidbody rb;
+        private Collider collider;
 
         public Carried(PlayerStateMachine pStateMachine, PlayerController pPlayer, ControlScheme pControlScheme,
             Rigidbody pRb, Animator pAnimator, List<ParticleSystem> pParticles, Collider pCollider)
             : base(pStateMachine, pAnimator, pParticles)
         {
-            _player = pPlayer;
-            _controlScheme = pControlScheme;
-            _rb = pRb;
-            _collider = pCollider;
+            player = pPlayer;
+            controlScheme = pControlScheme;
+            rb = pRb;
+            collider = pCollider;
         }
 
-        private void OnDrop(InputAction.CallbackContext ctx) => _player.Drop();
+        private void OnDrop(InputAction.CallbackContext ctx) => player.Drop();
 
         private void OnJump(InputAction.CallbackContext ctx)
         {
-            _player.Drop();
+            player.Drop();
 
-            _particles[0].Play();
-            _animator.SetTrigger("Jump");
-            Vector3 upDir = new Vector3(0, _player.VERTICAL_PROPEL_HEIGHT, 0);                                                                                  //const to change
-            _rb.velocity = upDir;
+            particles[0].Play();
+            animator.SetTrigger("Jump");
+            Vector3 upDir = new Vector3(0, player.VERTICAL_PROPEL_HEIGHT, 0);                                                                                  //const to change
+            rb.velocity = upDir;
 
-            _collider.isTrigger = false;
-            _stateMachine.CurrentState = _stateMachine.Running;
+            collider.isTrigger = false;
+            stateMachine.CurrentState = stateMachine.Running;
         }
 
         public override void OnEnter()
         {
             base.OnEnter();
-            _animator.SetBool("Carried", true);
-            _controlScheme.Player.Jump.performed += OnJump;
-            _controlScheme.Player.PickUp.performed += OnDrop;
-            _controlScheme.Player.Drop.performed += OnDrop;
+            animator.SetBool("Carried", true);
+            controlScheme.Player.Jump.performed += OnJump;
+            controlScheme.Player.PickUp.performed += OnDrop;
+            controlScheme.Player.Drop.performed += OnDrop;
         }
 
         public override void OnExit()
         {
             base.OnExit();
-            _animator.SetBool("Carried", false);
-            _controlScheme.Player.Jump.performed -= OnJump;
-            _controlScheme.Player.PickUp.performed -= OnDrop;
-            _controlScheme.Player.Drop.performed -= OnDrop;
+            animator.SetBool("Carried", false);
+            controlScheme.Player.Jump.performed -= OnJump;
+            controlScheme.Player.PickUp.performed -= OnDrop;
+            controlScheme.Player.Drop.performed -= OnDrop;
         }
     }
 }

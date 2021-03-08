@@ -16,7 +16,7 @@ namespace hulaohyes.camera.elements
             _camGlobal = pSideCamGlobal;
             _sideCamTransposer = _camNormal.GetCinemachineComponent<CinemachineFramingTransposer>();
 
-            _camNormal.Follow = _target;
+            _camNormal.Follow = target;
             _camGlobal.Follow = pPlayerGroup;
         }
 

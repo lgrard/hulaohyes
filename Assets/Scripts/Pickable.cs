@@ -15,13 +15,13 @@ public class Pickable : MonoBehaviour
     //private const float GRAVITY_AMOUNT_FALL = 4f;
 
 
-    private LayerMask _collisionLayer;
-    private Vector3 _forwardVelocity;
+    private LayerMask collisionLayer;
+    private Vector3 forwardVelocity;
 
     protected private PlayerController _currentPicker = null;
-    protected private Rigidbody _rb;
+    protected private Rigidbody rb;
     protected private Collider _collider;
-    protected bool _isDropped = false;
+    protected bool isDropped = false;
     protected bool _isPicked = false;
 
     [Range(1, 30)] public float THROW_FORCE = 20f;                                                                                                  //const to change
@@ -40,28 +40,28 @@ public class Pickable : MonoBehaviour
 
     public bool isPickable =>_currentPicker == null && isPickableState;
 
-    protected float _gravity => (_rb.velocity.y < 0) ? GRAVITY_AMOUNT_FALL : GRAVITY_AMOUNT_RISE;
+    protected float _gravity => (rb.velocity.y < 0) ? GRAVITY_AMOUNT_FALL : GRAVITY_AMOUNT_RISE;
 
 
     private void Start() => Init();
 
     protected virtual void Init()
     {
-        _rb = GetComponent<Rigidbody>();
+        rb = GetComponent<Rigidbody>();
         _collider = GetComponent<Collider>();
-        _collisionLayer = LayerMask.GetMask("Enemy","Player","KillZone","Default","Bricks","Ground");
+        collisionLayer = LayerMask.GetMask("Enemy","Player","KillZone","Default","Bricks","Ground");
     }
 
     public virtual void Propel()
     {
-        _isDropped = false;
+        isDropped = false;
         Vector3 lPropelPos = transform.position + (transform.forward * _proprelZoneCheck.z) - new Vector3(0, 0.5f, 0); ;
         Transform lTarget = Utility.GetClosestTarget(transform, Physics.OverlapBox(lPropelPos, _proprelZoneCheck, transform.rotation, LayerMask.GetMask("Enemy")));
         GetDropped(THROW_FORCE, THROW_ANGLE_OFFSET, lTarget);
     }
     public virtual void Drop()
     {
-        _isDropped = true;
+        isDropped = true;
         GetDropped(DROP_FORCE, DROP_ANGLE_OFFSET);
     }
 
@@ -69,7 +69,7 @@ public class Pickable : MonoBehaviour
     {
         _isPicked = true;
         transform.parent = pPicker.pickUpPoint;
-        _rb.isKinematic = true;
+        rb.isKinematic = true;
 
         transform.localEulerAngles = Vector3.zero;
         transform.localPosition = Vector3.zero;
@@ -90,14 +90,14 @@ public class Pickable : MonoBehaviour
 
         _currentPicker.DropTarget();
         transform.parent = null;
-        _rb.isKinematic = false;
-        _forwardVelocity = (lForwardDirection + lDiretionOffset) * pDropForce;
-        _rb.velocity = _forwardVelocity;
+        rb.isKinematic = false;
+        forwardVelocity = (lForwardDirection + lDiretionOffset) * pDropForce;
+        rb.velocity = forwardVelocity;
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        if ((_collisionLayer & 1 << other.gameObject.layer) == 1 << other.gameObject.layer
+        if ((collisionLayer & 1 << other.gameObject.layer) == 1 << other.gameObject.layer
             && other.gameObject.TryGetComponent<PlayerController>(out PlayerController pPlayer) != _currentPicker
             && !other.isTrigger
             && !_isPicked)
@@ -105,10 +105,10 @@ public class Pickable : MonoBehaviour
             if (_currentPicker != null)
             {
                 _currentPicker = null;
-                _rb.velocity = Vector3.zero;
+                rb.velocity = Vector3.zero;
                 _collider.isTrigger = false;
 
-                if (_isDropped) HitElseDropped(other);
+                if (isDropped) HitElseDropped(other);
 
                 else
                 {

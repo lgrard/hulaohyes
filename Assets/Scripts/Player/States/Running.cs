@@ -9,9 +9,9 @@ namespace hulaohyes.player.states
     public class Running : Idle
     {
         //private const float PICK_UP_DISTANCE = 2;
-        private Vector3 _targettingOffset = new Vector3(0, 0.5f, 0);
-        private LayerMask _pickableLayers;
-        private UnitCubeSpawner _currentSpawner;
+        private Vector3 targettingOffset = new Vector3(0, 0.5f, 0);
+        private LayerMask pickableLayers;
+        private UnitCubeSpawner currentSpawner;
 
         /// Create a new running state object
         /// <param name="pStateMachine">Associated state machine</param>
@@ -23,25 +23,25 @@ namespace hulaohyes.player.states
         public Running(PlayerStateMachine pStateMachine, PlayerController pPlayer, ControlScheme pControlScheme,
             Transform pCameraContainer, Rigidbody pRb, Animator pAnimator, List<ParticleSystem> pParticles)
             : base(pStateMachine, pPlayer, pControlScheme, pCameraContainer, pRb, pAnimator, pParticles)
-        { _pickableLayers = LayerMask.GetMask("Enemy", "Player", "Bricks"); }
+        { pickableLayers = LayerMask.GetMask("Enemy", "Player", "Bricks"); }
 
         void OnPickup(InputAction.CallbackContext ctx)
         {
             if (_player.pickUpTarget != null)
             {
-                _stateMachine.CurrentState = _stateMachine.Carrying;
+                stateMachine.CurrentState = stateMachine.Carrying;
                 return;
             }
 
-            else if (_currentSpawner != null) _currentSpawner.PushButton();
+            else if (currentSpawner != null) currentSpawner.PushButton();
         }
 
         void Targetting()
         {
-            Ray lFrontRay = new Ray(_player.transform.position+_targettingOffset,_player.transform.forward);
+            Ray lFrontRay = new Ray(_player.transform.position+targettingOffset,_player.transform.forward);
             RaycastHit hit;
 
-            if (Physics.Raycast(lFrontRay,out hit, _player.PICK_UP_DISTANCE, _pickableLayers)                   //const to change
+            if (Physics.Raycast(lFrontRay,out hit, _player.PICK_UP_DISTANCE, pickableLayers)                   //const to change
                 && hit.collider.gameObject != _player
                 && !hit.collider.isTrigger)
             {
@@ -50,7 +50,7 @@ namespace hulaohyes.player.states
                     && pickableTarget.isPickable)
                     _player.pickUpTarget = pickableTarget;
 
-                else if (hit.collider.TryGetComponent<UnitCubeSpawner>(out UnitCubeSpawner pSpawner)) _currentSpawner = pSpawner;
+                else if (hit.collider.TryGetComponent<UnitCubeSpawner>(out UnitCubeSpawner pSpawner)) currentSpawner = pSpawner;
             }
 
             else if(hit.collider == null)
@@ -58,9 +58,9 @@ namespace hulaohyes.player.states
                 if(_player.pickUpTarget != null)
                     _player.pickUpTarget = null;
 
-                else if(_currentSpawner != null)
+                else if(currentSpawner != null)
                 {
-                    _currentSpawner = null;
+                    currentSpawner = null;
                 }
             }
         }

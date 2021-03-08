@@ -12,8 +12,8 @@ namespace hulaohyes.debugtool
         static InputDebugTool _instance;
 
         [Header("Input devices (Debug Only)")]
-        [SerializeField] string _p0_input_debug;
-        [SerializeField] string _p1_input_debug;
+        [SerializeField] string p0_input_debug;
+        [SerializeField] string p1_input_debug;
 
         private PlayerInput player0input;
         private PlayerInput player1input;
@@ -62,8 +62,8 @@ namespace hulaohyes.debugtool
                     player0cs.Player.Debug_Reload.performed += ReloadScene;
                     player1cs.Player.Debug_Reload.performed += ReloadScene;
 
-                    _p0_input_debug = player0input.devices[0].name;
-                    _p1_input_debug = player1input.devices[0].name;
+                    p0_input_debug = player0input.devices[0].name;
+                    p1_input_debug = player1input.devices[0].name;
                 }
 
                 else Disable();
@@ -85,8 +85,8 @@ namespace hulaohyes.debugtool
                 player1input.SwitchCurrentControlScheme(lPlayer0Device);
                 Debug.Log("Switch: device switch between players");
 
-                _p0_input_debug = lPlayer1Device.name;
-                _p1_input_debug = lPlayer0Device.name;
+                p0_input_debug = lPlayer1Device.name;
+                p1_input_debug = lPlayer0Device.name;
             }
         }
 

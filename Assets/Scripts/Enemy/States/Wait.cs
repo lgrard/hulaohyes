@@ -7,7 +7,7 @@ using hulaohyes.enemy.states;
 public abstract class Wait : EnemyState
 {
     protected float MAX_TIMER = 0.4f;
-    private float _timer;
+    private float timer;
 
     public Wait(EnemyStateMachine pStateMachine, EnemyController pEnemy, Animator pAnimator) : base(pStateMachine, pEnemy, pAnimator) { }
 
@@ -16,13 +16,13 @@ public abstract class Wait : EnemyState
     public override void OnEnter()
     {
         base.OnEnter();
-        _timer = MAX_TIMER;
+        timer = MAX_TIMER;
     }
 
     public override void LoopLogic()
     {
         base.LoopLogic();
-        if (_timer >= 0) _timer -= Time.deltaTime;
+        if (timer >= 0) timer -= Time.deltaTime;
         else TimerEnd();
     }
 

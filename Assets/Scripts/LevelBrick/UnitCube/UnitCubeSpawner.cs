@@ -7,59 +7,59 @@ namespace hulaohyes.levelbrick.unitcube
 {
     public class UnitCubeSpawner : MonoBehaviour
     {
-        private UnitCube _currentUnitCube;
-        private GameObject _unitCubePrefab;
-        private Vector3 _spawnOffset = new Vector3(0,1,0);
-        private bool _canSpawnCube = true;
-        [SerializeField] GameObject _spawner;
-        [SerializeField] bool _drawGizmos = true;
+        private UnitCube currentUnitCube;
+        private GameObject unitCubePrefab;
+        private Vector3 spawnOffset = new Vector3(0,1,0);
+        private bool canSpawnCube = true;
+        [SerializeField] GameObject spawner;
+        [SerializeField] bool drawGizmos = true;
 
         private void Start()
         {
             string lPath = "Prefabs/Bricks/UnitCube";
-            _unitCubePrefab = Resources.Load(lPath) as GameObject;
-            if (_unitCubePrefab == null) Debug.LogError(lPath +" is not a valid path");
-            if (_spawner == null) Debug.LogError("You need to assign a spawner object to "+gameObject.name);
+            unitCubePrefab = Resources.Load(lPath) as GameObject;
+            if (unitCubePrefab == null) Debug.LogError(lPath +" is not a valid path");
+            if (spawner == null) Debug.LogError("You need to assign a spawner object to "+gameObject.name);
         }
 
         private IEnumerator ButtonTimer()
         {
-            _canSpawnCube = false;
+            canSpawnCube = false;
             yield return new WaitForSeconds(1f);
 
-            GameObject lUnitcubeToSpawn = PrefabUtility.InstantiatePrefab(_unitCubePrefab) as GameObject;
-            if (lUnitcubeToSpawn.TryGetComponent<UnitCube>(out UnitCube pCube)) _currentUnitCube = pCube;
-            _currentUnitCube.transform.position = _spawner.transform.position + _spawnOffset;
-            _currentUnitCube.CurrentSpawner = this;
+            GameObject lUnitcubeToSpawn = PrefabUtility.InstantiatePrefab(unitCubePrefab) as GameObject;
+            if (lUnitcubeToSpawn.TryGetComponent<UnitCube>(out UnitCube pCube)) currentUnitCube = pCube;
+            currentUnitCube.transform.position = spawner.transform.position + spawnOffset;
+            currentUnitCube.CurrentSpawner = this;
 
-            _canSpawnCube = true;
+            canSpawnCube = true;
         }
 
         public void PushButton()
         {
-            if (_currentUnitCube != null) _currentUnitCube.DestroyUnitCube();
-            else if (_canSpawnCube) StartCoroutine(ButtonTimer());
+            if (currentUnitCube != null) currentUnitCube.DestroyUnitCube();
+            else if (canSpawnCube) StartCoroutine(ButtonTimer());
         }
 
         /// Nullify reference to old cube and create a new one
         public void DestroyCurrentCube()
         {
-            _currentUnitCube = null;
-            if(_canSpawnCube) StartCoroutine(ButtonTimer());
+            currentUnitCube = null;
+            if(canSpawnCube) StartCoroutine(ButtonTimer());
         }
 
         private void OnDrawGizmos()
         {
-            if (_drawGizmos)
+            if (drawGizmos)
             {
                 Gizmos.color = Color.grey;
                 Gizmos.DrawSphere(this.transform.position, 0.25f);
 
                 Gizmos.color = Color.green;
-                if (_currentUnitCube != null) Gizmos.DrawLine(this.transform.position, _currentUnitCube.transform.position);
+                if (currentUnitCube != null) Gizmos.DrawLine(this.transform.position, currentUnitCube.transform.position);
 
                 Gizmos.matrix = Matrix4x4.TRS(transform.position, transform.rotation, transform.lossyScale);
-               if(_spawner!=null) Gizmos.DrawCube(_spawner.transform.localPosition + _spawnOffset, Vector3.one);
+               if(spawner!=null) Gizmos.DrawCube(spawner.transform.localPosition + spawnOffset, Vector3.one);
             }
         }
     }

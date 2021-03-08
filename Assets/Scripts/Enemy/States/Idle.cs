@@ -7,27 +7,27 @@ namespace hulaohyes.enemy.states
 {
     public class Idle : EnemyState
     {
-        private SphereCollider _detectionZone;
-        private LayerMask _playerLayer;
+        private SphereCollider detectionZone;
+        private LayerMask playerLayer;
 
         public Idle(EnemyStateMachine pStateMachine, EnemyController pEnemy, Animator pAnimator, SphereCollider pDetectionZone)
             : base(pStateMachine,pEnemy,pAnimator)
         {
-            _detectionZone = pDetectionZone;
-            _playerLayer = LayerMask.GetMask("Player");
+            detectionZone = pDetectionZone;
+            playerLayer = LayerMask.GetMask("Player");
         }
 
         private void PlayerCheck()
         {
-            _enemy.currentTarget = Utility.GetClosestTarget(_enemy.transform, Physics.OverlapSphere(_enemy.transform.position, _detectionZone.radius, _playerLayer));
-            if(_enemy.currentTarget != null)_stateMachine.CurrentState = _stateMachine.StartUp;
+            enemy.currentTarget = Utility.GetClosestTarget(enemy.transform, Physics.OverlapSphere(enemy.transform.position, detectionZone.radius, playerLayer));
+            if(enemy.currentTarget != null)stateMachine.CurrentState = stateMachine.StartUp;
         }
 
         public override void OnEnter()
         {
             Debug.Log("Enter Idle");
             base.OnEnter();
-            _detectionZone.enabled = true;
+            detectionZone.enabled = true;
             PlayerCheck();
         }
 
@@ -35,7 +35,7 @@ namespace hulaohyes.enemy.states
         {
             Debug.Log("Exit Idle");
             base.OnExit();
-            _detectionZone.enabled = false;
+            detectionZone.enabled = false;
         }
     }
 }

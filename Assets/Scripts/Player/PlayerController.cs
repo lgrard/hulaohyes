@@ -13,25 +13,25 @@ namespace hulaohyes.player
         const float KNOCK_BACK_AMOUNT = 0.3f;
         const float KNOCK_BACK_TIME = 0.1f;
 
-        private GameManager _gameManager;
-        private Animator _playerAnimator;
-        private PlayerStateMachine _stateMachine;
-        private PlayerInput _playerInput;
-        private ControlScheme _controlScheme;
-        private Transform _cameraContainer;
+        private GameManager gameManager;
+        private Animator playerAnimator;
+        private PlayerStateMachine stateMachine;
+        private PlayerInput playerInput;
+        private ControlScheme controlScheme;
+        private Transform cameraContainer;
 
         public int playerIndex = 0;
 
         [Header("HP values")]
         private int maxHp = 10;
-        private int _hp;
+        private int hp;
 
         [Header("Objects and components")]
         [Tooltip("The transform where pick up target is stored")]
         public Transform pickUpPoint;
 
         [Header("Particles list")]
-        [SerializeField] List<ParticleSystem> _playerParticles;
+        [SerializeField] List<ParticleSystem> playerParticles;
 
         [Header("Player values")]
         public float MOVEMENT_SPEED = 6;                                                                                                //const to change
@@ -47,31 +47,31 @@ namespace hulaohyes.player
         [SerializeField] string currentState;
 
         ///Standard and physic GameLoops
-        private void Update() => _stateMachine.CurrentState.LoopLogic();
+        private void Update() => stateMachine.CurrentState.LoopLogic();
         private void FixedUpdate()
         {
-            currentState = _stateMachine.CurrentState.ToString();
-            _stateMachine.CurrentState.PhysLoopLogic();
-            _rb.AddForce(Physics.gravity * _gravity, ForceMode.Acceleration);
+            currentState = stateMachine.CurrentState.ToString();
+            stateMachine.CurrentState.PhysLoopLogic();
+            rb.AddForce(Physics.gravity * _gravity, ForceMode.Acceleration);
         }
 
         /// The player takes a certain amount of damage
         /// <param name="pDamage"> Amount of damage taken </param>
         public void TakeDamage(int pDamage, Transform pDealer)
         {
-            _hp -= pDamage;
-            if (_hp >= 0 && _stateMachine.CurrentState == _stateMachine.Carrying)
-                _stateMachine.Carrying.TakeCarryDamage();
+            hp -= pDamage;
+            if (hp >= 0 && stateMachine.CurrentState == stateMachine.Carrying)
+                stateMachine.Carrying.TakeCarryDamage();
 
-            else if (_hp >= 0 && _stateMachine.CurrentState != _stateMachine.Carrying && _stateMachine.CurrentState != _stateMachine.Carried)
+            else if (hp >= 0 && stateMachine.CurrentState != stateMachine.Carrying && stateMachine.CurrentState != stateMachine.Carried)
             {
                 StartCoroutine(KnockBack(pDealer));
-                _playerAnimator.SetTrigger("TakeDamage");
-                _stateMachine.CurrentState = _stateMachine.Wait;
+                playerAnimator.SetTrigger("TakeDamage");
+                stateMachine.CurrentState = stateMachine.Wait;
             }
 
-            else if (_hp <= 0)
-                _stateMachine.CurrentState = _stateMachine.Downed;
+            else if (hp <= 0)
+                stateMachine.CurrentState = stateMachine.Downed;
         }
 
         private IEnumerator KnockBack(Transform pOrigin)
@@ -91,37 +91,37 @@ namespace hulaohyes.player
         public void SetPlayerDevice()
         {
             InputDevice lDevice = DeviceManager.GetInputDevice(playerIndex);
-            if (lDevice != null) _playerInput.SwitchCurrentControlScheme(lDevice);
+            if (lDevice != null) playerInput.SwitchCurrentControlScheme(lDevice);
         }
         public void DropTarget()
         {
-            _rb.velocity = _rb.velocity / 1.2f;
-            _stateMachine.CurrentState = _stateMachine.Wait;
+            rb.velocity = rb.velocity / 1.2f;
+            stateMachine.CurrentState = stateMachine.Wait;
         }
         override protected void Init()
         {
             base.Init();
             isPickableState = false;
-            _cameraContainer = CameraManager.getInstance().GetCamera(playerIndex).transform;
-            _playerAnimator = GetComponent<Animator>();
-            _controlScheme = new ControlScheme();
-            _playerInput = GetComponent<PlayerInput>();
-            _playerInput.actions = _controlScheme.asset;
+            cameraContainer = CameraManager.getInstance().GetCamera(playerIndex).transform;
+            playerAnimator = GetComponent<Animator>();
+            controlScheme = new ControlScheme();
+            playerInput = GetComponent<PlayerInput>();
+            playerInput.actions = controlScheme.asset;
             SetPlayerDevice();
-            _stateMachine = new PlayerStateMachine(this, _controlScheme, _cameraContainer, _rb, _playerAnimator, _playerParticles, _collider);
+            stateMachine = new PlayerStateMachine(this, controlScheme, cameraContainer, rb, playerAnimator, playerParticles, _collider);
 
-            _hp = maxHp;
+            hp = maxHp;
         }
 
         override public void Propel()
         {
-            _stateMachine.CurrentState = _stateMachine.Thrown;
+            stateMachine.CurrentState = stateMachine.Thrown;
             base.Propel();
         }
 
         override public void Drop()
         {
-            _stateMachine.CurrentState = _stateMachine.Thrown;
+            stateMachine.CurrentState = stateMachine.Thrown;
             base.Drop();
         }
 
@@ -129,22 +129,22 @@ namespace hulaohyes.player
         {
             base.GetPicked(pPicker);
             if (pickUpTarget != null) DropTarget();
-            _stateMachine.CurrentState = _stateMachine.Carried;
+            stateMachine.CurrentState = stateMachine.Carried;
         }
         protected override void HitElseThrown(Collider pCollider)
         {
             base.HitElseThrown(pCollider);
-            _stateMachine.CurrentState = _stateMachine.Running;
+            stateMachine.CurrentState = stateMachine.Running;
         }
         protected override void HitElseDropped(Collider pCollider)
         {
             base.HitElseDropped(pCollider);
-            _stateMachine.CurrentState = _stateMachine.Running;
+            stateMachine.CurrentState = stateMachine.Running;
         }
 
-        bool isThrown => _stateMachine.CurrentState == _stateMachine.Thrown;
+        bool isThrown => stateMachine.CurrentState == stateMachine.Thrown;
 
-        public ControlScheme getActiveControlScheme() { return _controlScheme; }
+        public ControlScheme getActiveControlScheme() { return controlScheme; }
 
         protected override void OnGizmos()
         {

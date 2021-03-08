@@ -14,13 +14,13 @@ namespace hulaohyes.player.states
         public override void OnEnter()
         {
             base.OnEnter();
-            _animator.SetBool("Thrown", true);
+            animator.SetBool("Thrown", true);
         }
 
         public override void OnExit()
         {
             base.OnExit();
-            _animator.SetBool("Thrown", false);
+            animator.SetBool("Thrown", false);
         }
     }
 }

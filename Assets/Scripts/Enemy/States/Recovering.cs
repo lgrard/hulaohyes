@@ -13,20 +13,20 @@ public class Recovering : Wait
     protected override void TimerEnd()
     {
         base.TimerEnd();
-        _stateMachine.CurrentState = _stateMachine.Idle;
+        stateMachine.CurrentState = stateMachine.Idle;
     }
 
     public override void OnEnter()
     {
         base.OnEnter();
-        _enemy.isPickableState = true;
-        _animator.SetBool("isRecovering", true);
+        enemy.isPickableState = true;
+        animator.SetBool("isRecovering", true);
     }
 
     public override void OnExit()
     {
         base.OnExit();
-        _enemy.isPickableState = false;
-        _animator.SetBool("isRecovering", false);
+        enemy.isPickableState = false;
+        animator.SetBool("isRecovering", false);
     }
 }

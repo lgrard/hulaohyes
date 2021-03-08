@@ -10,27 +10,27 @@ namespace hulaohyes.camera
     public class LookAtCameraManager : AltCameraManager
     {
         [Header("Camera")]
-        [SerializeField] Transform _camPosition;
+        [SerializeField] Transform camPosition;
 
         protected override void Init()
         {
             base.Init();
-            Camera lCam0 = _camManager.GetCamera(0);
-            Transform lPlayerGroup = _camManager.PlayerGroup;
+            Camera lCam0 = camManager.GetCamera(0);
+            Transform lPlayerGroup = camManager.PlayerGroup;
             Transform lPlayer0 = GameManager.getPlayer(0).transform;
 
-            _altCamElement = new LookAtCameraElement(lCam0, _altGlobalCam, lPlayer0, lPlayerGroup, _camPosition);
+            altCamElement = new LookAtCameraElement(lCam0, altGlobalCam, lPlayer0, lPlayerGroup, camPosition);
         }
 
         protected override void GizmosDebug()
         {
             base.GizmosDebug();
 
-            if (_camPosition != null)
+            if (camPosition != null)
             {
-                Gizmos.matrix = Matrix4x4.TRS(_camPosition.position, _camPosition.rotation, transform.lossyScale);
+                Gizmos.matrix = Matrix4x4.TRS(camPosition.position, camPosition.rotation, transform.lossyScale);
                 Gizmos.color = Color.cyan;
-                Gizmos.DrawFrustum(_camPosition.localPosition, 60, 1, 5000, 1.7f);
+                Gizmos.DrawFrustum(camPosition.localPosition, 60, 1, 5000, 1.7f);
             }
         }
     }

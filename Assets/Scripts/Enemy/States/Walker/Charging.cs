@@ -9,38 +9,38 @@ namespace hulaohyes.enemy.states.walker
     {
         private const float CHARGE_SPEED = 10;
 
-        private NavMeshAgent _agent;
-        private BoxCollider _damageZone;
+        private NavMeshAgent agent;
+        private BoxCollider damageZone;
 
         public Charging(EnemyStateMachine pStateMachine, EnemyController pEnemy, Animator pAnimator, NavMeshAgent pAgent, BoxCollider pDamageZone)
             : base(pStateMachine, pEnemy, pAnimator)
         {
             MAX_TIMER = 3f;
-            _agent = pAgent;
-            _damageZone = pDamageZone;
+            agent = pAgent;
+            damageZone = pDamageZone;
         }
 
         public override void OnEnter()
         {
             base.OnEnter();
-            _damageZone.enabled = true;
-            _agent.speed = CHARGE_SPEED;
-            _agent.angularSpeed = 5;
+            damageZone.enabled = true;
+            agent.speed = CHARGE_SPEED;
+            agent.angularSpeed = 5;
         }
 
         public override void LoopLogic()
         {
             base.LoopLogic();
-            _animator.SetFloat("Speed", _agent.velocity.magnitude/ CHARGE_SPEED);
-            _agent.destination = (base._enemy.currentTarget.position);
+            animator.SetFloat("Speed", agent.velocity.magnitude/ CHARGE_SPEED);
+            agent.destination = (base.enemy.currentTarget.position);
         }
 
         public override void OnExit()
         {
             base.OnExit();
-            _damageZone.enabled = false;
-            _agent.isStopped = true;
-            _agent.velocity = _agent.velocity / 3;
+            damageZone.enabled = false;
+            agent.isStopped = true;
+            agent.velocity = agent.velocity / 3;
         }
     }
 }
