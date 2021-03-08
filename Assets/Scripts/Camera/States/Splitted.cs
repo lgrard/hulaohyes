@@ -1,9 +1,8 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using hulaohyes.states;
 using hulaohyes.camera.elements;
 using Cinemachine;
+using UnityEngine.Rendering;
 
 namespace hulaohyes.camera.states
 {
@@ -14,26 +13,28 @@ namespace hulaohyes.camera.states
         private const float CENTER_MAGNITUDE = 0.25f;
         private const float MERGE_THRESHOLD = 10;
 
-        private CameraManager _camManager;
-        private CinemachineFramingTransposer _sideCam0transposer;
-        private CinemachineFramingTransposer _sideCam1transposer;
-        private RectTransform _mask0;
-        private RectTransform _mask1;
-        private RectTransform _bar;
-        private Camera _cam1;
-        private float _splitAngle;
+        private CameraManager camManager;
+        private CinemachineFramingTransposer sideCam0transposer;
+        private CinemachineFramingTransposer sideCam1transposer;
+        private RectTransform mask0;
+        private RectTransform mask1;
+        private RectTransform bar;
+        private Camera cam1;
+        private GameObject cam0Volume;
+        private float splitAngle;
 
         public Splitted(CameraStateMachine pStateMachine, CameraElement pCamElement0, CameraElement pCamElement1,
-            SideCameraElement pSideCamElement0, SideCameraElement pSideCamElement1, RectTransform pMask0, RectTransform pMask1, RectTransform pBar)
+            SideCameraElement pSideCamElement0, SideCameraElement pSideCamElement1, RectTransform pMask0, RectTransform pMask1, RectTransform pBar, GameObject pCam0Volume)
             : base(pStateMachine, pCamElement0, pCamElement1)
         {
-            _cam1 = pSideCamElement1.Camera;
-            _camManager = CameraManager.getInstance();
-            _sideCam0transposer = pSideCamElement0.SideCamTransposer;
-            _sideCam1transposer = pSideCamElement1.SideCamTransposer;
-            _mask0 = pMask0;
-            _mask1 = pMask1;
-            _bar = pBar;
+            cam1 = pSideCamElement1.Camera;
+            camManager = CameraManager.getInstance();
+            sideCam0transposer = pSideCamElement0.SideCamTransposer;
+            sideCam1transposer = pSideCamElement1.SideCamTransposer;
+            mask0 = pMask0;
+            mask1 = pMask1;
+            bar = pBar;
+            cam0Volume = pCam0Volume;
         }
 
         IEnumerator SplitCams()
@@ -42,10 +43,11 @@ namespace hulaohyes.camera.states
 
             yield return new WaitForEndOfFrame();
 
-            _cam1.enabled = true;
-            _mask1.gameObject.SetActive(true);
-            _mask0.gameObject.SetActive(true);
-            _bar.gameObject.SetActive(true);
+            cam1.enabled = true;
+            mask1.gameObject.SetActive(true);
+            mask0.gameObject.SetActive(true);
+            bar.gameObject.SetActive(true);
+            cam0Volume.SetActive(false);
 
             UpdateCamGlobalPriority(camElement0, 1);
             UpdateCamGlobalPriority(camElement1, 0);
@@ -65,31 +67,32 @@ namespace hulaohyes.camera.states
 
             yield return new WaitForSeconds(0.5f);
 
-            _cam1.enabled = false;
-            _mask1.gameObject.SetActive(false);
-            _mask0.gameObject.SetActive(false);
-            _bar.gameObject.SetActive(false);
+            cam0Volume.SetActive(true);
+            cam1.enabled = false;
+            mask1.gameObject.SetActive(false);
+            mask0.gameObject.SetActive(false);
+            bar.gameObject.SetActive(false);
         }
 
         void SetScreenPosition()
         {
-            var lScreenX0 = (Mathf.Cos(_splitAngle * DEG2RAD) * CENTER_MAGNITUDE) + 0.5f;
-            var lScreenY0 = (Mathf.Sin(_splitAngle * DEG2RAD) * CENTER_MAGNITUDE) + 0.5f;
-            var lScreenX1 = 1 - ((Mathf.Cos(_splitAngle * DEG2RAD) * CENTER_MAGNITUDE) + 0.5f);
-            var lScreenY1 = 1 - ((Mathf.Sin(_splitAngle * DEG2RAD) * CENTER_MAGNITUDE) + 0.5f);
+            var lScreenX0 = (Mathf.Cos(splitAngle * DEG2RAD) * CENTER_MAGNITUDE) + 0.5f;
+            var lScreenY0 = (Mathf.Sin(splitAngle * DEG2RAD) * CENTER_MAGNITUDE) + 0.5f;
+            var lScreenX1 = 1 - ((Mathf.Cos(splitAngle * DEG2RAD) * CENTER_MAGNITUDE) + 0.5f);
+            var lScreenY1 = 1 - ((Mathf.Sin(splitAngle * DEG2RAD) * CENTER_MAGNITUDE) + 0.5f);
 
-            _sideCam0transposer.m_ScreenX = lScreenX0;
-            _sideCam0transposer.m_ScreenY = lScreenY0;
-            _sideCam1transposer.m_ScreenX = lScreenX1;
-            _sideCam1transposer.m_ScreenY = lScreenY1;
+            sideCam0transposer.m_ScreenX = lScreenX0;
+            sideCam0transposer.m_ScreenY = lScreenY0;
+            sideCam1transposer.m_ScreenX = lScreenX1;
+            sideCam1transposer.m_ScreenY = lScreenY1;
         }
 
         void SetUIAngle()
         {
-            _splitAngle = Mathf.Atan2(_playerDistance.x, _playerDistance.z) * RAD2DEG - 90;
-            _bar.localEulerAngles = new Vector3(0, 0, -_splitAngle);
-            _mask0.localEulerAngles = new Vector3(0, 0, -_splitAngle);
-            _mask1.localEulerAngles = new Vector3(0, 0, -_splitAngle - 180);
+            splitAngle = Mathf.Atan2(_playerDistance.x, _playerDistance.z) * RAD2DEG - 90;
+            bar.localEulerAngles = new Vector3(0, 0, -splitAngle);
+            mask0.localEulerAngles = new Vector3(0, 0, -splitAngle);
+            mask1.localEulerAngles = new Vector3(0, 0, -splitAngle - 180);
         }
 
         bool CanMerge => _playerDistance.magnitude < MERGE_THRESHOLD;
@@ -97,7 +100,7 @@ namespace hulaohyes.camera.states
         public override void OnEnter()
         {
             base.OnEnter();
-            _camManager.StartCoroutine(SplitCams());
+            camManager.StartCoroutine(SplitCams());
         }
 
         public override void LoopLogic()
@@ -113,7 +116,7 @@ namespace hulaohyes.camera.states
         public override void OnExit()
         {
             base.OnExit();
-            _camManager.StartCoroutine(MergeCams());
+            camManager.StartCoroutine(MergeCams());
         }
     }
 }

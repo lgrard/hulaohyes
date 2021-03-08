@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Cinemachine;
-using hulaohyes;
 using hulaohyes.camera.states;
 using hulaohyes.camera.elements;
+
 
 namespace hulaohyes.camera
 {
@@ -14,29 +14,30 @@ namespace hulaohyes.camera
 
         [Header("Camera 0")]
         [SerializeField] Camera _cam0;
-        [SerializeField] CinemachineVirtualCamera _sideCam0;
-        [SerializeField] CinemachineVirtualCamera _sideGlobalCam0;
+        [SerializeField] CinemachineVirtualCamera sideCam0;
+        [SerializeField] CinemachineVirtualCamera sideGlobalCam0;
+        [SerializeField] GameObject cam0Volume;
 
         [Header("Camera 1")]
         [SerializeField] Camera _cam1;
-        [SerializeField] CinemachineVirtualCamera _sideCam1;
-        [SerializeField] CinemachineVirtualCamera _sideGlobalCam1;
+        [SerializeField] CinemachineVirtualCamera sideCam1;
+        [SerializeField] CinemachineVirtualCamera sideGlobalCam1;
 
         [Header("DepthMasks")]
-        [SerializeField] RectTransform _mask0;
-        [SerializeField] RectTransform _mask1;
+        [SerializeField] RectTransform mask0;
+        [SerializeField] RectTransform mask1;
 
         [Header("Splitting bar")]
-        [SerializeField] RectTransform _bar;
+        [SerializeField] RectTransform bar;
 
         [Header("Targets")]
-        private Transform _playerGroup;
-        private Transform _player0;
-        private Transform _player1;
+        private Transform playerGroup;
+        private Transform player0;
+        private Transform player1;
 
-        private CameraStateMachine _stateMachine;
-        private SideCameraElement _sideCamElement0;
-        private SideCameraElement _sideCamElement1;
+        private CameraStateMachine stateMachine;
+        private SideCameraElement sideCamElement0;
+        private SideCameraElement sideCamElement1;
 
 
         private void Awake()
@@ -54,14 +55,17 @@ namespace hulaohyes.camera
 
         void Init()
         {
-            _player0 = GameManager.getPlayer(0).transform;
-            _player1 = GameManager.getPlayer(1).transform;
-            _playerGroup = FindObjectOfType<CinemachineTargetGroup>().transform;
+            player0 = GameManager.getPlayer(0).transform;
+            player1 = GameManager.getPlayer(1).transform;
+            CinemachineTargetGroup lPlayerTargetGroup = FindObjectOfType<CinemachineTargetGroup>();
+            lPlayerTargetGroup.AddMember(player0,1,1);
+            lPlayerTargetGroup.AddMember(player1,1,1);
+            playerGroup = lPlayerTargetGroup.transform;
 
-            _sideCamElement0 = new SideCameraElement(_cam0, _sideCam0, _sideGlobalCam0,_player0, _playerGroup);
-            _sideCamElement1 = new SideCameraElement(_cam1, _sideCam1, _sideGlobalCam1,_player1, _sideGlobalCam0.transform);
+            sideCamElement0 = new SideCameraElement(_cam0, sideCam0, sideGlobalCam0,player0, playerGroup);
+            sideCamElement1 = new SideCameraElement(_cam1, sideCam1, sideGlobalCam1,player1, sideGlobalCam0.transform);
 
-            _stateMachine = new CameraStateMachine(_sideCamElement0, _sideCamElement1, _sideCamElement0,_sideCamElement1,_mask0, _mask1, _bar);
+            stateMachine = new CameraStateMachine(sideCamElement0, sideCamElement1, sideCamElement0,sideCamElement1,mask0, mask1, bar, cam0Volume);
         }
 
         /// Returns CameraManager singleton instance
@@ -76,22 +80,22 @@ namespace hulaohyes.camera
         /// <param name="pAltCamElement">New global alternative camera</param>
         public void SetAltCameraElement(CameraElement pAltCamElement)
         {
-            _stateMachine.SplitState.ForceMerge();
-            _stateMachine.MergeState.SetCanSplit = false;
-            _stateMachine.SplitState.UpdateCamGlobalPriority(_sideCamElement0, 0);
-            _stateMachine.SplitState.UpdateCamNormalPriority(_sideCamElement0, 0);
-            _stateMachine.SplitState.camElement0 = pAltCamElement;
-            _stateMachine.SplitState.UpdateCamGlobalPriority(_stateMachine.SplitState.camElement0, 100);
+            stateMachine.SplitState.ForceMerge();
+            stateMachine.MergeState.SetCanSplit = false;
+            stateMachine.SplitState.UpdateCamGlobalPriority(sideCamElement0, 0);
+            stateMachine.SplitState.UpdateCamNormalPriority(sideCamElement0, 0);
+            stateMachine.SplitState.camElement0 = pAltCamElement;
+            stateMachine.SplitState.UpdateCamGlobalPriority(stateMachine.SplitState.camElement0, 100);
         }
 
         /// Reset global and normal cameras to sideCamElements
         public void ResetCamerasElement()
         {
-            _stateMachine.SplitState.UpdateCamGlobalPriority(_stateMachine.SplitState.camElement0, 0);
-            _stateMachine.SplitState.camElement0 = _sideCamElement0;
-            _stateMachine.SplitState.UpdateCamGlobalPriority(_sideCamElement0, 100);
-            _stateMachine.SplitState.UpdateCamNormalPriority(_sideCamElement0, 99);
-            _stateMachine.MergeState.SetCanSplit = true;
+            stateMachine.SplitState.UpdateCamGlobalPriority(stateMachine.SplitState.camElement0, 0);
+            stateMachine.SplitState.camElement0 = sideCamElement0;
+            stateMachine.SplitState.UpdateCamGlobalPriority(sideCamElement0, 100);
+            stateMachine.SplitState.UpdateCamNormalPriority(sideCamElement0, 99);
+            stateMachine.MergeState.SetCanSplit = true;
         }
 
         /// Returns associated player index Camera component
@@ -109,8 +113,8 @@ namespace hulaohyes.camera
         }
 
         /// Returns current global PlayerGroup
-        public Transform PlayerGroup { get => _playerGroup; }
+        public Transform PlayerGroup { get => playerGroup; }
 
-        private void Update() => _stateMachine.CurrentState.LoopLogic();
+        private void Update() => stateMachine.CurrentState.LoopLogic();
     }
 }
