@@ -76,17 +76,17 @@ namespace hulaohyes.enemy
             base.GetPicked(pPlayer);
         }
 
-        protected override void HitSomething(Collider pCollider)
+        protected override void HitElse(Collider pCollider)
         {
             if (isThrown)
             {
-                base.HitSomething(pCollider);
+                base.HitElse(pCollider);
                 destroyEnemy();
             }
 
             else if (isDropped)
             {
-                base.HitSomething(pCollider);
+                base.HitElse(pCollider);
                 _navMeshAgent.enabled = true;
                 _stateMachine.CurrentState = _stateMachine.Idle;
             }

@@ -90,8 +90,11 @@ namespace hulaohyes.player
             InputDevice lDevice = DeviceManager.GetInputDevice(playerIndex);
             if (lDevice != null) _playerInput.SwitchCurrentControlScheme(lDevice);
         }
-        public void DropTarget() => _stateMachine.CurrentState = _stateMachine.Wait;
-
+        public void DropTarget()
+        {
+            _rb.velocity = _rb.velocity / 1.2f;
+            _stateMachine.CurrentState = _stateMachine.Wait;
+        }
         override protected void Init()
         {
             base.Init();
@@ -126,11 +129,11 @@ namespace hulaohyes.player
             _stateMachine.CurrentState = _stateMachine.Carried;
         }
 
-        protected override void HitSomething(Collider pCollider)
+        protected override void HitElse(Collider pCollider)
         {
             if (isThrown)
             {
-                base.HitSomething(pCollider);
+                base.HitElse(pCollider);
                 _stateMachine.CurrentState = _stateMachine.Running;
             }
         }
@@ -141,6 +144,7 @@ namespace hulaohyes.player
 
         protected override void OnGizmos()
         {
+            Gizmos.DrawLine(transform.position + new Vector3(0,0.5f,0), (transform.forward * PICK_UP_DISTANCE+transform.position+new Vector3(0,0.5f,0)));             //GroundCheck debug line
             Gizmos.DrawLine(transform.position, new Vector3(transform.position.x, transform.position.y - GROUND_CHECK_DISTANCE, transform.position.z));             //GroundCheck debug line
             base.OnGizmos();
         }

@@ -22,6 +22,7 @@ public class Pickable : MonoBehaviour
     protected private Rigidbody _rb;
     protected private Collider _collider;
     protected bool _isDropped = false;
+    protected bool _isPicked = false;
 
     [Range(1, 30)] public float THROW_FORCE = 20f;                                                                                                  //const to change
     [Range(1, 30)] public float DROP_FORCE = 9f;                                                                                                    //const to change
@@ -66,13 +67,15 @@ public class Pickable : MonoBehaviour
 
     public virtual void GetPicked(PlayerController pPicker)
     {
+        _isPicked = true;
         transform.parent = pPicker.pickUpPoint;
-        _currentPicker = pPicker;
         _rb.isKinematic = true;
 
         transform.localEulerAngles = Vector3.zero;
         transform.localPosition = Vector3.zero;
         _collider.isTrigger = true;
+
+        _currentPicker = pPicker;
     }
 
     private void GetDropped(float pDropForce, float pAngleOffset, Transform pTarget = null)
@@ -82,6 +85,8 @@ public class Pickable : MonoBehaviour
 
         if (pTarget != null)
             lForwardDirection = ((pTarget.position+ new Vector3(0,1f,0)) - transform.position).normalized;
+
+        _isPicked = false;
 
         _currentPicker.DropTarget();
         transform.parent = null;
@@ -94,20 +99,24 @@ public class Pickable : MonoBehaviour
     {
         if ((_collisionLayer & 1 << other.gameObject.layer) == 1 << other.gameObject.layer
             && other.gameObject.TryGetComponent<PlayerController>(out PlayerController pPlayer) != _currentPicker
-            && !other.isTrigger)
+            && !other.isTrigger
+            && !_isPicked)
         {
-            HitSomething(other);
+            HitElse(other);
+
             if (other.gameObject.TryGetComponent<EnemyController>(out EnemyController pEnemy)
                 && gameObject != pEnemy.gameObject
-                && !_isDropped)
-            {
-                if(_impactParticles != null)_impactParticles.Play();
-                pEnemy.destroyEnemy();
-            }
+                && !_isDropped) HitEnemy(pEnemy);
         }
     }
 
-    protected virtual void HitSomething(Collider pCollider)
+    private void HitEnemy(EnemyController pEnemy)
+    {
+        if (_impactParticles != null) _impactParticles.Play();
+        pEnemy.destroyEnemy();
+    }
+
+    protected virtual void HitElse(Collider pCollider)
     {
         _currentPicker = null;
         _rb.velocity = Vector3.zero;
