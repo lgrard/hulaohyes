@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using hulaohyes.enemy.states.walker;
+using hulaohyes.player;
 
 namespace hulaohyes.enemy
 {
@@ -24,6 +25,17 @@ namespace hulaohyes.enemy
             _damageZone.center = _damageZoneSetting.localPosition;
             _damageZone.isTrigger = true;
             _damageZone.enabled = false;
+        }
+
+        protected override void HitPlayer(PlayerController pPlayer)
+        {
+            if (isAttacking)
+            {
+                pPlayer.TakeDamage(1, transform);
+                _stateMachine.CurrentState = _stateMachine.Recovering;
+            }
+            
+            base.HitPlayer(pPlayer);
         }
 
         protected override void OnGizmos()

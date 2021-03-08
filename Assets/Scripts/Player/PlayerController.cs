@@ -43,10 +43,14 @@ namespace hulaohyes.player
         [HideInInspector]
         public Pickable pickUpTarget;
 
+        [Header("Debug")]
+        [SerializeField] string currentState;
+
         ///Standard and physic GameLoops
         private void Update() => _stateMachine.CurrentState.LoopLogic();
         private void FixedUpdate()
         {
+            currentState = _stateMachine.CurrentState.ToString();
             _stateMachine.CurrentState.PhysLoopLogic();
             _rb.AddForce(Physics.gravity * _gravity, ForceMode.Acceleration);
         }
@@ -84,7 +88,6 @@ namespace hulaohyes.player
             }
         }
 
-
         public void SetPlayerDevice()
         {
             InputDevice lDevice = DeviceManager.GetInputDevice(playerIndex);
@@ -118,8 +121,8 @@ namespace hulaohyes.player
 
         override public void Drop()
         {
-            base.Drop();
             _stateMachine.CurrentState = _stateMachine.Thrown;
+            base.Drop();
         }
 
         override public void GetPicked(PlayerController pPicker)
@@ -128,14 +131,15 @@ namespace hulaohyes.player
             if (pickUpTarget != null) DropTarget();
             _stateMachine.CurrentState = _stateMachine.Carried;
         }
-
-        protected override void HitElse(Collider pCollider)
+        protected override void HitElseThrown(Collider pCollider)
         {
-            if (isThrown)
-            {
-                base.HitElse(pCollider);
-                _stateMachine.CurrentState = _stateMachine.Running;
-            }
+            base.HitElseThrown(pCollider);
+            _stateMachine.CurrentState = _stateMachine.Running;
+        }
+        protected override void HitElseDropped(Collider pCollider)
+        {
+            base.HitElseDropped(pCollider);
+            _stateMachine.CurrentState = _stateMachine.Running;
         }
 
         bool isThrown => _stateMachine.CurrentState == _stateMachine.Thrown;

@@ -102,11 +102,24 @@ public class Pickable : MonoBehaviour
             && !other.isTrigger
             && !_isPicked)
         {
-            HitElse(other);
+            if (_currentPicker != null)
+            {
+                _currentPicker = null;
+                _rb.velocity = Vector3.zero;
+                _collider.isTrigger = false;
 
-            if (other.gameObject.TryGetComponent<EnemyController>(out EnemyController pEnemy)
-                && gameObject != pEnemy.gameObject
-                && !_isDropped) HitEnemy(pEnemy);
+                if (_isDropped) HitElseDropped(other);
+
+                else
+                {
+                    HitElseThrown(other);
+
+                    if (other.gameObject.TryGetComponent<EnemyController>(out EnemyController pEnemy)
+                    && gameObject != pEnemy.gameObject) HitEnemy(pEnemy);
+                }
+            }
+
+            else HitSomething(other);
         }
     }
 
@@ -115,12 +128,17 @@ public class Pickable : MonoBehaviour
         if (_impactParticles != null) _impactParticles.Play();
         pEnemy.destroyEnemy();
     }
-
-    protected virtual void HitElse(Collider pCollider)
+    protected virtual void HitSomething(Collider pCollider)
     {
-        _currentPicker = null;
-        _rb.velocity = Vector3.zero;
-        _collider.isTrigger = false;
+    
+    }
+    protected virtual void HitElseThrown(Collider pCollider)
+    {
+        
+    }
+    protected virtual void HitElseDropped(Collider pCollider)
+    {
+
     }
 
     protected virtual void OnGizmos()

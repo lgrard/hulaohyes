@@ -44,6 +44,15 @@ namespace hulaohyes.enemy
             _detectionZone.enabled = false;
         }
 
+        protected virtual void HitPlayer(PlayerController pPlayer)
+        {
+            if (isIdling && currentTarget == null)
+            {
+                currentTarget = pPlayer.transform;
+                _stateMachine.CurrentState = _stateMachine.StartUp;
+            }
+        }
+
         protected override void Init()
         {
             base.Init();
@@ -76,35 +85,22 @@ namespace hulaohyes.enemy
             base.GetPicked(pPlayer);
         }
 
-        protected override void HitElse(Collider pCollider)
+        protected override void HitSomething(Collider pCollider)
         {
-            if (isThrown)
-            {
-                base.HitElse(pCollider);
-                destroyEnemy();
-            }
+            base.HitSomething(pCollider);
+            if (pCollider.TryGetComponent<PlayerController>(out PlayerController pPlayer))
+                HitPlayer(pPlayer);
+        }
 
-            else if (isDropped)
-            {
-                base.HitElse(pCollider);
-                _navMeshAgent.enabled = true;
-                _stateMachine.CurrentState = _stateMachine.Idle;
-            }
+        protected override void HitElseThrown(Collider pCollider)
+        {
+            destroyEnemy();
+        }
 
-            else if (pCollider.TryGetComponent<PlayerController>(out PlayerController pPlayer))
-            {
-                if (isAttacking)
-                {
-                    pPlayer.TakeDamage(1, transform);
-                    _stateMachine.CurrentState = _stateMachine.Recovering;
-                }
-
-                else if (isIdling && currentTarget == null)
-                {
-                    currentTarget = pPlayer.transform;
-                    _stateMachine.CurrentState = _stateMachine.StartUp;
-                }
-            }
+        protected override void HitElseDropped(Collider pCollider)
+        {
+            _navMeshAgent.enabled = true;
+            _stateMachine.CurrentState = _stateMachine.Idle;
         }
 
         private void OnTriggerExit(Collider other)
@@ -117,7 +113,7 @@ namespace hulaohyes.enemy
         private bool isDropped => _stateMachine.CurrentState == _stateMachine.Thrown && _isDropped;
         private bool isIdling => _stateMachine.CurrentState == _stateMachine.Idle;
         public bool isRecovering => _stateMachine.CurrentState == _stateMachine.Recovering;
-        private bool isAttacking => _stateMachine.CurrentState == _stateMachine.Attacking;
+        protected bool isAttacking => _stateMachine.CurrentState == _stateMachine.Attacking;
 
 
         public void destroyEnemy()
