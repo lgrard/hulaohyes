@@ -7,10 +7,12 @@ namespace hulaohyes.enemy
 {
     public class TurretController : EnemyController
     {
+        [SerializeField] GameObject bulletPrefab;
+
         protected override void Init()
         {
             base.Init();
-            stateMachine = new TurretStateMachine(this, rb, enemyAnimator, enemyParticles, detectionZone);
+            stateMachine = new TurretStateMachine(this, rb, enemyAnimator, enemyParticles, detectionZone, bulletPrefab);
         }
     }
 }
