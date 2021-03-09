@@ -10,7 +10,6 @@ namespace hulaohyes.player.states
     {
         //private const float PICK_UP_DISTANCE = 2;
         private Vector3 targettingOffset = new Vector3(0, 0.5f, 0);
-        private Vector3 targettingSize = Vector3.one;
         private LayerMask pickableLayers;
         private UnitCubeSpawner currentSpawner;
 
@@ -39,19 +38,16 @@ namespace hulaohyes.player.states
 
         void Targetting()
         {
-            Vector3 lPos = _player.transform.position + targettingOffset;
+            Ray lRay = new Ray(_player.transform.position + targettingOffset, _player.transform.forward);
             RaycastHit hit;
 
-            if (Physics.BoxCast(lPos, targettingSize, _player.transform.forward,out hit,_player.transform.rotation,2)                                          //const to change
-                && hit.collider.gameObject != _player
-                && !hit.collider.isTrigger)
+            if(Physics.Raycast(lRay,out hit,_player.PICK_UP_DISTANCE,pickableLayers,QueryTriggerInteraction.Ignore)
+                && hit.collider.gameObject != _player.gameObject)
             {
-                if (hit.collider.TryGetComponent<Pickable>(out Pickable pickableTarget)
-                    && pickableTarget != _player.pickUpTarget
-                    && pickableTarget.isPickable)
+                if (hit.collider.TryGetComponent<Pickable>(out Pickable pickableTarget) && pickableTarget.isPickable)
                     _player.pickUpTarget = pickableTarget;
-
-                else if (hit.collider.TryGetComponent<UnitCubeSpawner>(out UnitCubeSpawner pSpawner)) currentSpawner = pSpawner;
+                else if (hit.collider.TryGetComponent<UnitCubeSpawner>(out UnitCubeSpawner pSpawner))
+                    currentSpawner = pSpawner;
             }
 
             else if(hit.collider == null)
@@ -60,9 +56,7 @@ namespace hulaohyes.player.states
                     _player.pickUpTarget = null;
 
                 else if(currentSpawner != null)
-                {
                     currentSpawner = null;
-                }
             }
         }
 
