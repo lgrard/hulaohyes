@@ -9,7 +9,6 @@ namespace hulaohyes.enemy
 {
     public class EnemyController : Pickable
     {
-        protected NavMeshAgent navMeshAgent;
         protected EnemyStateMachine stateMachine;
         protected Animator enemyAnimator;
         protected SphereCollider detectionZone;
@@ -56,9 +55,7 @@ namespace hulaohyes.enemy
         protected override void Init()
         {
             base.Init();
-            isPickableState = false;
             CreateDetectionZone();
-            navMeshAgent = GetComponent<NavMeshAgent>();
             enemyAnimator = GetComponent<Animator>();
             GameManager.AddEnemy(this);
         }
@@ -81,7 +78,6 @@ namespace hulaohyes.enemy
         {
             stateMachine.CurrentState = stateMachine.Carried;
             detectionZone.enabled = false;
-            navMeshAgent.enabled = false;
             base.GetPicked(pPlayer);
         }
 
@@ -99,7 +95,7 @@ namespace hulaohyes.enemy
 
         protected override void HitElseDropped(Collider pCollider)
         {
-            navMeshAgent.enabled = true;
+            enemyAnimator.SetTrigger("Escape");
             stateMachine.CurrentState = stateMachine.Idle;
         }
 
@@ -110,7 +106,7 @@ namespace hulaohyes.enemy
 
         public Animator EnemyAnimator => enemyAnimator;
         private bool isThrown => stateMachine.CurrentState == stateMachine.Thrown && !base.isDropped;
-        private bool isDropped => stateMachine.CurrentState == stateMachine.Thrown && base.isDropped;
+        private bool isDroppedEnemy => stateMachine.CurrentState == stateMachine.Thrown && base.isDropped;
         private bool isIdling => stateMachine.CurrentState == stateMachine.Idle;
         public bool isRecovering => stateMachine.CurrentState == stateMachine.Recovering;
         protected bool isAttacking => stateMachine.CurrentState == stateMachine.Attacking;

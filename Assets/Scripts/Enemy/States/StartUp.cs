@@ -1,39 +1,37 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using hulaohyes.enemy.states;
-using hulaohyes.enemy;
-using UnityEngine.AI;
 
-public class StartUp : Wait
+namespace hulaohyes.enemy.states
 {
-    private NavMeshAgent agent;
-
-    public StartUp(EnemyStateMachine pStateMachine, EnemyController pEnemy, Animator pAnimator, NavMeshAgent pAgent)
-        :base(pStateMachine, pEnemy, pAnimator)
+    public class StartUp : Wait
     {
-        agent = pAgent;
-        MAX_TIMER = 3f;
-    }
+        private const float ROTATION_AMOUNT = 0.01f;
 
-    protected override void TimerEnd()
-    {
-        base.TimerEnd();
-        stateMachine.CurrentState = stateMachine.Attacking;
-    }
+        public StartUp(EnemyStateMachine pStateMachine, EnemyController pEnemy, Animator pAnimator)
+            : base(pStateMachine, pEnemy, pAnimator)
+        {
+            MAX_TIMER = 3f;
+        }
 
-    public override void LoopLogic()
-    {
-        base.LoopLogic();
-        agent.destination = (enemy.currentTarget.transform.position);
-    }
+        protected override void TimerEnd()
+        {
+            base.TimerEnd();
+            stateMachine.CurrentState = stateMachine.Attacking;
+        }
 
-    public override void OnEnter()
-    {
-        base.OnEnter();
-        agent.isStopped = false;
-        agent.speed = 0.1f;
-        agent.angularSpeed = 120;
-        animator.SetBool("Attacking", true);
+        public override void LoopLogic()
+        {
+            base.LoopLogic();
+            Vector3 lDirection = enemy.currentTarget.position - enemy.transform.position;
+            Quaternion lRotation = Quaternion.LookRotation(lDirection, Vector3.up);
+            enemy.transform.rotation = Quaternion.Slerp(enemy.transform.rotation, lRotation, ROTATION_AMOUNT);
+        }
+
+        public override void OnEnter()
+        {
+            base.OnEnter();
+            animator.SetBool("Attacking", true);
+        }
     }
 }

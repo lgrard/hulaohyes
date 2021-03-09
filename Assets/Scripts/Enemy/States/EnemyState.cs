@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using hulaohyes.states;
-using hulaohyes.enemy;
 
 namespace hulaohyes.enemy.states
 {

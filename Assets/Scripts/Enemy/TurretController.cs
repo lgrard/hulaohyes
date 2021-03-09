@@ -10,7 +10,7 @@ namespace hulaohyes.enemy
         protected override void Init()
         {
             base.Init();
-            stateMachine = new TurretStateMachine(this, rb, enemyAnimator, enemyParticles, navMeshAgent, detectionZone);
+            stateMachine = new TurretStateMachine(this, rb, enemyAnimator, enemyParticles, detectionZone);
         }
     }
 }

@@ -3,19 +3,24 @@ using System.Collections.Generic;
 using UnityEngine;
 using hulaohyes.enemy.states.walker;
 using hulaohyes.player;
+using UnityEngine.AI;
 
 namespace hulaohyes.enemy
 {
     public class WalkerController : EnemyController
     {
+        private NavMeshAgent navMeshAgent;
         private BoxCollider damageZone;
         [SerializeField] Transform damageZoneSetting;
+
 
         protected override void Init()
         {
             base.Init();
             CreateDamageZone();
+            navMeshAgent = GetComponent<NavMeshAgent>();
             stateMachine = new WalkerStateMachine(this, rb, enemyAnimator, enemyParticles, navMeshAgent, detectionZone, damageZone);
+            isPickableState = false;
         }
 
         private void CreateDamageZone()
@@ -25,6 +30,18 @@ namespace hulaohyes.enemy
             damageZone.center = damageZoneSetting.localPosition;
             damageZone.isTrigger = true;
             damageZone.enabled = false;
+        }
+
+        public override void GetPicked(PlayerController pPlayer)
+        {
+            navMeshAgent.enabled = false;
+            base.GetPicked(pPlayer);
+        }
+
+        protected override void HitElseDropped(Collider pCollider)
+        {
+            navMeshAgent.enabled = true;
+            base.HitElseDropped(pCollider);
         }
 
         protected override void HitPlayer(PlayerController pPlayer)

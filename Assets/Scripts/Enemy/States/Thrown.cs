@@ -1,29 +1,32 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using hulaohyes.enemy;
-using hulaohyes.enemy.states;
 
-public class Thrown : Wait
+namespace hulaohyes.enemy.states
 {
-    public Thrown(EnemyStateMachine pStateMachine, EnemyController pEnemy, Animator pAnimator)
-        : base(pStateMachine, pEnemy, pAnimator) { MAX_TIMER = 5f; }
-
-    protected override void TimerEnd()
+    public class Thrown : Wait
     {
-        base.TimerEnd();
-        enemy.destroyEnemy();
-    }
+        public Thrown(EnemyStateMachine pStateMachine, EnemyController pEnemy, Animator pAnimator)
+            : base(pStateMachine, pEnemy, pAnimator) { MAX_TIMER = 5f; }
 
-    public override void OnEnter()
-    {
-        base.OnEnter();
-        animator.SetBool("Thrown", true);
-    }
+        protected override void TimerEnd()
+        {
+            base.TimerEnd();
+            enemy.destroyEnemy();
+        }
 
-    public override void OnExit()
-    {
-        base.OnExit();
-        animator.SetBool("Thrown", false);
+        public override void OnEnter()
+        {
+            base.OnEnter();
+            animator.SetBool("Thrown", true);
+            enemy.isPickableState = false;
+        }
+
+        public override void OnExit()
+        {
+            base.OnExit();
+            animator.SetBool("Thrown", false);
+            enemy.isPickableState = true;
+        }
     }
 }

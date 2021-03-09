@@ -10,7 +10,7 @@ namespace hulaohyes.player.states
     {
         //private const float PICK_UP_DISTANCE = 2;
         private Vector3 targettingOffset = new Vector3(0, 0.5f, 0);
-        private Vector3 targettingSize = Vector3.one*0.5f;
+        private Vector3 targettingSize = Vector3.one;
         private LayerMask pickableLayers;
         private UnitCubeSpawner currentSpawner;
 
@@ -39,10 +39,10 @@ namespace hulaohyes.player.states
 
         void Targetting()
         {
-            Vector3 lPos = _player.transform.position + _player.transform.forward * 0.25f + targettingOffset;
+            Vector3 lPos = _player.transform.position + targettingOffset;
             RaycastHit hit;
 
-            if (Physics.BoxCast(lPos, targettingSize, _player.transform.forward,out hit)                                          //const to change
+            if (Physics.BoxCast(lPos, targettingSize, _player.transform.forward,out hit,_player.transform.rotation,2)                                          //const to change
                 && hit.collider.gameObject != _player
                 && !hit.collider.isTrigger)
             {
@@ -65,6 +65,7 @@ namespace hulaohyes.player.states
                 }
             }
         }
+
 
         public override void OnEnter()
         {

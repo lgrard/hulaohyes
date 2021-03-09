@@ -8,9 +8,6 @@ namespace hulaohyes.enemy.states
 {
     public class Attacking : Wait
     {
-        private NavMeshAgent agent;
-        private BoxCollider damageZone;
-
         public Attacking(EnemyStateMachine pStateMachine, EnemyController pEnemy, Animator pAnimator)
             : base(pStateMachine, pEnemy, pAnimator)
         { }

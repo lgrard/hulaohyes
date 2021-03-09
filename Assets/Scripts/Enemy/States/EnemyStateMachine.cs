@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AI;
 using hulaohyes.states;
 
 namespace hulaohyes.enemy.states
@@ -10,9 +9,9 @@ namespace hulaohyes.enemy.states
     {
         private Carried _carried;
         private Idle _idle;
-        private Recovering _recovering;
         private Thrown _thrown;
         private StartUp _startUp;
+        protected Recovering _recovering;
         protected Attacking _attacking;
 
         ///Create a new state machine object
@@ -23,13 +22,12 @@ namespace hulaohyes.enemy.states
         /// <param name="pParticles">Associated particles list</param>
         /// <param name="pNavMeshAgent">Associated NavMesh agent</param>
         public EnemyStateMachine(EnemyController pEnemy, Rigidbody pRb,
-            Animator pAnimator, List<ParticleSystem> pParticles, NavMeshAgent pNavMeshAgent, SphereCollider pDetectionZone)
+            Animator pAnimator, List<ParticleSystem> pParticles, SphereCollider pDetectionZone)
         {
             _carried = new Carried(this, pEnemy, pAnimator);
             _idle = new Idle(this, pEnemy, pAnimator, pDetectionZone);
             _thrown = new Thrown(this, pEnemy, pAnimator);
-            _recovering = new Recovering(this, pEnemy, pAnimator);
-            _startUp = new StartUp(this, pEnemy, pAnimator, pNavMeshAgent);
+            _startUp = new StartUp(this, pEnemy, pAnimator);
             CurrentState = _idle;
         }
 
