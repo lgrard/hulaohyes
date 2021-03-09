@@ -18,14 +18,12 @@ namespace hulaohyes.enemy.states
         public override void OnEnter()
         {
             base.OnEnter();
-            animator.SetBool("Thrown", true);
             enemy.isPickableState = false;
         }
 
         public override void OnExit()
         {
             base.OnExit();
-            animator.SetBool("Thrown", false);
             enemy.isPickableState = true;
         }
     }

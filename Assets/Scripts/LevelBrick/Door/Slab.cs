@@ -20,6 +20,8 @@ namespace hulaohyes.levelbrick.door
         [SerializeField] Vector3 cubeSlotPosition;
         [Tooltip("TriggerSize")]
         [SerializeField] Vector3 triggerZoneSize;
+        [SerializeField] MeshRenderer renderer;
+        [SerializeField] Transform moveSlab;
         [Tooltip("Are the gizmos drawing fo this object")]
         [SerializeField] bool drawGizmos;
 
@@ -27,6 +29,15 @@ namespace hulaohyes.levelbrick.door
         {
             collisionLayer = LayerMask.GetMask("Player", "Bricks");
             CreateTrigger();
+
+            if(renderer != null)
+            {
+                renderer.materials[0].SetColor("EmissiveColor",_color);
+                renderer.materials[1].SetColor("EmitColor",_color);
+
+                if(maxUnit == 2)
+                    renderer.materials[2].SetColor("EmitColor", _color);
+            }
         }
 
         void CreateTrigger()
@@ -46,6 +57,32 @@ namespace hulaohyes.levelbrick.door
             _currentUnitCube.FreezeCube(this);
         }
 
+        public void SetLed(Pickable enterObject, float pAmount)
+        {
+            float lSlabPos0 = pAmount == 0 ? 0 : -0.05f;
+            float lSlabPos1 = pAmount == 0 ? 0 : -0.1f;
+
+            if (maxUnit == 2)
+            {
+                if (enterObject is PlayerController)
+                {
+                    moveSlab.localPosition = new Vector3(0, lSlabPos0, 0);
+                    renderer.materials[1].SetFloat("Brightness", pAmount);
+                }
+                else
+                {
+                    moveSlab.localPosition = new Vector3(0, lSlabPos1, 0);
+                    renderer.materials[2].SetFloat("Brightness", pAmount);
+                }
+            }
+
+            else if (maxUnit == 1)
+            {
+                moveSlab.localPosition = new Vector3(0, lSlabPos0, 0);
+                renderer.materials[1].SetFloat("Brightness", pAmount);
+            }
+        }
+
         private void OnTriggerEnter(Collider other)
         {
             if ((collisionLayer & 1 << other.gameObject.layer) == 1 << other.gameObject.layer)
@@ -54,13 +91,21 @@ namespace hulaohyes.levelbrick.door
 
                 if(other.TryGetComponent<UnitCube>(out UnitCube pCube))
                 {
-                    if (_currentUnitCube == null) MagnetCube(pCube);
+                    if (_currentUnitCube == null)
+                    {
+                        SetLed(pCube,5);
+                        MagnetCube(pCube);
+                    }
                     else return;
                 }
 
                 else if (other.TryGetComponent<PlayerController>(out PlayerController pPlayer))
                 {
-                    if (currentPlayer == null) currentPlayer = pPlayer;
+                    if (currentPlayer == null)
+                    {
+                        SetLed(pPlayer,5);
+                        currentPlayer = pPlayer;
+                    }
                     else return;
                 }
 
@@ -73,6 +118,7 @@ namespace hulaohyes.levelbrick.door
         {
             if (other.TryGetComponent<PlayerController>(out PlayerController pPlayer) && pPlayer == currentPlayer)
             {
+                SetLed(pPlayer, 0);
                 currentPlayer = null;
                 currentUnits -= 1;
                 _doorManager.SetUnit(-1);
@@ -80,7 +126,11 @@ namespace hulaohyes.levelbrick.door
         }
 
         /// Set this Slab's color 
-        public Color Color { set => _color = value; }
+        public Color Color
+        {
+            get => _color;
+            set => _color = value;
+        }
 
         /// Set this Slab's current door manager 
         public DoorManager DoorManager { set => _doorManager = value; }

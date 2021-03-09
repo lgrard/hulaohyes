@@ -63,6 +63,7 @@ namespace hulaohyes.enemy
         public override void Propel()
         {
             base.isDropped = false;
+            enemyAnimator.SetTrigger("Thrown");
             stateMachine.CurrentState = stateMachine.Thrown;
             base.Propel();
         }
@@ -70,6 +71,7 @@ namespace hulaohyes.enemy
         public override void Drop()
         {
             base.isDropped = true;
+            enemyAnimator.SetTrigger("Escape");
             stateMachine.CurrentState = stateMachine.Thrown;
             base.Drop();
         }
@@ -90,12 +92,13 @@ namespace hulaohyes.enemy
 
         protected override void HitElseThrown(Collider pCollider)
         {
+            enemyAnimator.SetTrigger("HitGround");
             destroyEnemy();
         }
 
         protected override void HitElseDropped(Collider pCollider)
         {
-            enemyAnimator.SetTrigger("Escape");
+            enemyAnimator.SetTrigger("HitGround");
             stateMachine.CurrentState = stateMachine.Idle;
         }
 

@@ -35,7 +35,7 @@ public class Pickable : MonoBehaviour
 
     [SerializeField] bool _drawGizmos = true;
 
-    [HideInInspector]
+    
     public bool isPickableState = true;
 
     public bool isPickable =>_currentPicker == null && isPickableState;

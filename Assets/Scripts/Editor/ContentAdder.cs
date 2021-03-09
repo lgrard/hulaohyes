@@ -17,14 +17,14 @@ public class ContentAdder : MonoBehaviour
     public static GameObject SpawnDoorGroup()
     {
         GameObject lDoorGroup = PrefabUtility.InstantiatePrefab(getItemFromPrefab("Prefabs/Bricks/DoorGroup")) as GameObject;
-        GameObject lDoor = PrefabUtility.InstantiatePrefab(getItemFromPrefab("Prefabs/Bricks/Door")) as GameObject;
+        GameObject lDoor = PrefabUtility.InstantiatePrefab(getItemFromPrefab("Prefabs/Bricks/Door_x1")) as GameObject;
         lDoor.transform.parent = lDoorGroup.transform;
-        lDoor.name = "0_Door";
+        lDoor.name = "0_Door_x1";
 
-        GameObject lSlabObject = PrefabUtility.InstantiatePrefab(getItemFromPrefab("Prefabs/Bricks/Slab")) as GameObject;
+        GameObject lSlabObject = PrefabUtility.InstantiatePrefab(getItemFromPrefab("Prefabs/Bricks/Slab_x1")) as GameObject;
         Slab lSlab = lSlabObject.GetComponent<Slab>();
         lSlabObject.transform.parent = lDoorGroup.transform;
-        lSlabObject.name = "0_Slab";
+        lSlabObject.name = "0_Slab_x1";
 
         if (lDoorGroup.TryGetComponent<DoorManager>(out DoorManager lDoorManager))
         {

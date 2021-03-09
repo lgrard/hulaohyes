@@ -15,7 +15,6 @@ namespace hulaohyes.enemy.states
         {
             base.TimerEnd();
             enemy.Drop();
-            animator.SetTrigger("Escape");
         }
 
         public override void OnEnter()
