@@ -104,9 +104,10 @@ class ContentManagerWindow : EditorWindow
 
         GUILayout.BeginHorizontal();
         GUILayout.Label("Checkpoints", labelStyle, GUILayout.Width(labelWidth));
-        if (GUILayout.Button("PlayerStart", GUILayout.Width(buttonWidth / 3), GUILayout.Height(buttonHeight))) LoadObject("Prefabs/Bricks/Checkpoints/PlayerStart");
-        if (GUILayout.Button("Checkpoint", GUILayout.Width(buttonWidth / 3), GUILayout.Height(buttonHeight))) LoadObject("Prefabs/Bricks/Checkpoints/Checkpoint");
-        if (GUILayout.Button("BigCheckpoint", GUILayout.Width(buttonWidth / 3), GUILayout.Height(buttonHeight))) LoadObject("Prefabs/Bricks/Checkpoints/BigCheckpoint");
+        if (GUILayout.Button("PlayerStart", GUILayout.Width(buttonWidth / 4), GUILayout.Height(buttonHeight))) LoadObject("Prefabs/Bricks/Checkpoints/PlayerStart");
+        if (GUILayout.Button("Checkpoint", GUILayout.Width(buttonWidth / 4), GUILayout.Height(buttonHeight))) LoadObject("Prefabs/Bricks/Checkpoints/Checkpoint");
+        if (GUILayout.Button("BigCheckpoint", GUILayout.Width(buttonWidth / 4), GUILayout.Height(buttonHeight))) LoadObject("Prefabs/Bricks/Checkpoints/BigCheckpoint");
+        if (GUILayout.Button("LevelEnd", GUILayout.Width(buttonWidth / 4), GUILayout.Height(buttonHeight))) LoadObject("Prefabs/Bricks/Checkpoints/LevelEnd");
         GUILayout.EndHorizontal();
 
         GUILayout.Space(20f);

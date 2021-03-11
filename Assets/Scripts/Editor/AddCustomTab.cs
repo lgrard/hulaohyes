@@ -14,6 +14,7 @@ public class AddCustomTab : MonoBehaviour
     [MenuItem("HulaOhYes/Enemy/Turret")] static void newEnemyTurret() => newItemFromPrefab("Prefabs/Enemy/Enemy_Turret");
     [MenuItem("HulaOhYes/Bricks/Unit Cube Spawner")] static void newUnitCubeSpawner() => newItemFromPrefab("Prefabs/Bricks/UnitCubeSpawner");
     [MenuItem("HulaOhYes/Bricks/Checkpoints/Checkpoint")] static void newCheckPoint() => newItemFromPrefab("Prefabs/Bricks/Checkpoints/Checkpoint");
+    [MenuItem("HulaOhYes/Bricks/Checkpoints/Checkpoint")] static void newLevelEnd() => newItemFromPrefab("Prefabs/Bricks/Checkpoints/LevelEnd");
     [MenuItem("HulaOhYes/Bricks/Checkpoints/Big Checkpoint")] static void newBigCheckPoint() => newItemFromPrefab("Prefabs/Bricks/Checkpoints/BigCheckpoint");
     [MenuItem("HulaOhYes/Bricks/Door Group")] static void newDoorGroup() => ContentAdder.SpawnDoorGroup();
     [MenuItem("HulaOhYes/DebugTools/Input Switcher")] static void newInputSwitcher()
