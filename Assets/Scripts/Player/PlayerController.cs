@@ -23,7 +23,7 @@ namespace hulaohyes.player
         public int playerIndex = 0;
 
         [Header("HP values")]
-        private int maxHp = 10;
+        private int maxHp = 3;
         private int hp;
 
         [Header("Objects and components")]

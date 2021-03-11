@@ -21,11 +21,16 @@ namespace hulaohyes.player.states
             base.animator.SetFloat("Speed", 0);
         }
 
+        protected virtual void TimerEnd()
+        {
+            stateMachine.CurrentState = stateMachine.Running;
+        }
+
         public override void LoopLogic()
         {
             base.LoopLogic();
             if (timer >= 0) timer -= Time.deltaTime;
-            else stateMachine.CurrentState = stateMachine.Running;
+            else TimerEnd();
         }
     }
 }
