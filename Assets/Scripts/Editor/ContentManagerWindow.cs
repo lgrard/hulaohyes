@@ -100,6 +100,15 @@ class ContentManagerWindow : EditorWindow
         if (GUILayout.Button("UnitCubeSpawner", GUILayout.Width(buttonWidth / 2), GUILayout.Height(buttonHeight))) LoadObject("Prefabs/Bricks/UnitCubeSpawner");
         GUILayout.EndHorizontal();
 
+        GUILayout.Space(5f);
+
+        GUILayout.BeginHorizontal();
+        GUILayout.Label("Checkpoints", labelStyle, GUILayout.Width(labelWidth));
+        if (GUILayout.Button("PlayerStart", GUILayout.Width(buttonWidth / 3), GUILayout.Height(buttonHeight))) LoadObject("Prefabs/Bricks/Checkpoints/PlayerStart");
+        if (GUILayout.Button("Checkpoint", GUILayout.Width(buttonWidth / 3), GUILayout.Height(buttonHeight))) LoadObject("Prefabs/Bricks/Checkpoints/Checkpoint");
+        if (GUILayout.Button("BigCheckpoint", GUILayout.Width(buttonWidth / 3), GUILayout.Height(buttonHeight))) LoadObject("Prefabs/Bricks/Checkpoints/BigCheckpoint");
+        GUILayout.EndHorizontal();
+
         GUILayout.Space(20f);
 
         GUILayout.BeginHorizontal();

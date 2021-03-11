@@ -13,6 +13,8 @@ public class AddCustomTab : MonoBehaviour
     [MenuItem("HulaOhYes/Enemy/Walker")] static void newEnemyWalker() => newItemFromPrefab("Prefabs/Enemy/Enemy_Walker");
     [MenuItem("HulaOhYes/Enemy/Turret")] static void newEnemyTurret() => newItemFromPrefab("Prefabs/Enemy/Enemy_Turret");
     [MenuItem("HulaOhYes/Bricks/Unit Cube Spawner")] static void newUnitCubeSpawner() => newItemFromPrefab("Prefabs/Bricks/UnitCubeSpawner");
+    [MenuItem("HulaOhYes/Bricks/Checkpoints/Checkpoint")] static void newCheckPoint() => newItemFromPrefab("Prefabs/Bricks/Checkpoints/Checkpoint");
+    [MenuItem("HulaOhYes/Bricks/Checkpoints/Big Checkpoint")] static void newBigCheckPoint() => newItemFromPrefab("Prefabs/Bricks/Checkpoints/BigCheckpoint");
     [MenuItem("HulaOhYes/Bricks/Door Group")] static void newDoorGroup() => ContentAdder.SpawnDoorGroup();
     [MenuItem("HulaOhYes/DebugTools/Input Switcher")] static void newInputSwitcher()
     {
@@ -21,6 +23,18 @@ public class AddCustomTab : MonoBehaviour
             Debug.LogError("An input switcher is already on the current scene");
 
         else lDebugToolObject.AddComponent<InputDebugTool>();
+    }
+    [MenuItem("HulaOhYes/Bricks/Checkpoints/Player Start")] static void newPlayerStart()
+    {
+        GameObject lPlayerStart = GameObject.FindGameObjectWithTag("PlayerStart");
+
+        if (lPlayerStart != null)
+        {
+            Selection.activeObject = lPlayerStart;
+            Debug.LogError("A player Start is already on the current scene");
+        }
+
+        else newItemFromPrefab("Prefabs/Bricks/Checkpoints/PlayerStart");
     }
 
     public static GameObject newItemFromPrefab(string pFilePath)
