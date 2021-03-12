@@ -24,7 +24,6 @@ namespace hulaohyes.enemy.states
 
         public override void OnEnter()
         {
-            Debug.Log("Enter Idle");
             base.OnEnter();
             detectionZone.enabled = true;
             PlayerCheck();
@@ -32,7 +31,6 @@ namespace hulaohyes.enemy.states
 
         public override void OnExit()
         {
-            Debug.Log("Exit Idle");
             base.OnExit();
             detectionZone.enabled = false;
         }

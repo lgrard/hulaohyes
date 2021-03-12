@@ -43,14 +43,12 @@ namespace hulaohyes.enemy.states.walker
             Quaternion lRotation = Quaternion.LookRotation(lDirection, Vector3.up);
             enemy.transform.rotation = Quaternion.Slerp(enemy.transform.rotation, lRotation, CHARGE_ROTATION_AMOUNT);
             agent.velocity = new Vector3(enemy.transform.forward.x * CHARGE_SPEED, agent.velocity.y, enemy.transform.forward.z * CHARGE_SPEED);
-            animator.SetFloat("Speed", agent.velocity.magnitude/ CHARGE_SPEED);
         }
 
         public override void OnExit()
         {
             base.OnExit();
             particles[0].Stop();
-            animator.SetFloat("Speed", 0);
             damageZone.enabled = false;
             agent.isStopped = true;
             agent.velocity = agent.velocity / 3;
