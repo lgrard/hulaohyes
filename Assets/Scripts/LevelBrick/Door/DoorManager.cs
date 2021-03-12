@@ -70,8 +70,9 @@ namespace hulaohyes.levelbrick.door
         {
             for (int i = doorList.Count - 1; i >= 0; i--)
             {
-                float lDoorY = Mathf.Lerp(doorPositions[i], doorPositions[i]- doorHeight, doorCurve.Evaluate(doorProgress / DOOR_DURATION));
+                float lDoorY = Mathf.Lerp(doorPositions[i], doorPositions[i] - doorHeight, doorCurve.Evaluate(doorProgress / DOOR_DURATION));
                 doorList[i].transform.position = new Vector3(doorList[i].transform.position.x, lDoorY, doorList[i].transform.position.z);
+                if(!doorCompList[i].OpenParticles.isPlaying) doorCompList[i].OpenParticles.Play();
             }
         }
 

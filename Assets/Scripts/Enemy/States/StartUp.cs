@@ -6,11 +6,13 @@ namespace hulaohyes.enemy.states
 {
     public class StartUp : Wait
     {
+        private List<ParticleSystem> particles;
         private const float ROTATION_AMOUNT = 0.01f;
 
-        public StartUp(EnemyStateMachine pStateMachine, EnemyController pEnemy, Animator pAnimator)
+        public StartUp(EnemyStateMachine pStateMachine, EnemyController pEnemy, Animator pAnimator, List<ParticleSystem> pParticles )
             : base(pStateMachine, pEnemy, pAnimator)
         {
+            particles = pParticles;
             MAX_TIMER = 3f;
         }
 
@@ -31,7 +33,14 @@ namespace hulaohyes.enemy.states
         public override void OnEnter()
         {
             base.OnEnter();
+            particles[2].Play();
             animator.SetBool("Attacking", true);
+        }
+
+        public override void OnExit()
+        {
+            base.OnExit();
+            particles[2].Stop();
         }
     }
 }

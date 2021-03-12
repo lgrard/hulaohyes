@@ -31,7 +31,7 @@ public class Pickable : MonoBehaviour
     [Range(0, 10)] public float GRAVITY_AMOUNT_RISE = 2f;                                                                                           //const to change
     [Range(0, 10)] public float GRAVITY_AMOUNT_FALL = 4f;                                                                                           //const to change
     [SerializeField] Vector3 _proprelZoneCheck;                                  
-    [SerializeField] ParticleSystem _impactParticles;
+    [SerializeField] protected ParticleSystem _impactParticles;
 
     [SerializeField] bool _drawGizmos = true;
 

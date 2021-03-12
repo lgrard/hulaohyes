@@ -60,7 +60,6 @@ namespace hulaohyes.player.states
             }
         }
 
-
         public override void OnEnter()
         {
             base.OnEnter();

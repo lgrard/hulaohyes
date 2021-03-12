@@ -22,6 +22,8 @@ namespace hulaohyes.levelbrick.door
         [SerializeField] Vector3 triggerZoneSize;
         [SerializeField] MeshRenderer renderer;
         [SerializeField] Transform moveSlab;
+        [Header("Particles")]
+        [SerializeField] ParticleSystem stepParticles;
         [Tooltip("Are the gizmos drawing fo this object")]
         [SerializeField] bool drawGizmos;
 
@@ -109,6 +111,7 @@ namespace hulaohyes.levelbrick.door
                     else return;
                 }
 
+                stepParticles.Play();
                 currentUnits += 1;
                 _doorManager.SetUnit(1);
             }

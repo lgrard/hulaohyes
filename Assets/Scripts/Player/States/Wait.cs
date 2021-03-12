@@ -7,7 +7,7 @@ namespace hulaohyes.player.states
 {
     public class Wait : PlayerState
     {
-        protected float MAX_TIMER = 0.4f;
+        protected float MAX_TIMER = 0.7f;
 
         private float timer;
 

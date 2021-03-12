@@ -10,8 +10,8 @@ namespace hulaohyes.enemy.states.turret
         private Vector3 offset = new Vector3(0,0.5f,0);
         private GameObject projectilePrefab;
 
-        public Shooting(EnemyStateMachine pStateMachine, EnemyController pEnemy, Animator pAnimator, GameObject pProjectilePrefab)
-            : base(pStateMachine, pEnemy, pAnimator)
+        public Shooting(EnemyStateMachine pStateMachine, EnemyController pEnemy, Animator pAnimator, GameObject pProjectilePrefab, List<ParticleSystem> pParticles)
+            : base(pStateMachine, pEnemy, pAnimator, pParticles)
         {
             projectilePrefab = pProjectilePrefab;
             MAX_TIMER = 1f;

@@ -10,6 +10,7 @@ namespace hulaohyes.levelbrick.door
         private MeshRenderer _doorRenderer;
         private Color _color;
         [SerializeField] private GameObject _moveDoor;
+        [SerializeField] private ParticleSystem openParticles;
 
         void Start()
         {
@@ -24,6 +25,7 @@ namespace hulaohyes.levelbrick.door
             }
         }
 
+        public ParticleSystem OpenParticles => openParticles;
         public MeshRenderer DoorRenderer => _doorRenderer;
         public GameObject moveDoor => _moveDoor;
         public DoorManager DoorManager

@@ -27,7 +27,7 @@ namespace hulaohyes.enemy.states
             _carried = new Carried(this, pEnemy, pAnimator);
             _idle = new Idle(this, pEnemy, pAnimator, pDetectionZone);
             _thrown = new Thrown(this, pEnemy, pAnimator);
-            _startUp = new StartUp(this, pEnemy, pAnimator);
+            _startUp = new StartUp(this, pEnemy, pAnimator, pParticles);
             CurrentState = _idle;
         }
 

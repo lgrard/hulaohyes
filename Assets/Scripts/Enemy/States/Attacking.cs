@@ -8,9 +8,11 @@ namespace hulaohyes.enemy.states
 {
     public class Attacking : Wait
     {
-        public Attacking(EnemyStateMachine pStateMachine, EnemyController pEnemy, Animator pAnimator)
+        protected List<ParticleSystem> particles;
+
+        public Attacking(EnemyStateMachine pStateMachine, EnemyController pEnemy, Animator pAnimator, List<ParticleSystem> pParticles)
             : base(pStateMachine, pEnemy, pAnimator)
-        { }
+        { particles = pParticles; }
 
         protected override void TimerEnd()
         {

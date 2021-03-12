@@ -11,7 +11,7 @@ namespace hulaohyes.enemy.states.turret
         Animator pAnimator, List<ParticleSystem> pParticles, SphereCollider pDetectionZone, GameObject pProjectilePrefab)
             : base(pEnemy, pRb, pAnimator, pParticles, pDetectionZone)
         {
-            _attacking = new Shooting(this, pEnemy, pAnimator, pProjectilePrefab);
+            _attacking = new Shooting(this, pEnemy, pAnimator, pProjectilePrefab, pParticles);
             _recovering = new Recovering(this, pEnemy, pAnimator);
         }
     }

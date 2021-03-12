@@ -85,16 +85,29 @@ namespace hulaohyes.player.states
             }
         }
 
+        void ParticleManagement()
+        {
+            if (isGrounded && !particles[1].isPlaying && movementInput.magnitude > 0.1f) particles[1].Play();
+            else if (!isGrounded && particles[1].isPlaying) particles[1].Stop();
+        }
+
+        void OnMovementsStop(InputAction.CallbackContext ctx)
+        {
+            if (particles[1].isPlaying) particles[1].Stop();
+        }
+
         public override void OnEnter()
         {
             base.OnEnter();
             _controlScheme.Player.Jump.performed += OnJump;
+            _controlScheme.Player.Movement.canceled += OnMovementsStop;
         }
 
         public override void LoopLogic()
         {
             base.LoopLogic();
             CameraDirection();
+            ParticleManagement();
             movementInput = _controlScheme.Player.Movement.ReadValue<Vector2>();
         }
 
@@ -109,6 +122,8 @@ namespace hulaohyes.player.states
         {
             base.OnExit();
             _controlScheme.Player.Jump.performed -= OnJump;
+            _controlScheme.Player.Movement.canceled -= OnMovementsStop;
+            particles[1].Stop();
         }
     }
 }

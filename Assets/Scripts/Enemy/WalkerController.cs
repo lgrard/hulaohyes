@@ -4,6 +4,7 @@ using UnityEngine;
 using hulaohyes.enemy.states.walker;
 using hulaohyes.player;
 using UnityEngine.AI;
+using hulaohyes.effects;
 
 namespace hulaohyes.enemy
 {
@@ -48,7 +49,9 @@ namespace hulaohyes.enemy
         {
             if (isAttacking)
             {
+                enemyParticles[3].Play();
                 pPlayer.TakeDamage(1, transform);
+                StartCoroutine(Effects.HitStop(enemyAnimator, pPlayer.Animator, 0.2f, 0.05f));
                 stateMachine.CurrentState = stateMachine.Recovering;
             }
             

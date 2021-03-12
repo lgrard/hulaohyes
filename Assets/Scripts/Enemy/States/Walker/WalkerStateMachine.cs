@@ -11,7 +11,7 @@ namespace hulaohyes.enemy.states.walker
         Animator pAnimator, List<ParticleSystem> pParticles, NavMeshAgent pNavMeshAgent, SphereCollider pDetectionZone, BoxCollider pDamageZone)
             :base(pEnemy,pRb,pAnimator,pParticles,pDetectionZone)
         {
-            _attacking = new Charging(this, pEnemy, pAnimator, pNavMeshAgent, pDamageZone);
+            _attacking = new Charging(this, pEnemy, pAnimator, pNavMeshAgent, pDamageZone, pParticles);
             _recovering = new RecoveringWalker(this, pEnemy, pAnimator);
         }
     }

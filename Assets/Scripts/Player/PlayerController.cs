@@ -10,7 +10,7 @@ namespace hulaohyes.player
 {
     public class PlayerController : Pickable
     {
-        const float KNOCK_BACK_AMOUNT = 0.3f;
+        const float KNOCK_BACK_AMOUNT = 1.5f;
         const float KNOCK_BACK_TIME = 0.1f;
 
         private GameManager gameManager;
@@ -59,6 +59,7 @@ namespace hulaohyes.player
         /// <param name="pDamage"> Amount of damage taken </param>
         public void TakeDamage(int pDamage, Transform pDealer)
         {
+            rb.velocity = Vector3.zero;
             hp -= pDamage;
             if (hp >= 0 && stateMachine.CurrentState == stateMachine.Carrying)
                 stateMachine.Carrying.TakeCarryDamage();
@@ -143,7 +144,7 @@ namespace hulaohyes.player
         }
 
         bool isThrown => stateMachine.CurrentState == stateMachine.Thrown;
-
+        public Animator Animator => playerAnimator;
         public ControlScheme getActiveControlScheme() { return controlScheme; }
 
         protected override void OnGizmos()
