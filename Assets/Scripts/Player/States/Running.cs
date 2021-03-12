@@ -29,11 +29,16 @@ namespace hulaohyes.player.states
         {
             if (_player.pickUpTarget != null)
             {
+                animator.SetTrigger("PressPick");
                 stateMachine.CurrentState = stateMachine.Carrying;
                 return;
             }
 
-            else if (currentSpawner != null) currentSpawner.PushButton();
+            else if (currentSpawner != null)
+            {
+                animator.SetTrigger("PressPick");
+                currentSpawner.PushButton();
+            }
         }
 
         void Targetting()
@@ -45,9 +50,17 @@ namespace hulaohyes.player.states
                 && hit.collider.gameObject != _player.gameObject)
             {
                 if (hit.collider.TryGetComponent<Pickable>(out Pickable pickableTarget) && pickableTarget.isPickable)
+                {
                     _player.pickUpTarget = pickableTarget;
+                    animator.ResetTrigger("PressPick");
+                    animator.SetBool("CanPick", true);
+                }
                 else if (hit.collider.TryGetComponent<UnitCubeSpawner>(out UnitCubeSpawner pSpawner))
+                {
                     currentSpawner = pSpawner;
+                    animator.ResetTrigger("PressPick");
+                    animator.SetBool("CanPick", true);
+                }
             }
 
             else if(hit.collider == null)
@@ -57,6 +70,9 @@ namespace hulaohyes.player.states
 
                 else if(currentSpawner != null)
                     currentSpawner = null;
+
+                if(animator.GetBool("CanPick"))
+                    animator.SetBool("CanPick", false);
             }
         }
 
@@ -79,6 +95,9 @@ namespace hulaohyes.player.states
             base.OnExit();
             base._controlScheme.Player.PickUp.performed -= OnPickup;
             _player.isPickableState = false;
+
+            if (animator.GetBool("CanPick"))
+                animator.SetBool("CanPick", false);
         }
     }
 }

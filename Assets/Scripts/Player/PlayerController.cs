@@ -5,6 +5,7 @@ using UnityEngine.InputSystem;
 using hulaohyes.player.states;
 using hulaohyes.inputs;
 using hulaohyes.camera;
+using UnityEngine.Animations;
 
 namespace hulaohyes.player
 {
@@ -30,8 +31,9 @@ namespace hulaohyes.player
         [Tooltip("The transform where pick up target is stored")]
         public Transform pickUpPoint;
 
-        [Header("Particles list")]
+        [Header("Particles list and effects")]
         [SerializeField] List<ParticleSystem> playerParticles;
+        [SerializeField] public LookAtConstraint pickIndicator;
 
         [Header("Player values")]
         public float MOVEMENT_SPEED = 6;                                                                                                //const to change
@@ -110,6 +112,11 @@ namespace hulaohyes.player
             playerInput.actions = controlScheme.asset;
             SetPlayerDevice();
             stateMachine = new PlayerStateMachine(this, controlScheme, cameraContainer, rb, playerAnimator, playerParticles, _collider);
+            ConstraintSource lCamLookAt = new ConstraintSource();
+            lCamLookAt.sourceTransform = cameraContainer;
+            lCamLookAt.weight = 1;
+            pickIndicator.SetSource(0,lCamLookAt);
+            pickIndicator.constraintActive = true;
 
             hp = maxHp;
         }
