@@ -92,8 +92,8 @@ namespace hulaohyes
 
             if(lSpawner != null)
             {
-                lSpawnPos = playerStart.SpawnPosition;
-                lSpawnRot = playerStart.SpawnRotation;
+                lSpawnPos = lSpawner.SpawnPosition;
+                lSpawnRot = lSpawner.SpawnRotation;
             }
 
             else
