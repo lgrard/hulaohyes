@@ -21,6 +21,12 @@ namespace hulaohyes.levelbrick.unitcube
         public void DestroyUnitCube()
         {
             if(_currentPicker != null) _currentPicker.DropTarget();
+            if(currentSlab != null)
+            {
+                currentSlab.SetLed(this, 0);
+                currentSlab.CurrentUnitCube = null;
+                currentSlab = null;
+            }
             _currentSpawner.DestroyCurrentCube();
             Destroy(this.gameObject,0.5f);
         }
