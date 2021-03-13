@@ -63,7 +63,7 @@ namespace hulaohyes.player.states
                 }
             }
 
-            else if(hit.collider == null)
+            if(hit.collider == null || _player.pickUpTarget != null && !_player.pickUpTarget.isPickable)
             {
                 if(_player.pickUpTarget != null)
                     _player.pickUpTarget = null;
