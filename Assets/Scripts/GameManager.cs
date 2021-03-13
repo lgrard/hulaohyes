@@ -105,7 +105,6 @@ namespace hulaohyes
 
             lPlayerToSpawn.transform.position = lSpawnPos;
             lPlayerToSpawn.transform.rotation = lSpawnRot;
-            lPlayerToSpawn.gameObject.SetActive(true);
             lPlayerToSpawn.Spawn();
         }
 

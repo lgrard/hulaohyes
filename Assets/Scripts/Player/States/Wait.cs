@@ -14,6 +14,8 @@ namespace hulaohyes.player.states
         public Wait(PlayerStateMachine pStateMachine, Animator pAnimator, List<ParticleSystem> pParticles)
             : base(pStateMachine, pAnimator, pParticles) { }
 
+        protected virtual float Timer => timer;
+
         public override void OnEnter()
         {
             base.OnEnter();

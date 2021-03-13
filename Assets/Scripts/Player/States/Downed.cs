@@ -8,31 +8,37 @@ namespace hulaohyes.player.states
     {
         private PlayerController player;
         private GameManager gameManager;
+        private bool playerDead = false;
 
         public Downed(PlayerStateMachine pStateMachine, Animator pAnimator, List<ParticleSystem> pParticles, PlayerController pPlayer)
             : base(pStateMachine, pAnimator, pParticles)
         {
             gameManager = GameManager.getInstance();
             player = pPlayer;
-            MAX_TIMER = 3;
-        }
-
-        public override void OnEnter()
-        {
-            base.OnEnter();
-            animator.SetBool("Downed", true);
+            MAX_TIMER = 5;
         }
 
         override protected void TimerEnd()
         {
             base.TimerEnd();
             gameManager.SpawnPlayer(player.playerIndex);
+            stateMachine.CurrentState = stateMachine.Running;
         }
 
-        public override void OnExit()
+        public override void OnEnter()
         {
-            base.OnExit();
-            animator.SetBool("Downed", false);
+            base.OnEnter();
+            playerDead = false;
+        }
+
+        public override void LoopLogic()
+        {
+            base.LoopLogic();
+            if (Timer <= 4.3f && !playerDead)
+            {
+                playerDead = true;
+                player.Die();
+            }
         }
     }
 }

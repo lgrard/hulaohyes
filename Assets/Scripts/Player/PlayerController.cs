@@ -20,11 +20,12 @@ namespace hulaohyes.player
         private PlayerInput playerInput;
         private ControlScheme controlScheme;
         private Transform cameraContainer;
+        private SkinnedMeshRenderer renderer;
 
         public int playerIndex = 0;
 
         [Header("HP values")]
-        private int maxHp = 3;
+        [SerializeField] int MAX_HP = 3;                                                                                                         //const to change
         private int hp;
 
         [Header("Objects and components")]
@@ -66,7 +67,7 @@ namespace hulaohyes.player
             if (hp >= 0 && stateMachine.CurrentState == stateMachine.Carrying)
                 stateMachine.Carrying.TakeCarryDamage();
 
-            else if (hp >= 0 && stateMachine.CurrentState != stateMachine.Carrying && stateMachine.CurrentState != stateMachine.Carried)
+            else if (hp > 0 && stateMachine.CurrentState != stateMachine.Carrying && stateMachine.CurrentState != stateMachine.Carried)
             {
                 StartCoroutine(KnockBack(pDealer));
                 playerAnimator.SetTrigger("TakeDamage");
@@ -74,7 +75,11 @@ namespace hulaohyes.player
             }
 
             else if (hp <= 0)
+            {
+                StartCoroutine(KnockBack(pDealer));
+                playerAnimator.SetTrigger("Dies");
                 stateMachine.CurrentState = stateMachine.Downed;
+            }
         }
 
         private IEnumerator KnockBack(Transform pOrigin)
@@ -109,6 +114,7 @@ namespace hulaohyes.player
             playerAnimator = GetComponent<Animator>();
             controlScheme = new ControlScheme();
             playerInput = GetComponent<PlayerInput>();
+            renderer = GetComponentInChildren<SkinnedMeshRenderer>();
             playerInput.actions = controlScheme.asset;
             SetPlayerDevice();
             stateMachine = new PlayerStateMachine(this, controlScheme, cameraContainer, rb, playerAnimator, playerParticles, _collider);
@@ -118,12 +124,23 @@ namespace hulaohyes.player
             pickIndicator.SetSource(0,lCamLookAt);
             pickIndicator.constraintActive = true;
 
-            hp = maxHp;
+            hp = MAX_HP;
         }
 
         public void Spawn()
         {
-            hp = maxHp;
+            hp = MAX_HP;
+
+            renderer.enabled = true;
+            base._collider.enabled = true;
+            base.rb.isKinematic = false;
+        }
+
+        public void Die()
+        {
+            renderer.enabled = false;
+            base._collider.enabled = false;
+            base.rb.isKinematic = true;
         }
 
         override public void Propel()
