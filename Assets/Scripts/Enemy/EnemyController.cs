@@ -118,6 +118,7 @@ namespace hulaohyes.enemy
         public void destroyEnemy()
         {
             enemyAnimator.SetTrigger("TakeDamage");
+            _collider.isTrigger = true;
             rb.isKinematic = true;
             Debug.Log(gameObject.name + " is dead");
             Destroy(gameObject, 0.5f);
