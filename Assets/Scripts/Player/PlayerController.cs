@@ -130,7 +130,7 @@ namespace hulaohyes.player
             pickIndicator.SetSource(0,lCamLookAt);
             pickIndicator.constraintActive = true;
             lifeBarMat = lifeBar.material;
-            lifeBarRotation = lifeBar.transform.rotation;
+            lifeBarRotation = Quaternion.Euler(90,0,180);
             hp = MAX_HP;
         }
 
