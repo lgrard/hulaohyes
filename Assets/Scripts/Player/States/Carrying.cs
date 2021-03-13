@@ -8,7 +8,7 @@ namespace hulaohyes.player.states
 {
     public class Carrying : Idle
     {
-        private const int HIT_BEFORE_DROP = 3;
+        private const int HIT_BEFORE_DROP = 1;
         private int currentHit;
 
         public Carrying(PlayerStateMachine pStateMachine, PlayerController pPlayer, ControlScheme pControlScheme,
@@ -22,7 +22,7 @@ namespace hulaohyes.player.states
 
             if (currentHit <= 0)
             {
-                _player.Drop();
+                _player.pickUpTarget.Drop();
                 stateMachine.CurrentState = stateMachine.Wait;
             }
         }
@@ -39,6 +39,7 @@ namespace hulaohyes.player.states
 
         public override void OnEnter()
         {
+            currentHit = HIT_BEFORE_DROP;
             base.OnEnter();
             PickUpTarget();
             base._controlScheme.Player.Drop.performed += OnDropTarget;
