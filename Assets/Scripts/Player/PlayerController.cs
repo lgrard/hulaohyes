@@ -103,7 +103,7 @@ namespace hulaohyes.player
         }
         public void DropTarget()
         {
-            rb.velocity = rb.velocity / 1.2f;
+            rb.velocity = rb.velocity /2f;
             stateMachine.CurrentState = stateMachine.Wait;
         }
         override protected void Init()

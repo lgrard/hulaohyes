@@ -25,6 +25,7 @@ namespace hulaohyes.enemy.states.walker
         {
             base.TimerEnd();
             particles[1].Play();
+            agent.velocity = Vector3.zero;
         }
 
         public override void OnEnter()
