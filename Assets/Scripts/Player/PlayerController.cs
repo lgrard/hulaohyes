@@ -155,6 +155,15 @@ namespace hulaohyes.player
             base.Drop();
         }
 
+        public void JumpFromCarried()
+        {
+            _isPicked = false;
+            if (_currentPicker != null) _currentPicker.DropTarget();
+            _currentPicker = null;
+            transform.parent = null;
+            rb.isKinematic = false;
+        }
+
         override public void GetPicked(PlayerController pPicker)
         {
             base.GetPicked(pPicker);

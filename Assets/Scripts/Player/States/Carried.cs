@@ -29,7 +29,7 @@ namespace hulaohyes.player.states
 
         private void OnJump(InputAction.CallbackContext ctx)
         {
-            player.Drop();
+            player.JumpFromCarried();
 
             particles[0].Play();
             animator.SetTrigger("Jump");
