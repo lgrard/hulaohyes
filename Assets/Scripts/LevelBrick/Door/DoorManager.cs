@@ -13,9 +13,9 @@ namespace hulaohyes.levelbrick.door
 
         [Header("Associated door")]
         [SerializeField] List<GameObject> doorList;
-        [SerializeField] List<Door> doorCompList;
         [SerializeField] AnimationCurve doorCurve;
         [Range(0,10)][SerializeField] float doorHeight = 3.1f;
+        private List<Door> doorCompList;
         private List<float> doorPositions;
         private float doorProgress;
         private bool doorIsOpening;
@@ -31,6 +31,7 @@ namespace hulaohyes.levelbrick.door
 
         private void Awake()
         {
+            doorCompList = new List<Door>();
             doorPositions = new List<float>();
             foreach (GameObject lDoor in doorList)
             {

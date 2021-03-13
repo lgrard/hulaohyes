@@ -28,7 +28,6 @@ namespace hulaohyes
         {
             if (_instance == null)
             {
-                Debug.Log("create playerstart");
                 _instance = this;
                 DontDestroyOnLoad(this.gameObject);
             }
