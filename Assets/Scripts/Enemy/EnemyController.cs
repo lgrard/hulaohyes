@@ -102,6 +102,12 @@ namespace hulaohyes.enemy
             stateMachine.CurrentState = stateMachine.Idle;
         }
 
+        protected override void Drowns()
+        {
+            base.Drowns();
+            destroyEnemy();
+        }
+
         private void OnTriggerExit(Collider other)
         {
             if (other.transform == currentTarget && isRecovering) currentTarget = null;
@@ -120,7 +126,6 @@ namespace hulaohyes.enemy
             enemyAnimator.SetTrigger("TakeDamage");
             _collider.isTrigger = true;
             rb.isKinematic = true;
-            Debug.Log(gameObject.name + " is dead");
             Destroy(gameObject, 0.5f);
         }
 

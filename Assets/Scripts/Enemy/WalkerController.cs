@@ -41,7 +41,7 @@ namespace hulaohyes.enemy
 
         protected override void HitElseDropped(Collider pCollider)
         {
-            navMeshAgent.enabled = true;
+            if(pCollider.gameObject.layer != killZoneLayer) navMeshAgent.enabled = true;
             base.HitElseDropped(pCollider);
         }
 

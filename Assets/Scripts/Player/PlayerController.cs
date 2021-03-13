@@ -143,6 +143,13 @@ namespace hulaohyes.player
             base.rb.isKinematic = true;
         }
 
+        protected override void Drowns()
+        {
+            base.Drowns();
+            playerAnimator.SetTrigger("Drowns");
+            stateMachine.CurrentState = stateMachine.Downed;
+        }
+
         override public void Propel()
         {
             stateMachine.CurrentState = stateMachine.Thrown;

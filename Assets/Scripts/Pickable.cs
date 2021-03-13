@@ -14,7 +14,7 @@ public class Pickable : MonoBehaviour
     //private const float GRAVITY_AMOUNT_RISE = 2f;
     //private const float GRAVITY_AMOUNT_FALL = 4f;
 
-
+    protected LayerMask killZoneLayer;
     private LayerMask collisionLayer;
     private Vector3 forwardVelocity;
 
@@ -50,6 +50,7 @@ public class Pickable : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         _collider = GetComponent<Collider>();
         collisionLayer = LayerMask.GetMask("Enemy","Player","KillZone","Default","Bricks","Ground");
+        killZoneLayer = LayerMask.NameToLayer("KillZone");
     }
 
     public virtual void Propel()
@@ -123,6 +124,12 @@ public class Pickable : MonoBehaviour
         }
     }
 
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.layer == killZoneLayer) Drowns();
+    }
+
+
     private void HitEnemy(EnemyController pEnemy)
     {
         if (_impactParticles != null) _impactParticles.Play();
@@ -137,6 +144,10 @@ public class Pickable : MonoBehaviour
         
     }
     protected virtual void HitElseDropped(Collider pCollider)
+    {
+
+    }
+    protected virtual void Drowns()
     {
 
     }

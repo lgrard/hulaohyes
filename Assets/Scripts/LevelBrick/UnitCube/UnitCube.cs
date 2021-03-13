@@ -10,14 +10,12 @@ namespace hulaohyes.levelbrick.unitcube
     {
         private Slab currentSlab;
         private UnitCubeSpawner _currentSpawner;
-        private LayerMask killZoneLayer;
         private MeshRenderer renderer;
 
         protected override void Init()
         {
             base.Init();
             renderer = GetComponent<MeshRenderer>();
-            killZoneLayer = LayerMask.NameToLayer("KillZone");
         }
 
         public void DestroyUnitCube()
@@ -56,9 +54,11 @@ namespace hulaohyes.levelbrick.unitcube
                 currentSlab = null;
             }
         }
-        private void OnCollisionEnter(Collision collision)
+
+        protected override void Drowns()
         {
-            if (collision.gameObject.layer == killZoneLayer) DestroyUnitCube();
+            base.Drowns();
+            DestroyUnitCube();
         }
     }
 }
