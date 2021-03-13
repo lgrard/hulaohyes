@@ -76,10 +76,18 @@ namespace hulaohyes
             Vector3 lSpawnPos;
             Quaternion lSpawnRot;
 
-            if (pIndex == 0 && currentCheckPoint0.CheckPointIndex > currentCheckPointGlobal.CheckPointIndex && currentCheckPoint0 != null)
-                lSpawner = currentCheckPoint0;
-            else if (pIndex == 1 && currentCheckPoint1.CheckPointIndex > currentCheckPointGlobal.CheckPointIndex && currentCheckPoint1 != null)
-                lSpawner = currentCheckPoint1;
+            if (currentCheckPoint0 != null && pIndex == 0)
+            {
+                if(currentCheckPointGlobal != null && currentCheckPoint0.CheckPointIndex > currentCheckPointGlobal.CheckPointIndex || currentCheckPointGlobal == null)
+                    lSpawner = currentCheckPoint0;
+            }
+
+            else if (currentCheckPoint1 != null && pIndex == 1)
+            {
+                if (currentCheckPointGlobal != null && currentCheckPoint1.CheckPointIndex > currentCheckPointGlobal.CheckPointIndex || currentCheckPointGlobal == null)
+                    lSpawner = currentCheckPoint1;
+            }
+
             else if (currentCheckPointGlobal != null)
                 lSpawner = currentCheckPointGlobal;
 
@@ -98,6 +106,7 @@ namespace hulaohyes
             lPlayerToSpawn.transform.position = lSpawnPos;
             lPlayerToSpawn.transform.rotation = lSpawnRot;
             lPlayerToSpawn.gameObject.SetActive(true);
+            lPlayerToSpawn.Spawn();
         }
 
         private void SpawnAllplayers()

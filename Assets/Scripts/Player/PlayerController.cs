@@ -121,6 +121,11 @@ namespace hulaohyes.player
             hp = maxHp;
         }
 
+        public void Spawn()
+        {
+            hp = maxHp;
+        }
+
         override public void Propel()
         {
             stateMachine.CurrentState = stateMachine.Thrown;
