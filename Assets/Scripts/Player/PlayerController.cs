@@ -21,6 +21,8 @@ namespace hulaohyes.player
         private ControlScheme controlScheme;
         private Transform cameraContainer;
         private SkinnedMeshRenderer renderer;
+        private Material lifeBarMat;
+        private Quaternion lifeBarRotation;
 
         public int playerIndex = 0;
 
@@ -35,6 +37,7 @@ namespace hulaohyes.player
         [Header("Particles list and effects")]
         [SerializeField] List<ParticleSystem> playerParticles;
         [SerializeField] public LookAtConstraint pickIndicator;
+        [SerializeField] public MeshRenderer lifeBar;
 
         [Header("Player values")]
         public float MOVEMENT_SPEED = 6;                                                                                                //const to change
@@ -56,6 +59,7 @@ namespace hulaohyes.player
             currentState = stateMachine.CurrentState.ToString();
             stateMachine.CurrentState.PhysLoopLogic();
             rb.AddForce(Physics.gravity * _gravity, ForceMode.Acceleration);
+            lifeBar.transform.rotation = lifeBarRotation;
         }
 
         /// The player takes a certain amount of damage
@@ -64,6 +68,8 @@ namespace hulaohyes.player
         {
             rb.velocity = Vector3.zero;
             hp -= pDamage;
+            UpdateLifeBar();
+
             if (hp >= 0 && stateMachine.CurrentState == stateMachine.Carrying)
                 stateMachine.Carrying.TakeCarryDamage();
 
@@ -123,13 +129,15 @@ namespace hulaohyes.player
             lCamLookAt.weight = 1;
             pickIndicator.SetSource(0,lCamLookAt);
             pickIndicator.constraintActive = true;
-
+            lifeBarMat = lifeBar.material;
+            lifeBarRotation = lifeBar.transform.rotation;
             hp = MAX_HP;
         }
 
         public void Spawn()
         {
             hp = MAX_HP;
+            UpdateLifeBar();
 
             renderer.enabled = true;
             base._collider.enabled = true;
@@ -169,6 +177,13 @@ namespace hulaohyes.player
             _currentPicker = null;
             transform.parent = null;
             rb.isKinematic = false;
+        }
+
+        private void UpdateLifeBar()
+        {
+            float lCurrentHp = hp;
+            float lMaxHp = MAX_HP;
+            lifeBarMat.SetFloat("FillAmount", lCurrentHp / lMaxHp);
         }
 
         override public void GetPicked(PlayerController pPicker)

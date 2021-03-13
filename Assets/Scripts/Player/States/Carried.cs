@@ -44,6 +44,7 @@ namespace hulaohyes.player.states
         {
             base.OnEnter();
             animator.SetBool("Carried", true);
+            player.lifeBar.enabled = false;
             controlScheme.Player.Jump.performed += OnJump;
             controlScheme.Player.PickUp.performed += OnDrop;
             controlScheme.Player.Drop.performed += OnDrop;
@@ -53,6 +54,7 @@ namespace hulaohyes.player.states
         {
             base.OnExit();
             animator.SetBool("Carried", false);
+            player.lifeBar.enabled = true;
             controlScheme.Player.Jump.performed -= OnJump;
             controlScheme.Player.PickUp.performed -= OnDrop;
             controlScheme.Player.Drop.performed -= OnDrop;
