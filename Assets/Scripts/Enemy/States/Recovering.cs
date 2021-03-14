@@ -6,11 +6,11 @@ namespace hulaohyes.enemy.states
 {
     public class Recovering : Wait
     {
-        //private const float RECOVERING_DURATION = 3f;                
+        //private const float ATTACK_RECOVERING_DURATION = 3f;                
 
         public Recovering(EnemyStateMachine pStateMachine, EnemyController pEnemy, Animator pAnimator)
         : base(pStateMachine, pEnemy, pAnimator)
-        { MAX_TIMER = enemy.RECOVERING_DURATION; }                               //const to change
+        { MAX_TIMER = enemy.ATTACK_RECOVERING_DURATION; }                               //const to change
 
         protected override void TimerEnd()
         {

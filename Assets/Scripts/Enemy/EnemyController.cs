@@ -16,7 +16,8 @@ namespace hulaohyes.enemy
         [Header("Values common")]
         public float STARTUP_ROTATION_AMOUNT = 2;                               //const to change
         public float START_UP_DURATION = 3;                                     //const to change
-        public float RECOVERING_DURATION = 3f;                                  //const to change
+        public float ATTACK_RECOVERING_DURATION = 3f;                                  //const to change
+        public float DROP_RECOVER_DURATION = 1f;                
 
         [Header("Values walker")]
         public float CHARGE_DURATION = 3f;                                      //const to change
@@ -114,7 +115,7 @@ namespace hulaohyes.enemy
         protected override void HitElseDropped(Collider pCollider)
         {
             enemyAnimator.SetTrigger("HitGround");
-            stateMachine.CurrentState = stateMachine.Idle;
+            stateMachine.CurrentState = stateMachine.Dropped;
         }
 
         protected override void Drowns()

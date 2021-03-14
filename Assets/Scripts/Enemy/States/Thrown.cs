@@ -14,17 +14,5 @@ namespace hulaohyes.enemy.states
             base.TimerEnd();
             enemy.destroyEnemy();
         }
-
-        public override void OnEnter()
-        {
-            base.OnEnter();
-            enemy.isPickableState = false;
-        }
-
-        public override void OnExit()
-        {
-            base.OnExit();
-            enemy.isPickableState = true;
-        }
     }
 }

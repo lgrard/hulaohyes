@@ -11,6 +11,7 @@ namespace hulaohyes.enemy.states
         private Idle _idle;
         private Thrown _thrown;
         private StartUp _startUp;
+        private Dropped _dropped;
         protected Recovering _recovering;
         protected Attacking _attacking;
 
@@ -28,6 +29,7 @@ namespace hulaohyes.enemy.states
             _idle = new Idle(this, pEnemy, pAnimator, pDetectionZone);
             _thrown = new Thrown(this, pEnemy, pAnimator);
             _startUp = new StartUp(this, pEnemy, pAnimator, pParticles);
+            _dropped = new Dropped(this, pEnemy, pAnimator);
             CurrentState = _idle;
         }
 
@@ -37,6 +39,7 @@ namespace hulaohyes.enemy.states
         public Thrown Thrown => _thrown;
         public StartUp StartUp => _startUp;
         public Attacking Attacking => _attacking;
+        public Dropped Dropped => _dropped;
     }
 }
 
