@@ -17,6 +17,7 @@ public class Pickable : MonoBehaviour
     protected LayerMask killZoneLayer;
     private LayerMask collisionLayer;
     private Vector3 forwardVelocity;
+    private TrailRenderer speedTrail;
 
     protected private PlayerController _currentPicker = null;
     protected private Rigidbody rb;
@@ -51,11 +52,14 @@ public class Pickable : MonoBehaviour
         _collider = GetComponent<Collider>();
         collisionLayer = LayerMask.GetMask("Enemy","Player","KillZone","Default","Bricks","Ground");
         killZoneLayer = LayerMask.NameToLayer("KillZone");
+        speedTrail = GetComponentInChildren<TrailRenderer>();
+        if (speedTrail != null) speedTrail.emitting = false;
     }
 
     public virtual void Propel()
     {
         isDropped = false;
+        if(speedTrail != null) speedTrail.emitting = true;
         Vector3 lPropelPos = transform.position + (transform.forward * _proprelZoneCheck.z) - new Vector3(0, 0.5f, 0); ;
         Transform lTarget = Utility.GetClosestTarget(transform, Physics.OverlapBox(lPropelPos, _proprelZoneCheck, transform.rotation, LayerMask.GetMask("Enemy")));
         GetDropped(THROW_FORCE, THROW_ANGLE_OFFSET, lTarget);
@@ -141,7 +145,7 @@ public class Pickable : MonoBehaviour
     }
     protected virtual void HitElseThrown(Collider pCollider)
     {
-        
+        if (speedTrail != null) speedTrail.emitting = false;
     }
     protected virtual void HitElseDropped(Collider pCollider)
     {
