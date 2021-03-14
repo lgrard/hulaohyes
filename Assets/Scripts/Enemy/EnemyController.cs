@@ -123,6 +123,7 @@ namespace hulaohyes.enemy
 
         public void destroyEnemy()
         {
+            enemyParticles[4].Play();
             enemyAnimator.SetTrigger("TakeDamage");
             _collider.isTrigger = true;
             rb.isKinematic = true;
