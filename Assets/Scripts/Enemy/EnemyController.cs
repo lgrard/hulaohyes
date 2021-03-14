@@ -13,6 +13,21 @@ namespace hulaohyes.enemy
         protected Animator enemyAnimator;
         protected SphereCollider detectionZone;
 
+        [Header("Values common")]
+        public float STARTUP_ROTATION_AMOUNT = 2;                               //const to change
+        public float START_UP_DURATION = 3;                                     //const to change
+        public float RECOVERING_DURATION = 3f;                                  //const to change
+
+        [Header("Values walker")]
+        public float CHARGE_DURATION = 3f;                                      //const to change
+        public float CHARGE_ROTATION_AMOUNT = 1f;                               //const to change
+        public float CHARGE_SPEED = 6;                                          //const to change
+
+        [Header("Values Turret")]
+        public float PROJECTILE_LIFETIME = 3f;                                  //const to change
+        public float PROJECTILE_SPEED = 5f;                                     //const to change
+
+
         [Header("Zone size")]
         [Range(1,10)][SerializeField] float zoneRadius = 1;
 

@@ -20,6 +20,9 @@ namespace hulaohyes.enemy.states.turret
         void Shoot()
         {
             GameObject lBullet = MonoBehaviour.Instantiate(projectilePrefab);
+            Projectile lBulletComp = lBullet.GetComponent<Projectile>();                //const to change
+            lBulletComp.PROJECTILE_LIFETIME = enemy.PROJECTILE_LIFETIME;                //const to change
+            lBulletComp.PROJECTILE_SPEED = enemy.PROJECTILE_SPEED;                      //const to change
             lBullet.transform.rotation = enemy.transform.rotation;
             lBullet.transform.position = enemy.transform.position + offset;
         }
