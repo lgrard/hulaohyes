@@ -131,6 +131,7 @@ public class Pickable : MonoBehaviour
     private void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.layer == killZoneLayer) Drowns();
+        else CollideWithElse(collision);
     }
 
 
@@ -152,6 +153,10 @@ public class Pickable : MonoBehaviour
 
     }
     protected virtual void Drowns()
+    {
+
+    }
+    protected virtual void CollideWithElse(Collision pCollision)
     {
 
     }

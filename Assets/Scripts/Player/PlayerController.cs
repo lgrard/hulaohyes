@@ -23,6 +23,7 @@ namespace hulaohyes.player
         private SkinnedMeshRenderer renderer;
         private Material lifeBarMat;
         private Quaternion lifeBarRotation;
+        private LayerMask groundLayer;
 
         public int playerIndex = 0;
 
@@ -131,6 +132,7 @@ namespace hulaohyes.player
             pickIndicator.constraintActive = true;
             lifeBarMat = lifeBar.material;
             lifeBarRotation = Quaternion.Euler(90,0,180);
+            groundLayer = LayerMask.GetMask("Ground", "Bricks");
             hp = MAX_HP;
         }
 
@@ -201,6 +203,15 @@ namespace hulaohyes.player
         {
             base.HitElseDropped(pCollider);
             stateMachine.CurrentState = stateMachine.Running;
+        }
+
+        protected override void CollideWithElse(Collision pCollision)
+        {
+            base.CollideWithElse(pCollision);
+            if ((groundLayer & 1 << pCollision.gameObject.layer) == 1 << pCollision.gameObject.layer
+                && !pCollision.collider.isTrigger
+                && pCollision.contacts[0].normal == Vector3.up)
+                playerParticles[2].Play();
         }
 
         bool isThrown => stateMachine.CurrentState == stateMachine.Thrown;
