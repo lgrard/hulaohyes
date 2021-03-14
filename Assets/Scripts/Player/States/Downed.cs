@@ -6,6 +6,8 @@ namespace hulaohyes.player.states
 {
     public class Downed : Wait
     {
+        //private const float RESPAWN_TIMER = 5f;
+
         private PlayerController player;
         private GameManager gameManager;
         private bool playerDead = false;
@@ -15,7 +17,7 @@ namespace hulaohyes.player.states
         {
             gameManager = GameManager.getInstance();
             player = pPlayer;
-            MAX_TIMER = 5;
+            MAX_TIMER = player.RESPAWN_TIMER;                                      //const to change
         }
 
         override protected void TimerEnd()
@@ -28,6 +30,7 @@ namespace hulaohyes.player.states
         public override void OnEnter()
         {
             base.OnEnter();
+            if (player.pickUpTarget != null) player.pickUpTarget.Drop();
             playerDead = false;
         }
 

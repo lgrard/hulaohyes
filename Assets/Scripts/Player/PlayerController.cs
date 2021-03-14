@@ -41,6 +41,7 @@ namespace hulaohyes.player
         [SerializeField] public MeshRenderer lifeBar;
 
         [Header("Player values")]
+        public float RESPAWN_TIMER = 5;                                                                                                //const to change
         public float MOVEMENT_SPEED = 6;                                                                                                //const to change
         public float JUMP_HEIGHT = 8;                                                                                                   //const to change
         public float GROUND_CHECK_DISTANCE = 0.5f;
@@ -140,6 +141,7 @@ namespace hulaohyes.player
         {
             hp = MAX_HP;
             UpdateLifeBar();
+            lifeBar.enabled = true;
 
             renderer.enabled = true;
             base._collider.enabled = true;
@@ -157,6 +159,7 @@ namespace hulaohyes.player
         {
             base.Drowns();
             playerAnimator.SetTrigger("Drowns");
+            lifeBar.enabled = false;
             stateMachine.CurrentState = stateMachine.Downed;
         }
 
