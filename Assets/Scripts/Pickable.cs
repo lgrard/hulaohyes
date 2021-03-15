@@ -90,7 +90,7 @@ public class Pickable : MonoBehaviour
         Vector3 lDiretionOffset = new Vector3(0, Mathf.Sin(pAngleOffset * DEG2RAD), 0);
         Vector3 lForwardDirection = transform.forward;
 
-        if (pTarget != null)
+        if (pTarget != null && pTarget.gameObject != gameObject)
             lForwardDirection = ((pTarget.position+ new Vector3(0,1f,0)) - transform.position).normalized;
 
         _isPicked = false;
