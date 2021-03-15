@@ -23,6 +23,7 @@ public class Pickable : MonoBehaviour
     protected private Rigidbody rb;
     protected private Collider _collider;
     protected bool isDropped = false;
+    protected bool isThrown = false;
     protected bool _isPicked = false;
 
     [Range(1, 30)] public float THROW_FORCE = 20f;                                                                                                  //const to change
@@ -50,7 +51,7 @@ public class Pickable : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         _collider = GetComponent<Collider>();
-        collisionLayer = LayerMask.GetMask("Enemy","Player","KillZone","Default","Bricks","Ground");
+        collisionLayer = LayerMask.GetMask("Enemy","Player","Default","Bricks","Ground");
         killZoneLayer = LayerMask.NameToLayer("KillZone");
         speedTrail = GetComponentInChildren<TrailRenderer>();
         if (speedTrail != null) speedTrail.emitting = false;
@@ -59,7 +60,8 @@ public class Pickable : MonoBehaviour
     public virtual void Propel()
     {
         isDropped = false;
-        if(speedTrail != null) speedTrail.emitting = true;
+        isThrown = true;
+        if (speedTrail != null) speedTrail.emitting = true;
         Vector3 lPropelPos = transform.position + (transform.forward * _proprelZoneCheck.z) - new Vector3(0, 0.5f, 0); ;
         Transform lTarget = Utility.GetClosestTarget(transform, Physics.OverlapBox(lPropelPos, _proprelZoneCheck, transform.rotation, LayerMask.GetMask("Enemy")));
         GetDropped(THROW_FORCE, THROW_ANGLE_OFFSET, lTarget);
@@ -67,6 +69,7 @@ public class Pickable : MonoBehaviour
     public virtual void Drop()
     {
         isDropped = true;
+        isThrown = false;
         GetDropped(DROP_FORCE, DROP_ANGLE_OFFSET);
     }
 
@@ -78,7 +81,6 @@ public class Pickable : MonoBehaviour
 
         transform.localEulerAngles = Vector3.zero;
         transform.localPosition = Vector3.zero;
-        _collider.isTrigger = true;
 
         _currentPicker = pPicker;
     }
@@ -100,24 +102,26 @@ public class Pickable : MonoBehaviour
         rb.velocity = forwardVelocity;
     }
 
-    private void OnTriggerEnter(Collider other)
+    private void OnCollisionEnter(Collision other)
     {
-        if ((collisionLayer & 1 << other.gameObject.layer) == 1 << other.gameObject.layer
-            && other.gameObject.TryGetComponent<PlayerController>(out PlayerController pPlayer) != _currentPicker
-            && !other.isTrigger
-            && !_isPicked)
+        if (other.collider.gameObject.layer == killZoneLayer)
         {
-            if (_currentPicker != null)
+            Drowns();
+            return;
+        }
+
+        if (!other.collider.isTrigger)
+        {
+            if(_currentPicker != null && other.gameObject != _currentPicker.gameObject && !_isPicked)
             {
                 _currentPicker = null;
                 rb.velocity = Vector3.zero;
-                _collider.isTrigger = false;
 
-                if (isDropped) HitElseDropped(other);
+                if (isDropped) HitElseDropped(other.collider);
 
-                else
+                else if(isThrown)
                 {
-                    HitElseThrown(other);
+                    HitElseThrown(other.collider);
 
                     if (other.gameObject.TryGetComponent<EnemyController>(out EnemyController pEnemy)
                     && gameObject != pEnemy.gameObject) HitEnemy(pEnemy);
@@ -128,37 +132,37 @@ public class Pickable : MonoBehaviour
         }
     }
 
-    private void OnCollisionEnter(Collision collision)
-    {
-        if (collision.gameObject.layer == killZoneLayer) Drowns();
-        else CollideWithElse(collision);
-    }
-
 
     private void HitEnemy(EnemyController pEnemy)
     {
         if (_impactParticles != null) _impactParticles.Play();
         pEnemy.destroyEnemy();
     }
-    protected virtual void HitSomething(Collider pCollider)
+    protected virtual void HitSomething(Collision pCollider)
     {
-    
+        isThrown = false;
+        isDropped = false;
     }
     protected virtual void HitElseThrown(Collider pCollider)
     {
         if (speedTrail != null) speedTrail.emitting = false;
+        isThrown = false;
+        isDropped = false;
     }
     protected virtual void HitElseDropped(Collider pCollider)
     {
-
+        isThrown = false;
+        isDropped = false;
     }
     protected virtual void Drowns()
     {
-
-    }
-    protected virtual void CollideWithElse(Collision pCollision)
-    {
-
+        _collider.enabled = false;
+        speedTrail.emitting = false;
+        _currentPicker = null;
+        rb.velocity = Vector3.zero;
+        rb.isKinematic = true;
+        isThrown = false;
+        isDropped = false;
     }
 
     protected virtual void OnGizmos()

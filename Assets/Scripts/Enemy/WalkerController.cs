@@ -47,15 +47,11 @@ namespace hulaohyes.enemy
 
         protected override void HitPlayer(PlayerController pPlayer)
         {
-            if (isAttacking)
-            {
-                enemyParticles[3].Play();
-                pPlayer.TakeDamage(1, transform);
-                StartCoroutine(Effects.HitStop(enemyAnimator, pPlayer.Animator, 0.2f, 0.05f));
-                stateMachine.CurrentState = stateMachine.Recovering;
-            }
-            
             base.HitPlayer(pPlayer);
+            enemyParticles[3].Play();
+            pPlayer.TakeDamage(1, transform);
+            StartCoroutine(Effects.HitStop(enemyAnimator, pPlayer.Animator, 0.2f, 0.05f));
+            stateMachine.CurrentState = stateMachine.Recovering;
         }
 
         protected override void OnGizmos()

@@ -59,15 +59,6 @@ namespace hulaohyes.enemy
             detectionZone.enabled = false;
         }
 
-        protected virtual void HitPlayer(PlayerController pPlayer)
-        {
-            if (isIdling && currentTarget == null)
-            {
-                currentTarget = pPlayer.transform;
-                stateMachine.CurrentState = stateMachine.StartUp;
-            }
-        }
-
         protected override void Init()
         {
             base.Init();
@@ -99,13 +90,6 @@ namespace hulaohyes.enemy
             base.GetPicked(pPlayer);
         }
 
-        protected override void HitSomething(Collider pCollider)
-        {
-            base.HitSomething(pCollider);
-            if (pCollider.TryGetComponent<PlayerController>(out PlayerController pPlayer))
-                HitPlayer(pPlayer);
-        }
-
         protected override void HitElseThrown(Collider pCollider)
         {
             enemyAnimator.SetTrigger("HitGround");
@@ -118,10 +102,32 @@ namespace hulaohyes.enemy
             stateMachine.CurrentState = stateMachine.Dropped;
         }
 
+        protected virtual void HitPlayer(PlayerController pPlayer)
+        {
+
+        }
+
         protected override void Drowns()
         {
             base.Drowns();
             destroyEnemy();
+        }
+
+        private void OnTriggerEnter(Collider other)
+        {
+            if(other.TryGetComponent<PlayerController>(out PlayerController lPlayer))
+            {
+                if(currentTarget == null && isIdling)
+                {
+                    currentTarget = lPlayer.transform;
+                    stateMachine.CurrentState = stateMachine.StartUp;
+                }
+
+                else if (isAttacking)
+                {
+                    HitPlayer(lPlayer);
+                }
+            }
         }
 
         private void OnTriggerExit(Collider other)

@@ -207,17 +207,13 @@ namespace hulaohyes.player
             base.HitElseDropped(pCollider);
             stateMachine.CurrentState = stateMachine.Running;
         }
-
-        protected override void CollideWithElse(Collision pCollision)
+        protected override void HitSomething(Collision pCollider)
         {
-            base.CollideWithElse(pCollision);
-            if ((groundLayer & 1 << pCollision.gameObject.layer) == 1 << pCollision.gameObject.layer
-                && !pCollision.collider.isTrigger
-                && pCollision.contacts[0].normal == Vector3.up)
+            base.HitSomething(pCollider);
+            if (pCollider.contacts[0].normal == Vector3.up)
                 playerParticles[2].Play();
         }
 
-        bool isThrown => stateMachine.CurrentState == stateMachine.Thrown;
         bool isDown => stateMachine.CurrentState == stateMachine.Downed;
         public Animator Animator => playerAnimator;
         public ControlScheme getActiveControlScheme() { return controlScheme; }
