@@ -30,7 +30,7 @@ namespace hulaohyes.enemy
 
 
         [Header("Zone size")]
-        [Range(1,10)][SerializeField] float zoneRadius = 1;
+        [Range(1,50)][SerializeField] float zoneRadius = 1;
 
         [Header("Particles list")]
         [SerializeField] protected List<ParticleSystem> enemyParticles;
