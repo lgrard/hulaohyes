@@ -72,7 +72,7 @@ namespace hulaohyes.player
             hp -= pDamage;
             UpdateLifeBar();
 
-            if (hp >= 0 && stateMachine.CurrentState == stateMachine.Carrying)
+            if (hp > 0 && stateMachine.CurrentState == stateMachine.Carrying)
                 stateMachine.Carrying.TakeCarryDamage();
 
             else if (hp > 0 && stateMachine.CurrentState != stateMachine.Carrying && stateMachine.CurrentState != stateMachine.Carried)
@@ -112,7 +112,7 @@ namespace hulaohyes.player
         public void DropTarget()
         {
             rb.velocity = rb.velocity /2f;
-            stateMachine.CurrentState = stateMachine.Wait;
+            if(!isDown) stateMachine.CurrentState = stateMachine.Wait;
         }
         override protected void Init()
         {
@@ -218,6 +218,7 @@ namespace hulaohyes.player
         }
 
         bool isThrown => stateMachine.CurrentState == stateMachine.Thrown;
+        bool isDown => stateMachine.CurrentState == stateMachine.Downed;
         public Animator Animator => playerAnimator;
         public ControlScheme getActiveControlScheme() { return controlScheme; }
 
