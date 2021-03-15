@@ -10,7 +10,7 @@ namespace hulaohyes.player.states
 
         private PlayerController player;
         private GameManager gameManager;
-        private bool playerDead = false;
+        private bool disabled;
 
         public Downed(PlayerStateMachine pStateMachine, Animator pAnimator, List<ParticleSystem> pParticles, PlayerController pPlayer)
             : base(pStateMachine, pAnimator, pParticles)
@@ -18,28 +18,28 @@ namespace hulaohyes.player.states
             gameManager = GameManager.getInstance();
             player = pPlayer;
             MAX_TIMER = player.RESPAWN_TIMER;                                      //const to change
+            disabled = false;
         }
 
         override protected void TimerEnd()
         {
             base.TimerEnd();
             gameManager.SpawnPlayer(player.playerIndex);
-            stateMachine.CurrentState = stateMachine.Running;
         }
 
         public override void OnEnter()
         {
             base.OnEnter();
+            disabled = false;
             if (player.pickUpTarget != null) player.pickUpTarget.Drop();
-            playerDead = false;
         }
 
         public override void LoopLogic()
         {
             base.LoopLogic();
-            if (Timer <= 4.3f && !playerDead)
+            if (Timer <= 4.3f && !player.IsDead && !disabled)
             {
-                playerDead = true;
+                disabled = true;
                 player.Die();
             }
         }

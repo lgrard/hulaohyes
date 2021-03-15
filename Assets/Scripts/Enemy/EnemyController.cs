@@ -69,7 +69,6 @@ namespace hulaohyes.enemy
 
         public override void Propel()
         {
-            base.isDropped = false;
             enemyAnimator.SetTrigger("Thrown");
             stateMachine.CurrentState = stateMachine.Thrown;
             base.Propel();
@@ -77,7 +76,6 @@ namespace hulaohyes.enemy
 
         public override void Drop()
         {
-            base.isDropped = true;
             enemyAnimator.SetTrigger("Escape");
             stateMachine.CurrentState = stateMachine.Thrown;
             base.Drop();

@@ -14,7 +14,6 @@ namespace hulaohyes.player
         const float KNOCK_BACK_AMOUNT = 1.5f;
         const float KNOCK_BACK_TIME = 0.1f;
 
-        private GameManager gameManager;
         private Animator playerAnimator;
         private PlayerStateMachine stateMachine;
         private PlayerInput playerInput;
@@ -24,6 +23,7 @@ namespace hulaohyes.player
         private Material lifeBarMat;
         private Quaternion lifeBarRotation;
         private LayerMask groundLayer;
+        private bool _isDead;
 
         public int playerIndex = 0;
 
@@ -134,25 +134,29 @@ namespace hulaohyes.player
             lifeBarMat = lifeBar.material;
             lifeBarRotation = Quaternion.Euler(90,0,180);
             groundLayer = LayerMask.GetMask("Ground", "Bricks");
+            _isDead = false;
             hp = MAX_HP;
         }
 
         public void Spawn()
         {
+            stateMachine.CurrentState = stateMachine.Running;
             hp = MAX_HP;
             UpdateLifeBar();
             lifeBar.enabled = true;
-
             renderer.enabled = true;
-            base._collider.enabled = true;
-            base.rb.isKinematic = false;
+            _collider.enabled = true;
+            rb.isKinematic = false;
+            _isDead = false;
         }
 
         public void Die()
         {
+            _isDead = true;
             renderer.enabled = false;
-            base._collider.enabled = false;
-            base.rb.isKinematic = true;
+            _collider.enabled = false;
+            rb.isKinematic = true;
+            GameManager.getInstance().DeathCheck();
         }
 
         protected override void Drowns()
@@ -215,6 +219,7 @@ namespace hulaohyes.player
         }
 
         bool isDown => stateMachine.CurrentState == stateMachine.Downed;
+        public bool IsDead => _isDead;
         public Animator Animator => playerAnimator;
         public ControlScheme getActiveControlScheme() { return controlScheme; }
 

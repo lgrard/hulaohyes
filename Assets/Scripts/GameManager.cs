@@ -109,18 +109,36 @@ namespace hulaohyes
 
         private void SpawnAllplayers()
         {
-            if(currentCheckPointGlobal != null)
+            Vector3 lSpawnPos0;
+            Vector3 lSpawnPos1;
+            Quaternion lSpawnRot0;
+            Quaternion lSpawnRot1;
+
+            if (currentCheckPointGlobal != null)
             {
                 BigCheckpoint lGlobalCp = currentCheckPointGlobal as BigCheckpoint;
 
-                _player0.transform.position = lGlobalCp.SpawnPosition;
-                _player0.transform.rotation = lGlobalCp.SpawnRotation;
-                _player0.gameObject.SetActive(true);
-
-                _player1.transform.position = lGlobalCp.SecondSpawnPosition;
-                _player1.transform.rotation = lGlobalCp.SecondSpawnRotation;
-                _player1.gameObject.SetActive(true);
+                lSpawnPos0 = lGlobalCp.SpawnPosition;
+                lSpawnRot0 = lGlobalCp.SpawnRotation;
+                lSpawnPos1 = lGlobalCp.SecondSpawnPosition;
+                lSpawnRot1 = lGlobalCp.SecondSpawnRotation;
             }
+
+            else
+            {
+                lSpawnPos0 = playerStart.SpawnPosition;
+                lSpawnRot0 = playerStart.SpawnRotation;
+                lSpawnPos1 = playerStart.SecondSpawnPosition;
+                lSpawnRot1 = playerStart.SecondSpawnRotation;
+            }
+
+            _player0.transform.position = lSpawnPos0;
+            _player0.transform.rotation = lSpawnRot0;
+            _player1.transform.position = lSpawnPos1;
+            _player1.transform.rotation = lSpawnRot1;
+
+            _player1.Spawn();
+            _player0.Spawn();
         }
 
         public void SetCurrentSpawner(int pPlayerIndex, Checkpoint pCheckpoint)
@@ -138,6 +156,13 @@ namespace hulaohyes
                 if (lCp.CheckPointIndex < pCheckpoint.CheckPointIndex && lCp.enabled) lCp.enabled = false;
         }
 
+        public void DeathCheck()
+        {
+            if(_player0.IsDead && _player1.IsDead)
+            {
+                SpawnAllplayers();
+            }
+        }
 
         public static void AddEnemy(EnemyController pEnemy)
         {
