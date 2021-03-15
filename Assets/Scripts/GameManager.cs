@@ -23,6 +23,7 @@ namespace hulaohyes
         private Checkpoint currentCheckPointGlobal;
         private Checkpoint[] CheckPointList;
 
+        public bool isPaused = false;
 
         private void Awake()
         {

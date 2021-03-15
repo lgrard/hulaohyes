@@ -14,6 +14,7 @@ namespace hulaohyes.player
         const float KNOCK_BACK_AMOUNT = 1.5f;
         const float KNOCK_BACK_TIME = 0.1f;
 
+        private GameManager gameManager;
         private Animator playerAnimator;
         private PlayerStateMachine stateMachine;
         private PlayerInput playerInput;
@@ -117,6 +118,7 @@ namespace hulaohyes.player
         override protected void Init()
         {
             base.Init();
+            gameManager = GameManager.getInstance();
             isPickableState = false;
             cameraContainer = CameraManager.getInstance().GetCamera(playerIndex).transform;
             playerAnimator = GetComponent<Animator>();
@@ -136,6 +138,8 @@ namespace hulaohyes.player
             groundLayer = LayerMask.GetMask("Ground", "Bricks");
             _isDead = false;
             hp = MAX_HP;
+
+            controlScheme.Player.Pause.performed += OpenPauseMenu;
         }
 
         public void Spawn()
@@ -193,6 +197,11 @@ namespace hulaohyes.player
             float lCurrentHp = hp;
             float lMaxHp = MAX_HP;
             lifeBarMat.SetFloat("FillAmount", lCurrentHp / lMaxHp);
+        }
+
+        private void OpenPauseMenu(InputAction.CallbackContext ctx)
+        {
+            LevelLoader.TogglePauseMenu();
         }
 
         override public void GetPicked(PlayerController pPicker)
