@@ -39,7 +39,11 @@ namespace hulaohyes.levelbrick.unitcube
         {
             rb.isKinematic = true;
             currentSlab = pSlab;
-            if (_currentPicker != null) _currentPicker.DropTarget();
+            if (_currentPicker != null)
+            {
+                _currentPicker.DropTarget();
+                _currentPicker = null;
+            }
             renderer.materials[0].SetColor("EmitColor", currentSlab.Color);
             renderer.materials[0].SetFloat("Brightness", 5);
         }
