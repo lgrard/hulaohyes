@@ -44,13 +44,13 @@ namespace hulaohyes.enemy
         private void Start() => Init();
 
         private void Update() => stateMachine.CurrentState.LoopLogic();
-        private void FixedUpdate()
+
+        protected override void PhysLoop()
         {
+            base.PhysLoop();
             currentState = stateMachine.CurrentState.ToString();
             stateMachine.CurrentState.PhysLoopLogic();
-            rb.AddForce(Physics.gravity * _gravity, ForceMode.Acceleration);
         }
-
         private void CreateDetectionZone()
         {
             detectionZone = gameObject.AddComponent<SphereCollider>();
@@ -83,6 +83,7 @@ namespace hulaohyes.enemy
 
         override public void GetPicked(PlayerController pPlayer)
         {
+            enemyParticles[2].Stop();
             stateMachine.CurrentState = stateMachine.Carried;
             detectionZone.enabled = false;
             base.GetPicked(pPlayer);

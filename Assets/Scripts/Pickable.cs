@@ -57,6 +57,14 @@ public class Pickable : MonoBehaviour
         if (speedTrail != null) speedTrail.emitting = false;
     }
 
+    private void FixedUpdate() => PhysLoop();
+
+    protected virtual void PhysLoop()
+    {
+        rb.AddForce(Physics.gravity * _gravity, ForceMode.Acceleration);
+
+    }
+
     public virtual void Propel()
     {
         isDropped = false;

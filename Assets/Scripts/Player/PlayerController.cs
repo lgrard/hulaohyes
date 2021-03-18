@@ -57,11 +57,12 @@ namespace hulaohyes.player
 
         ///Standard and physic GameLoops
         private void Update() => stateMachine.CurrentState.LoopLogic();
-        private void FixedUpdate()
+
+        protected override void PhysLoop()
         {
+            base.PhysLoop();
             currentState = stateMachine.CurrentState.ToString();
             stateMachine.CurrentState.PhysLoopLogic();
-            rb.AddForce(Physics.gravity * _gravity, ForceMode.Acceleration);
             lifeBar.transform.rotation = lifeBarRotation;
         }
 
