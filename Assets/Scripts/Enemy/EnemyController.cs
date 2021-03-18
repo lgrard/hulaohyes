@@ -90,7 +90,6 @@ namespace hulaohyes.enemy
 
         protected override void HitElseThrown(Collider pCollider)
         {
-            enemyAnimator.SetTrigger("HitGround");
             destroyEnemy();
         }
 
