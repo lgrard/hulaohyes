@@ -96,8 +96,9 @@ class ContentManagerWindow : EditorWindow
 
         GUILayout.BeginHorizontal();
         GUILayout.Label("Bricks", labelStyle, GUILayout.Width(labelWidth));
-        if (GUILayout.Button("DoorGroup", GUILayout.Width(buttonWidth / 2), GUILayout.Height(buttonHeight))) LoadObject("Prefabs/Bricks/DoorGroup");
-        if (GUILayout.Button("UnitCubeSpawner", GUILayout.Width(buttonWidth / 2), GUILayout.Height(buttonHeight))) LoadObject("Prefabs/Bricks/UnitCubeSpawner");
+        if (GUILayout.Button("DoorGroup", GUILayout.Width(buttonWidth / 3), GUILayout.Height(buttonHeight))) LoadObject("Prefabs/Bricks/DoorGroup");
+        if (GUILayout.Button("UnitCubeSpawner", GUILayout.Width(buttonWidth / 3), GUILayout.Height(buttonHeight))) LoadObject("Prefabs/Bricks/UnitCubeSpawner");
+        if (GUILayout.Button("Barrel", GUILayout.Width(buttonWidth / 3), GUILayout.Height(buttonHeight))) LoadObject("Prefabs/Bricks/Barrel");
         GUILayout.EndHorizontal();
 
         GUILayout.Space(5f);
