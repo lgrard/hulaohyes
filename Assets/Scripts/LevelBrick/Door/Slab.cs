@@ -97,6 +97,9 @@ namespace hulaohyes.levelbrick.door
                     {
                         SetLed(pCube,5);
                         MagnetCube(pCube);
+                        stepParticles.Play();
+                        currentUnits += 1;
+                        _doorManager.SetUnit(1);
                     }
                     else return;
                 }
@@ -107,13 +110,12 @@ namespace hulaohyes.levelbrick.door
                     {
                         SetLed(pPlayer,5);
                         currentPlayer = pPlayer;
+                        stepParticles.Play();
+                        currentUnits += 1;
+                        _doorManager.SetUnit(1);
                     }
                     else return;
                 }
-
-                stepParticles.Play();
-                currentUnits += 1;
-                _doorManager.SetUnit(1);
             }
         }
 
