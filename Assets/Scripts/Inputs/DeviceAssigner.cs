@@ -17,12 +17,14 @@ namespace hulaohyes.inputs
             _playerInput = GetComponent<PlayerInput>();
             _playerInput.actions = _controlScheme.asset;
             _controlScheme.Player.Join.performed += DeviceManager.SetInputDevice;
+            _controlScheme.Player.Drop.performed += DeviceManager.WithdrawInputDevice;
         }
 
         private void OnDisable()
         {
             _controlScheme.Disable();
             _controlScheme.Player.Join.performed -= DeviceManager.SetInputDevice;
+            _controlScheme.Player.Drop.performed -= DeviceManager.WithdrawInputDevice;
         }
     }
 }
