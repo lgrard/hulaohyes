@@ -11,11 +11,13 @@ namespace hulaohyes.enemy
         public float PROJECTILE_SPEED = 5f;       //const to change
         private Rigidbody rb;
         private float destroyTimer;
+        private ParticleSystem hitParticles;
 
         private void Start()
         {
             rb = GetComponent<Rigidbody>();
             destroyTimer = PROJECTILE_LIFETIME;
+            hitParticles = GetComponentInChildren<ParticleSystem>();
         }
 
         private void FixedUpdate()
@@ -30,7 +32,10 @@ namespace hulaohyes.enemy
         {
             if(other.TryGetComponent<PlayerController>(out PlayerController pPlayer))
                 pPlayer.TakeDamage(1, transform);
-
+            hitParticles.transform.parent = null;
+            hitParticles.transform.position = transform.position;
+            hitParticles.Play();
+            Destroy(hitParticles, 0.5f);
             Destroy(gameObject);
         }
     }
