@@ -65,8 +65,8 @@ namespace hulaohyes.levelbrick.unitcube
 
         protected override void Drowns()
         {
-            base.Drowns();
             DestroyUnitCube();
+            base.Drowns();
         }
     }
 }
