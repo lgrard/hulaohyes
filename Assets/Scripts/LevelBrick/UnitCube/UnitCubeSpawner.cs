@@ -7,15 +7,18 @@ namespace hulaohyes.levelbrick.unitcube
 {
     public class UnitCubeSpawner : MonoBehaviour
     {
+        private Animator animator;
         private UnitCube currentUnitCube;
         private GameObject unitCubePrefab;
         private Vector3 spawnOffset = new Vector3(0,1,0);
         private bool canSpawnCube = true;
+        [SerializeField] ParticleSystem pushParticles;
         [SerializeField] GameObject spawner;
         [SerializeField] bool drawGizmos = true;
 
         private void Start()
         {
+            animator = GetComponent<Animator>();
             string lPath = "Prefabs/Bricks/UnitCube";
             unitCubePrefab = Resources.Load(lPath) as GameObject;
             if (unitCubePrefab == null) Debug.LogError(lPath +" is not a valid path");
@@ -37,6 +40,9 @@ namespace hulaohyes.levelbrick.unitcube
 
         public void PushButton()
         {
+            pushParticles.Play();
+            animator.ResetTrigger("PushButton");
+            animator.SetTrigger("PushButton");
             if (currentUnitCube != null) currentUnitCube.DestroyUnitCube();
             else if (canSpawnCube) StartCoroutine(ButtonTimer());
         }
