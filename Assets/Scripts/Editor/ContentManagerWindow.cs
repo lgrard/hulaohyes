@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 using UnityEditor;
 
 class ContentManagerWindow : EditorWindow
@@ -28,6 +29,7 @@ class ContentManagerWindow : EditorWindow
     private Object hasPlayerStart;
     private Object hasPlayer0;
     private Object hasPlayer1;
+    private List<Object> requirementList;
 
     [MenuItem("HulaOhYes/Content Manager &HOME")] private static void ShowWindow() => EditorWindow.GetWindow(typeof(ContentManagerWindow)).titleContent.text = "Content Manager";
 
@@ -216,16 +218,14 @@ class ContentManagerWindow : EditorWindow
             GUILayout.FlexibleSpace();
             GUILayout.BeginVertical();
 
-            GUILayout.Space(5);
-            EditorGUILayout.ObjectField("GameManager", hasGameManager, typeof(GameObject),true);
-            EditorGUILayout.ObjectField("CameraManager", hasCamManager, typeof(GameObject),true);
-            EditorGUILayout.ObjectField("PlayerStart", hasPlayerStart, typeof(GameObject),true);
-            EditorGUILayout.ObjectField("Player0", hasPlayer0, typeof(GameObject),true);
-            EditorGUILayout.ObjectField("Player1", hasPlayer1, typeof(GameObject),true);
-            /*GUILayout.Toggle(hasCamManager, "CameraManager");
-            GUILayout.Toggle(hasPlayerStart, "PlayerStart");
-            GUILayout.Toggle(hasPlayer0, "Player0");
-            GUILayout.Toggle(hasPlayer1, "Player1");*/
+            if(requirementList != null)
+            {
+                GUILayout.Space(5);
+                EditorGUI.BeginDisabledGroup(true);
+                foreach (Object lRequirement in requirementList)
+                    EditorGUILayout.ObjectField(lRequirement, typeof(GameObject), true);
+                EditorGUI.EndDisabledGroup();
+            }
 
             GUILayout.EndVertical();
             GUILayout.FlexibleSpace();
@@ -234,7 +234,7 @@ class ContentManagerWindow : EditorWindow
             GUILayout.Space(15);
             GUILayout.BeginHorizontal();
             GUILayout.FlexibleSpace();
-            if (GUILayout.Button("Analyze current scene",GUILayout.Width(200), GUILayout.Height(50))) AnalyzeScene();
+            if (GUILayout.Button("Analyze current scene",GUILayout.Width(200), GUILayout.Height(30))) AnalyzeScene();
             GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
 
@@ -288,5 +288,14 @@ class ContentManagerWindow : EditorWindow
         hasPlayerStart = GameObject.Find("PlayerStart");
         hasPlayer0 = GameObject.Find("Player_0");
         hasPlayer1 = GameObject.Find("Player_1");
+
+        requirementList = new List<Object>()
+        {
+            hasGameManager,
+            hasCamManager,
+            hasPlayerStart,
+            hasPlayer0,
+            hasPlayer1,
+        };
     }
 }
