@@ -51,7 +51,7 @@ class ContentManagerWindow : EditorWindow
 
     private void OnGUI()
     {
-        buttonHeight = position.height / 12f;
+        buttonHeight = 50;                      //position.height / 12f;
         buttonWidth = position.width / 1.5f;
         labelWidth = position.width / 4f;
 
@@ -99,6 +99,13 @@ class ContentManagerWindow : EditorWindow
         if (GUILayout.Button("DoorGroup", GUILayout.Width(buttonWidth / 3), GUILayout.Height(buttonHeight))) LoadObject("Prefabs/Bricks/DoorGroup");
         if (GUILayout.Button("UnitCubeSpawner", GUILayout.Width(buttonWidth / 3), GUILayout.Height(buttonHeight))) LoadObject("Prefabs/Bricks/UnitCubeSpawner");
         if (GUILayout.Button("Barrel", GUILayout.Width(buttonWidth / 3), GUILayout.Height(buttonHeight))) LoadObject("Prefabs/Bricks/Barrel");
+        GUILayout.EndHorizontal();
+
+        GUILayout.Space(5f);
+
+        GUILayout.BeginHorizontal();
+        GUILayout.Label("Gears", labelStyle, GUILayout.Width(labelWidth));
+        if (GUILayout.Button("Gear", GUILayout.Width(buttonWidth), GUILayout.Height(buttonHeight))) LoadObject("Prefabs/Bricks/Gear");
         GUILayout.EndHorizontal();
 
         GUILayout.Space(5f);
