@@ -3,8 +3,10 @@ using UnityEditor;
 
 class ContentManagerWindow : EditorWindow
 {
+    private Material headerMat;
+    private Texture headerImage; 
     private float buttonWidth;
-    private float buttonHeight;
+    private float buttonHeight = 35;
     private float labelWidth;
     private Vector2 scrollView;
     private GUIStyle indicationStyle;
@@ -14,6 +16,7 @@ class ContentManagerWindow : EditorWindow
     private Object objectToLoad;
     private GameObject lastObject;
     private string overridenObjectName;
+    private Editor objectEditor;
 
     [MenuItem("HulaOhYes/Content Manager &HOME")] private static void ShowWindow() => EditorWindow.GetWindow(typeof(ContentManagerWindow)).titleContent.text = "Content Manager";
 
@@ -39,6 +42,9 @@ class ContentManagerWindow : EditorWindow
         labelStyle.fontStyle = FontStyle.Italic;
         labelStyle.alignment = TextAnchor.MiddleRight;
         labelStyle.padding.right = 10;
+
+        headerImage = (Texture)Resources.Load("Editor/CM_header");
+        headerMat = (Material)Resources.Load("Editor/M_EditorSprite");
     }
 
     void OnDestroy()
@@ -51,10 +57,11 @@ class ContentManagerWindow : EditorWindow
 
     private void OnGUI()
     {
-        buttonHeight = 50;                      //position.height / 12f;
         buttonWidth = position.width / 1.5f;
         labelWidth = position.width / 4f;
 
+        if(headerImage != null && position.height> 400)
+        EditorGUI.DrawPreviewTexture(GUILayoutUtility.GetRect(256, 50), headerImage, headerMat, ScaleMode.ScaleAndCrop);
 
         GUILayout.Space(15);
         GUILayout.Label("Content Manager", titleStyle);
@@ -118,7 +125,7 @@ class ContentManagerWindow : EditorWindow
         if (GUILayout.Button("LevelEnd", GUILayout.Width(buttonWidth / 4), GUILayout.Height(buttonHeight))) LoadObject("Prefabs/Bricks/Checkpoints/LevelEnd");
         GUILayout.EndHorizontal();
 
-        GUILayout.Space(20f);
+        GUILayout.Space(30f);
 
         GUILayout.BeginHorizontal();
         GUILayout.Label("Fence", labelStyle, GUILayout.Width(labelWidth));
@@ -169,6 +176,13 @@ class ContentManagerWindow : EditorWindow
         if (lastObject != null)
             if (GUILayout.Button("Undo", GUILayout.Height(buttonHeight))) Undo();
         GUILayout.Space(5f);
+
+        if (objectToLoad != null)
+        {
+            if(objectEditor == null)
+                objectEditor = Editor.CreateEditor(objectToLoad);
+            objectEditor.OnInteractivePreviewGUI(GUILayoutUtility.GetRect(256, 150), new GUIStyle());
+        }
     }
 
     void OnSceneGUI(SceneView sceneView)
@@ -201,6 +215,7 @@ class ContentManagerWindow : EditorWindow
     {
         objectToLoad = ContentAdder.getItemFromPrefab(pPath);
         overridenObjectName = objectToLoad.name;
+        objectEditor = Editor.CreateEditor(objectToLoad);
     }
 
     void Undo()
