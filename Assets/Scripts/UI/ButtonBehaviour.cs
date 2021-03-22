@@ -3,23 +3,21 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class ButtonBehaviour : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, ISelectHandler, IDeselectHandler
+public class ButtonBehaviour : MonoBehaviour, IPointerEnterHandler, ISelectHandler, IDeselectHandler
 {
     private Animator anim;
+    private EventSystem eventSystem;
 
-    private void Start()
+    private void Awake()
     {
         anim = GetComponent<Animator>();
+        eventSystem = EventSystem.current;
     }
 
     public void OnPointerEnter(PointerEventData eventData)
     {
         anim.SetBool("Selected", true);
-    }
-
-    public void OnPointerExit(PointerEventData eventData)
-    {
-        anim.SetBool("Selected", false);
+        eventSystem.SetSelectedGameObject(gameObject);
     }
 
     public void OnSelect(BaseEventData eventData)

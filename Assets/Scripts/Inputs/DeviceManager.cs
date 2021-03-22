@@ -19,19 +19,29 @@ namespace hulaohyes.inputs
             {
                 _inputDevice0 = lDevice;
                 Debug.Log(_inputDevice0.name + " has been linked with player 0");
+                return;
             }
             else if (_inputDevice1 == null && lDevice != _inputDevice0)
             {
                 _inputDevice1 = lDevice;
                 Debug.Log(_inputDevice1.name + " has been linked with player 1");
             }
-            else if (_inputDevice0 != null && _inputDevice1 != null) Debug.Log("Both player paired");
+            else if (bothPaired) Debug.Log("Both player paired");
         }
+
+        public static bool bothPaired => _inputDevice0 != null && _inputDevice1 != null;
 
         public static void WithdrawInputDevice(InputAction.CallbackContext ctx)
         {
             if (ctx.control.device == _inputDevice0) _inputDevice0 = null;
             else if (ctx.control.device == _inputDevice1) _inputDevice1 = null;
+        }
+
+        public static void ClearInputDevices()
+        {
+            _inputDevice0 = null;
+            _inputDevice1 = null;
+            Debug.Log("Both player inputs cleared");
         }
 
         /// Returns an associated player device
