@@ -30,6 +30,8 @@ namespace hulaohyes.enemy
 
         private void OnTriggerEnter(Collider other)
         {
+            if (other.TryGetComponent<TurretController>(out TurretController lTurret) || other.isTrigger) return;
+
             if(other.TryGetComponent<PlayerController>(out PlayerController pPlayer))
                 pPlayer.TakeDamage(1, transform);
             hitParticles.transform.parent = null;
