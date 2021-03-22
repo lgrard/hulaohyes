@@ -64,6 +64,7 @@ namespace hulaohyes.player
             currentState = stateMachine.CurrentState.ToString();
             stateMachine.CurrentState.PhysLoopLogic();
             lifeBar.transform.rotation = lifeBarRotation;
+            transform.rotation = Quaternion.Euler(0, transform.eulerAngles.y, 0);
         }
 
         /// The player takes a certain amount of damage
@@ -97,6 +98,7 @@ namespace hulaohyes.player
             float lTimeStamp = KNOCK_BACK_TIME;
             Vector3 lFirstPosition = transform.position;
             Vector3 lKnockBackDestination = transform.position + (pOrigin.forward * KNOCK_BACK_AMOUNT);
+            lKnockBackDestination.y = lFirstPosition.y;
             transform.rotation = Quaternion.LookRotation(pOrigin.position- transform.position, Vector3.up);
             while (lTimeStamp > 0)
             {
@@ -113,7 +115,7 @@ namespace hulaohyes.player
         }
         public void DropTarget()
         {
-            rb.velocity = rb.velocity /2f;
+            rb.velocity = rb.velocity /3f;
             if(!isDown) stateMachine.CurrentState = stateMachine.Wait;
         }
         override protected void Init()
