@@ -32,6 +32,11 @@ public class MainMenu : MonoBehaviour
         RenderSettings.skybox.SetFloat("_Rotation", Time.time);
     }
 
+    public void LoadLevel(int pLevelIndex)
+    {
+        LevelLoader.LoadLevel(pLevelIndex);
+    }
+
     private void ChangeMenu(int pMenuIndex)
     {
         previousMenu = activeMenu;

@@ -145,7 +145,7 @@ namespace hulaohyes.enemy
         {
             enemyParticles[4].Play();
             enemyAnimator.SetTrigger("TakeDamage");
-            _collider.isTrigger = true;
+            _collider.enabled = false;
             rb.isKinematic = true;
             Destroy(gameObject, 0.5f);
         }
