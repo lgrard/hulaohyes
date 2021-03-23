@@ -17,4 +17,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Binary/Scenes/3_Level_1.unity
     guid: 686f6c076eada6e43bcd04e5b7f2c571
+  - enabled: 1
+    path: Assets/Binary/Scenes/4_LoadingScreen.unity
+    guid: 320edd4386e09de4eac8636eb22167b3
   m_configObjects: {}

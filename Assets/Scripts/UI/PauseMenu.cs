@@ -9,7 +9,11 @@ public class PauseMenu : MonoBehaviour
     [SerializeField] GameObject firstSelectedButton;
 
     public void Resume() => LevelLoader.TogglePauseMenu();
-    public void Quit() => LevelLoader.LoadLevel(LevelLoader.mainMenu);
+    public void Quit()
+    {
+        EventSystem.current.enabled = false;
+        StartCoroutine(LevelLoader.LoadLevel(LevelLoader.mainMenu));
+    }
 
     private void Start()
     {

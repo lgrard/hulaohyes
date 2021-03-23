@@ -10,11 +10,7 @@ public static class LevelLoader
     private const int pauseMenu = 1;
     public const int level0 = 2;
     public const int level1 = 3;
-
-    public static void LoadLevel(int pLevel)
-    {
-        SceneManager.LoadScene(pLevel);
-    }
+    public const int loadingScreen = 4;
 
     public static bool TogglePauseMenu()
     {
@@ -35,5 +31,32 @@ public static class LevelLoader
         }
 
         return lGameManager.isPaused;
+    }
+
+    public static IEnumerator LoadLevel(int pLevel)
+    {
+        yield return null;
+
+        int lLastSceneIndex = SceneManager.GetActiveScene().buildIndex;
+        bool lHasPauseMenu = SceneManager.GetSceneByBuildIndex(pauseMenu).isLoaded;
+
+        SceneManager.LoadScene(loadingScreen, LoadSceneMode.Additive);
+        yield return new WaitForSecondsRealtime(0.75f);
+
+        AsyncOperation operation = SceneManager.LoadSceneAsync(pLevel, LoadSceneMode.Additive);
+        operation.allowSceneActivation = false;
+
+        while (!operation.isDone)
+        {
+            if (operation.progress >= 0.9f) operation.allowSceneActivation = true;
+            yield return null;
+        }
+
+        SceneManager.UnloadSceneAsync(lLastSceneIndex);
+        if (lHasPauseMenu) SceneManager.UnloadSceneAsync(pauseMenu);
+        SceneManager.UnloadSceneAsync(loadingScreen);
+        Time.timeScale = 1f;
+
+        yield return null;
     }
 }

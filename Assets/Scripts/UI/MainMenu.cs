@@ -19,9 +19,10 @@ public class MainMenu : MonoBehaviour
     [Header("First Selected Buttons")]
     [SerializeField] List<GameObject> firstButtonList;
 
-    private void Start()
+    private void OnEnable()
     {
-        eventSystem = EventSystem.current;
+        eventSystem = GetComponent<EventSystem>();
+        EventSystem.current = eventSystem;
         ChangeMenu(0);
 
         versionContainer.text += Application.version;
@@ -34,7 +35,7 @@ public class MainMenu : MonoBehaviour
 
     public void LoadLevel(int pLevelIndex)
     {
-        LevelLoader.LoadLevel(pLevelIndex);
+        StartCoroutine(LevelLoader.LoadLevel(pLevelIndex));
     }
 
     private void ChangeMenu(int pMenuIndex)
