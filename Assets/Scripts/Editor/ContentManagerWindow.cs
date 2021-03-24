@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿#if UNITY_EDITOR
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
@@ -299,3 +300,4 @@ class ContentManagerWindow : EditorWindow
         };
     }
 }
+#endif

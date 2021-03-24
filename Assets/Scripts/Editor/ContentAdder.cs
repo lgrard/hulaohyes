@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿#if UNITY_EDITOR
+using UnityEngine;
 using UnityEditor;
 using hulaohyes.levelbrick.door;
 
@@ -36,3 +37,4 @@ public class ContentAdder : MonoBehaviour
         return lDoorGroup;
     }
 }
+#endif

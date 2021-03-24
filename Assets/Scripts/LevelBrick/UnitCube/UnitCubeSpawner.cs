@@ -30,7 +30,7 @@ namespace hulaohyes.levelbrick.unitcube
             canSpawnCube = false;
             yield return new WaitForSeconds(1f);
 
-            GameObject lUnitcubeToSpawn = PrefabUtility.InstantiatePrefab(unitCubePrefab) as GameObject;
+            GameObject lUnitcubeToSpawn = Instantiate(unitCubePrefab) as GameObject;
             if (lUnitcubeToSpawn.TryGetComponent<UnitCube>(out UnitCube pCube)) currentUnitCube = pCube;
             currentUnitCube.transform.position = spawner.transform.position + spawnOffset;
             currentUnitCube.CurrentSpawner = this;
