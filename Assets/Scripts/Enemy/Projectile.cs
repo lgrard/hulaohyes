@@ -20,7 +20,7 @@ namespace hulaohyes.enemy
 
         private void FixedUpdate()
         {
-            transform.Translate(transform.forward * PROJECTILE_SPEED,Space.World);
+            transform.Translate(transform.forward * PROJECTILE_SPEED*Time.deltaTime,Space.World);
 
             if (destroyTimer > 0) destroyTimer -= Time.deltaTime;
             else Destroy(gameObject);
