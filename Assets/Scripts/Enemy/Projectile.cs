@@ -9,20 +9,18 @@ namespace hulaohyes.enemy
     {
         public float PROJECTILE_LIFETIME = 3f;          //const to change
         public float PROJECTILE_SPEED = 5f;       //const to change
-        private Rigidbody rb;
         private float destroyTimer;
         private ParticleSystem hitParticles;
 
         private void Start()
         {
-            rb = GetComponent<Rigidbody>();
             destroyTimer = PROJECTILE_LIFETIME;
             hitParticles = GetComponentInChildren<ParticleSystem>();
         }
 
         private void FixedUpdate()
         {
-            rb.velocity = transform.forward * PROJECTILE_SPEED;
+            transform.Translate(transform.forward * PROJECTILE_SPEED,Space.World);
 
             if (destroyTimer > 0) destroyTimer -= Time.deltaTime;
             else Destroy(gameObject);
