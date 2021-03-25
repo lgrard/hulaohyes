@@ -13,12 +13,14 @@ namespace hulaohyes.enemy.states.walker
 
         private NavMeshAgent agent;
         private BoxCollider damageZone;
+        private Rigidbody rb;
 
-        public Charging(EnemyStateMachine pStateMachine, EnemyController pEnemy, Animator pAnimator, NavMeshAgent pAgent, BoxCollider pDamageZone, List<ParticleSystem> pParticles)
+        public Charging(EnemyStateMachine pStateMachine, EnemyController pEnemy, Animator pAnimator, NavMeshAgent pAgent, BoxCollider pDamageZone, List<ParticleSystem> pParticles, Rigidbody pRb)
             : base(pStateMachine, pEnemy, pAnimator, pParticles)
         {
             MAX_TIMER = enemy.CHARGE_DURATION;                                 //const to change
             agent = pAgent;
+            rb = pRb;
             damageZone = pDamageZone;
         }
 
@@ -34,7 +36,7 @@ namespace hulaohyes.enemy.states.walker
             base.OnEnter();
             particles[0].Play();
             damageZone.enabled = true;
-            agent.isStopped = false;
+            rb.isKinematic = false;
         }
 
         public override void LoopLogic()
@@ -52,7 +54,6 @@ namespace hulaohyes.enemy.states.walker
             base.OnExit();
             particles[0].Stop();
             damageZone.enabled = false;
-            agent.isStopped = true;
             agent.velocity = agent.velocity / 3;
         }
     }

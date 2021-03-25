@@ -65,6 +65,7 @@ namespace hulaohyes.enemy
             CreateDetectionZone();
             enemyAnimator = GetComponent<Animator>();
             GameManager.AddEnemy(this);
+            rb.isKinematic = true;
         }
 
         public override void Propel()
