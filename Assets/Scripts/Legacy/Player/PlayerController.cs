@@ -1,0 +1,251 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.InputSystem;
+using hulaohyes.player.states;
+using hulaohyes.inputs;
+using hulaohyes.camera;
+using UnityEngine.Animations;
+
+namespace hulaohyes.player
+{
+    public class PlayerController : Pickable
+    {
+        const float KNOCK_BACK_AMOUNT = 1.5f;
+        const float KNOCK_BACK_TIME = 0.1f;
+
+        private GameManager gameManager;
+        private Animator playerAnimator;
+        private PlayerStateMachine stateMachine;
+        private PlayerInput playerInput;
+        private ControlScheme controlScheme;
+        private Transform cameraContainer;
+        private SkinnedMeshRenderer renderer;
+        private Material lifeBarMat;
+        private Quaternion lifeBarRotation;
+        private LayerMask groundLayer;
+        private bool _isDead;
+
+        public int playerIndex = 0;
+
+        [Header("HP values")]
+        [SerializeField] int MAX_HP = 3;                                                                                                         //const to change
+        private int hp;
+
+        [Header("Objects and components")]
+        [Tooltip("The transform where pick up target is stored")]
+        public Transform pickUpPoint;
+
+        [Header("Particles list and effects")]
+        [SerializeField] List<ParticleSystem> playerParticles;
+        [SerializeField] public LookAtConstraint pickIndicator;
+        [SerializeField] public MeshRenderer lifeBar;
+
+        [Header("Player values")]
+        public float RESPAWN_TIMER = 5;                                                                                                //const to change
+        public float MOVEMENT_SPEED = 6;                                                                                                //const to change
+        public float JUMP_HEIGHT = 8;                                                                                                   //const to change
+        public float GROUND_CHECK_DISTANCE = 0.5f;
+        public float PICK_UP_DISTANCE =2f;                                                                                              //const to change
+        public float VERTICAL_PROPEL_HEIGHT = 8f;                                                                                       //const to change
+
+        [HideInInspector]
+        public Pickable pickUpTarget;
+
+        [Header("Debug")]
+        [SerializeField] string currentState;
+
+        ///Standard and physic GameLoops
+        private void Update() => stateMachine.CurrentState.LoopLogic();
+
+        protected override void PhysLoop()
+        {
+            base.PhysLoop();
+            currentState = stateMachine.CurrentState.ToString();
+            stateMachine.CurrentState.PhysLoopLogic();
+            lifeBar.transform.rotation = lifeBarRotation;
+            transform.rotation = Quaternion.Euler(0, transform.eulerAngles.y, 0);
+        }
+
+        /// The player takes a certain amount of damage
+        /// <param name="pDamage"> Amount of damage taken </param>
+        public void TakeDamage(int pDamage, Transform pDealer)
+        {
+            rb.velocity = Vector3.zero;
+            hp -= pDamage;
+            UpdateLifeBar();
+
+            if (hp > 0 && stateMachine.CurrentState == stateMachine.Carrying)
+                stateMachine.Carrying.TakeCarryDamage();
+
+            else if (hp > 0 && stateMachine.CurrentState != stateMachine.Carrying && stateMachine.CurrentState != stateMachine.Carried)
+            {
+                StartCoroutine(KnockBack(pDealer));
+                playerAnimator.SetTrigger("TakeDamage");
+                stateMachine.CurrentState = stateMachine.Wait;
+            }
+
+            else if (hp <= 0)
+            {
+                StartCoroutine(KnockBack(pDealer));
+                playerAnimator.SetTrigger("Dies");
+                stateMachine.CurrentState = stateMachine.Downed;
+            }
+        }
+
+        private IEnumerator KnockBack(Transform pOrigin)
+        {
+            float lTimeStamp = KNOCK_BACK_TIME;
+            Vector3 lFirstPosition = transform.position;
+            Vector3 lKnockBackDestination = transform.position + (pOrigin.forward * KNOCK_BACK_AMOUNT);
+            lKnockBackDestination.y = lFirstPosition.y;
+            transform.rotation = Quaternion.LookRotation(pOrigin.position- transform.position, Vector3.up);
+            while (lTimeStamp > 0)
+            {
+                transform.position = Vector3.Lerp(lKnockBackDestination, lFirstPosition, lTimeStamp / KNOCK_BACK_TIME);
+                lTimeStamp -= Time.deltaTime;
+                yield return new WaitForEndOfFrame();
+            }
+        }
+
+        public void SetPlayerDevice()
+        {
+            InputDevice lDevice = DeviceManager.GetInputDevice(playerIndex);
+            if (lDevice != null) playerInput.SwitchCurrentControlScheme(lDevice);
+        }
+        public void DropTarget()
+        {
+            rb.velocity = rb.velocity /3f;
+            if(!isDown) stateMachine.CurrentState = stateMachine.Wait;
+        }
+        override protected void Init()
+        {
+            base.Init();
+            gameManager = GameManager.getInstance();
+            isPickableState = false;
+            cameraContainer = CameraManager.getInstance().GetCamera(playerIndex).transform;
+            playerAnimator = GetComponent<Animator>();
+            controlScheme = new ControlScheme();
+            playerInput = GetComponent<PlayerInput>();
+            renderer = GetComponentInChildren<SkinnedMeshRenderer>();
+            playerInput.actions = controlScheme.asset;
+            SetPlayerDevice();
+            stateMachine = new PlayerStateMachine(this, controlScheme, cameraContainer, rb, playerAnimator, playerParticles, _collider);
+            ConstraintSource lCamLookAt = new ConstraintSource();
+            lCamLookAt.sourceTransform = cameraContainer;
+            lCamLookAt.weight = 1;
+            pickIndicator.SetSource(0,lCamLookAt);
+            pickIndicator.constraintActive = true;
+            lifeBarMat = lifeBar.material;
+            lifeBarRotation = Quaternion.Euler(90,0,180);
+            groundLayer = LayerMask.GetMask("Ground", "Bricks");
+            _isDead = false;
+            hp = MAX_HP;
+
+            controlScheme.Player.Pause.performed += OpenPauseMenu;
+        }
+
+        public void Spawn()
+        {
+            stateMachine.CurrentState = stateMachine.Running;
+            hp = MAX_HP;
+            UpdateLifeBar();
+            lifeBar.enabled = true;
+            renderer.enabled = true;
+            _collider.enabled = true;
+            rb.isKinematic = false;
+            _isDead = false;
+        }
+
+        public void Die()
+        {
+            _isDead = true;
+            renderer.enabled = false;
+            _collider.enabled = false;
+            rb.isKinematic = true;
+            GameManager.getInstance().DeathCheck();
+        }
+
+        protected override void Drowns()
+        {
+            base.Drowns();
+            playerAnimator.SetTrigger("Drowns");
+            lifeBar.enabled = false;
+            stateMachine.CurrentState = stateMachine.Downed;
+        }
+
+        override public void Propel()
+        {
+            stateMachine.CurrentState = stateMachine.Thrown;
+            base.Propel();
+        }
+
+        override public void Drop()
+        {
+            stateMachine.CurrentState = stateMachine.Thrown;
+            base.Drop();
+        }
+
+        public void JumpFromCarried()
+        {
+            _isPicked = false;
+            if (_currentPicker != null) _currentPicker.DropTarget();
+            _currentPicker = null;
+            transform.parent = null;
+            rb.isKinematic = false;
+        }
+
+        private void UpdateLifeBar()
+        {
+            float lCurrentHp = hp;
+            float lMaxHp = MAX_HP;
+            lifeBarMat.SetFloat("FillAmount", lCurrentHp / lMaxHp);
+        }
+
+        private void OpenPauseMenu(InputAction.CallbackContext ctx)
+        {
+            LevelLoader.TogglePauseMenu();
+        }
+
+        override public void GetPicked(PlayerController pPicker)
+        {
+            base.GetPicked(pPicker);
+            if (pickUpTarget != null) DropTarget();
+            stateMachine.CurrentState = stateMachine.Carried;
+        }
+        protected override void HitElseThrown(Collider pCollider)
+        {
+            base.HitElseThrown(pCollider);
+            stateMachine.CurrentState = stateMachine.Running;
+        }
+        protected override void HitElseDropped(Collider pCollider)
+        {
+            base.HitElseDropped(pCollider);
+            stateMachine.CurrentState = stateMachine.Running;
+        }
+        protected override void HitSomething(Collision pCollider)
+        {
+            base.HitSomething(pCollider);
+            if (pCollider.contacts[0].normal == Vector3.up)
+                playerParticles[2].Play();
+        }
+
+        bool isDown => stateMachine.CurrentState == stateMachine.Downed;
+        public bool IsDead => _isDead;
+        public Animator Animator => playerAnimator;
+        public ControlScheme getActiveControlScheme() { return controlScheme; }
+
+        protected override void OnGizmos()
+        {
+            Gizmos.DrawLine(transform.position + new Vector3(0,0.5f,0), (transform.forward * PICK_UP_DISTANCE+transform.position+new Vector3(0,0.5f,0)));             //GroundCheck debug line
+            Gizmos.DrawLine(transform.position, new Vector3(transform.position.x, transform.position.y - GROUND_CHECK_DISTANCE, transform.position.z));             //GroundCheck debug line
+            base.OnGizmos();
+        }
+
+        ///Destroy player's object and delete references
+        public void destroyPlayer()
+        {
+            Destroy(gameObject);
+        }
+    }
+}
