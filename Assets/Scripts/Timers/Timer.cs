@@ -22,8 +22,8 @@ namespace hulaohyes.Assets.Scripts.Timers
         void TimerTick()
         {
             timer -= Time.deltaTime;
-            
-            if(timer <= 0)
+
+            if (timer <= 0)
             {
                 onTimerEnd?.Invoke();
                 TimerHandler.onUpdate -= TimerTick;
