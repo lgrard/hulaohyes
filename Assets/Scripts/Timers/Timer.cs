@@ -7,6 +7,7 @@ namespace hulaohyes.Assets.Scripts.Timers
     {
         public delegate void TimerAction();
         public TimerAction onTimerEnd;
+        public TimerAction onTick;
 
         private float timer;
 
@@ -22,12 +23,18 @@ namespace hulaohyes.Assets.Scripts.Timers
         void TimerTick()
         {
             timer -= Time.deltaTime;
+            onTick?.Invoke();
 
             if (timer <= 0)
             {
                 onTimerEnd?.Invoke();
                 TimerHandler.onUpdate -= TimerTick;
             }
+        }
+
+        public void Disable()
+        {
+            TimerHandler.onUpdate -= TimerTick;
         }
     }
 }
