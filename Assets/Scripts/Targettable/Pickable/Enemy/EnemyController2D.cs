@@ -18,6 +18,7 @@ namespace hulaohyes.Assets.Scripts.Targettable.Pickable.Enemy
 
         private Rigidbody2D _rb;
         private bool isPickable = true;
+        private float _direction = 1;
 
         [SerializeField] private EnemyDatas _enemyDataSet = null;
 
@@ -60,6 +61,12 @@ namespace hulaohyes.Assets.Scripts.Targettable.Pickable.Enemy
             onGetPickedUp?.Invoke();
         }
 
+
+        public float direction
+        {
+            get => _direction;
+            set => _direction = Mathf.Clamp(value, -1, 1);
+        }
 
         //Getters
         public bool isTargettable => isPickable;
