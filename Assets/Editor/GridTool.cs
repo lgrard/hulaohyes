@@ -121,6 +121,8 @@ public class GridTool : EditorWindow
             if(GUILayout.Button("Save",GUILayout.Height(40f))) SaveData();
         EditorGUILayout.EndHorizontal();
         GUILayout.Space(10);
+        if (GUILayout.Button("Snap selection to grid - (Shift+S)", GUILayout.Height(40f))) SnapToGrid();
+        GUILayout.Space(10);
     }
 
     void OnSceneGUI(SceneView pSceneView)
@@ -155,6 +157,17 @@ public class GridTool : EditorWindow
         string lPath = EditorUtility.SaveFilePanel("Save grid datas", "Assets/Editor/Data", "GridData_","json");
         string lNewJson = JsonUtility.ToJson(currentGridList);
         System.IO.File.WriteAllText(lPath, lNewJson);
+    }
+
+    [MenuItem("HulaOhYes/Snap to grid #S")]
+    public static void SnapToGrid()
+    {
+        foreach (Transform lObjects in Selection.transforms)
+        {
+            float lNewX = Mathf.RoundToInt(lObjects.position.x);
+            float lNewY = Mathf.RoundToInt(lObjects.position.y);
+            lObjects.position = new Vector3(lNewX, lNewY, lObjects.position.z);
+        }
     }
 }
 
