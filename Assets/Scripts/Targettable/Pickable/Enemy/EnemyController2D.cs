@@ -11,16 +11,20 @@ namespace hulaohyes.Assets.Scripts.Targettable.Pickable.Enemy
         public EventHandler onGetThrown;
         public EventHandler onGetDropped;
         public EventHandler onGetPickedUp;
-        public EventHandler onTargetLoss;
+        public EventHandler onActive;
+        public EventHandler onRecover;
+        public EventHandler onEndAttack;
+        public EventHandler onChangeDirection;
 
         public delegate void TypedEventHandler<T>(T pValue);
         public TypedEventHandler<Transform> onTargetAquire;
 
         private Rigidbody2D _rb;
         private bool isPickable = true;
-        private float _direction = 1;
+        private int _direction = 1;
 
         [SerializeField] private EnemyDatas _enemyDataSet = null;
+        [SerializeField] private EnemyTargetting targetting = null;
 
         private void Awake()
         {
@@ -33,6 +37,9 @@ namespace hulaohyes.Assets.Scripts.Targettable.Pickable.Enemy
         private void Init()
         {
             _rb = GetComponent<Rigidbody2D>();
+            onTargetAquire += OnTargetAquire;
+            onRecover += OnRecover;
+            onEndAttack += OnEndAttack;
         }
 
         public void GetThrown(Vector2 pVelocity)
@@ -58,11 +65,36 @@ namespace hulaohyes.Assets.Scripts.Targettable.Pickable.Enemy
             _rb.isKinematic = true;
             transform.eulerAngles = Vector3.zero;
             isPickable = false;
+            targetting.enabled = false;
             onGetPickedUp?.Invoke();
         }
 
+        //State component logic
+        private void ClearState()
+        {
+            _rb.isKinematic = true;
+            isPickable = true;
+        }
 
-        public float direction
+        private void OnTargetAquire(Transform pTarget)
+        {
+            targetting.enabled = false;
+            isPickable = false;
+        }
+
+        private void OnRecover()
+        {
+            isPickable = true;
+        }
+
+        private void OnEndAttack()
+        {
+            ClearState();
+            targetting.enabled = true;
+        }
+
+
+        public int direction
         {
             get => _direction;
             set => _direction = Mathf.Clamp(value, -1, 1);
