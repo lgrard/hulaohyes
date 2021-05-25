@@ -16,6 +16,12 @@ namespace hulaohyes.Assets.Scripts.Components.Player
         [Header("Debug")]
         [SerializeField] bool drawGizmos;
 
+        private void OnDisable()
+        {
+            currentPickUpTarget = null;
+            currentInteractTarget = null;
+        }
+
         private void FixedUpdate() => Targetting();
 
         void Targetting()
