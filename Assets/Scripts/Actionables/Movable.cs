@@ -10,7 +10,7 @@ namespace hulaohyes.Assets.Scripts.Actionables
         [SerializeField] private bool parentPlayer = false;
 
         [Header("Time values")]
-        [SerializeField] private float timeToOpen = 1;
+        [SerializeField] private float timeToMove = 1;
         [SerializeField] private AnimationCurve movingCurve = new AnimationCurve(new Keyframe(0,0),new Keyframe(1,1));
         private Vector2 basePosition = Vector2.zero;
         private Timer currentTimer = null;
@@ -22,19 +22,19 @@ namespace hulaohyes.Assets.Scripts.Actionables
 
         public override void DoAction()
         {
-            currentTimer = new Timer(timeToOpen);
+            currentTimer = new Timer(timeToMove);
             currentTimer.onTick = ActionOn;
         }
 
         void ActionOn()
         {
-            float lProgress = 1 - (currentTimer.currentTime / timeToOpen);
+            float lProgress = 1 - (currentTimer.currentTime / timeToMove);
             MoveObject(lProgress);
         }
 
         void ActionOff()
         {
-            float lProgress = currentTimer.currentTime / timeToOpen;
+            float lProgress = currentTimer.currentTime / timeToMove;
             MoveObject(lProgress);
         }
 
