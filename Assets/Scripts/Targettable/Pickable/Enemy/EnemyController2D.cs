@@ -2,6 +2,7 @@
 using UnityEngine;
 using hulaohyes.Assets.Scripts.Targettable.Pickable.Player;
 using hulaohyes.Assets.Scripts.Components.Enemy;
+using hulaohyes.Assets.Scripts.Components.Enemy.Walker;
 
 namespace hulaohyes.Assets.Scripts.Targettable.Pickable.Enemy
 {
@@ -25,6 +26,7 @@ namespace hulaohyes.Assets.Scripts.Targettable.Pickable.Enemy
 
         [SerializeField] private EnemyDatas _enemyDataSet = null;
         [SerializeField] private EnemyTargetting targetting = null;
+        [SerializeField] private WalkerRush attacking = null;
 
         private void Awake()
         {
@@ -66,6 +68,7 @@ namespace hulaohyes.Assets.Scripts.Targettable.Pickable.Enemy
             transform.eulerAngles = Vector3.zero;
             isPickable = false;
             targetting.enabled = false;
+            attacking.enabled = false;
             onGetPickedUp?.Invoke();
         }
 

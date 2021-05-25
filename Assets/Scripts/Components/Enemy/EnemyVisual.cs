@@ -22,6 +22,9 @@ namespace hulaohyes.Assets.Scripts.Components.Enemy
             enemy.onRecover += OnRecover;
             enemy.onEndAttack += OnEndAttack;
             enemy.onChangeDirection += OnChangeDirection;
+            enemy.onGetPickedUp += OnGetPickedUp;
+            enemy.onGetDropped += OnGetDropped;
+            enemy.onGetThrown += OnGetThrown;
         }
         
         private void OnDisable()
@@ -31,6 +34,9 @@ namespace hulaohyes.Assets.Scripts.Components.Enemy
             enemy.onRecover -= OnRecover;
             enemy.onEndAttack -= OnEndAttack;
             enemy.onChangeDirection -= OnChangeDirection;
+            enemy.onGetPickedUp -= OnGetPickedUp;
+            enemy.onGetDropped -= OnGetDropped;
+            enemy.onGetThrown -= OnGetThrown;
         }
 
         void OnChangeDirection()
@@ -47,7 +53,7 @@ namespace hulaohyes.Assets.Scripts.Components.Enemy
         void OnTargetAquire(Transform pTarget)
         {
             enemy.onTargetAquire -= OnTargetAquire;
-            animator.SetTrigger("Attacks");
+            animator.SetTrigger("SpotTarget");
             startUpParticles?.Play();
         }
 
@@ -69,6 +75,20 @@ namespace hulaohyes.Assets.Scripts.Components.Enemy
         {
             enemy.onTargetAquire += OnTargetAquire;
             animator.SetBool("isRecovering", false);
+        }
+
+        void OnGetPickedUp()
+        {
+            animator.SetTrigger("GetPickedUp");
+        }
+
+        void OnGetDropped()
+        {
+            animator.SetTrigger("Escape");
+        }
+        void OnGetThrown()
+        {
+            animator.SetTrigger("Thrown");
         }
     }
 }
