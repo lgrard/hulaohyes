@@ -32,6 +32,8 @@ namespace hulaohyes.Assets.Scripts.Timers
             }
         }
 
+        public float currentTime => timer;
+
         public void Disable()
         {
             TimerHandler.onUpdate -= TimerTick;
